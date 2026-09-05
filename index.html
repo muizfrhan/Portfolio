@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Muhamad Farhan Muizaddin</title>
+    <meta name="description" content="Muhamad Farhan Muizaddin — Full-Stack Developer from Indonesia. Building modern web applications, scalable systems and interactive digital experiences.">
+    <meta name="keywords" content="Full-Stack Developer, Web Developer, Portfolio, Next.js, Node.js, PHP, JavaScript, Indonesia, Frontend, Backend, Muhamad Farhan Muizaddin">
+    <meta name="author" content="Muhamad Farhan Muizaddin">
+    <meta name="theme-color" content="#050510">
+    <meta name="color-scheme" content="dark">
+    <link rel="canonical" href="https://your-domain.vercel.app/">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.svg">
+    <link rel="apple-touch-icon" href="assets/images/logo.png">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Muhamad Farhan Muizaddin — Full-Stack Developer">
+    <meta property="og:description" content="Futuristic portfolio of Muhamad Farhan Muizaddin — Full-Stack Developer crafting scalable, cinematic web experiences.">
+    <meta property="og:url" content="https://your-domain.vercel.app/">
+    <meta property="og:image" content="https://your-domain.vercel.app/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Muhamad Farhan Muizaddin — Full-Stack Developer">
+    <meta name="twitter:description" content="Futuristic, cinematic portfolio — Muhamad Farhan Muizaddin, Full-Stack Developer from Indonesia.">
+    <meta name="twitter:image" content="https://your-domain.vercel.app/og-image.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Muhamad Farhan Muizaddin",
+      "jobTitle": "Full-Stack Developer",
+      "address": { "@type": "PostalAddress", "addressCountry": "ID", "addressLocality": "Indonesia" },
+      "url": "https://your-domain.vercel.app/",
+      "sameAs": ["https://github.com", "https://linkedin.com"],
+      "knowsAbout": ["JavaScript","Next.js","Node.js","PHP","MySQL","Python"]
+    }
+    </script>
+    <noscript><style>.loader{display:none!important} [data-scroll-reveal]{opacity:1!important;transform:none!important} .tech-card,.project-card,.tl-item{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <!-- LOADING SCREEN -->
+    <div class="loader" id="loader">
+        <div class="loader-overlay" id="loaderOverlay">
+            <div class="loader-terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="terminal-title">M Farhan Muizaddin</div>
+                </div>
+                <div class="terminal-body" id="terminalBody">
+                    <div class="terminal-line" id="line1">INITIALIZING PORTFOLIO...</div>
+                    <div class="terminal-line" id="line2">LOADING DEVELOPER PROFILE...</div>
+                    <div class="terminal-line" id="line3">LOADING PROJECTS...</div>
+                    <div class="terminal-line" id="line4">LOADING SYSTEM...</div>
+                    <div class="terminal-line" id="line5">SYSTEM READY</div>
+                </div>
+                <div class="loader-progress-container">
+                    <div class="loader-progress-bar" id="loaderProgressBar"></div>
+                    <div class="loader-percentage" id="loaderPercentage">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" aria-label="Muhamad Farhan Muizaddin — Home">
+                <img src="assets/images/logo-navbar.png" alt="Muhamad Farhan Muizaddin" width="160" height="48" loading="eager" decoding="async" fetchpriority="high" onerror="this.onerror=null;this.src='assets/images/logo.png'">
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#experience" class="nav-link">Experience</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navLinks">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main id="main">
+    <!-- HERO SECTION -->
+    <section class="hero" id="home" aria-labelledby="heroTitle">
+        <div class="hero-background">
+            <canvas id="heroCanvas"></canvas>
+            <div class="grid-overlay"></div>
+            <div class="radial-glow"></div>
+            <div class="radial-glow-2"></div>
+            <div class="noise-overlay" id="noiseOverlay"></div>
+        </div>
+
+        <div class="container hero-layout">
+            <!-- LEFT SIDE -->
+            <div class="hero-left" id="heroLeft">
+                <div class="hero-badge" id="heroBadge">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text">Available for Work</span>
+                </div>
+                <p class="hero-eyebrow" id="heroEyebrow" aria-label="HELLO, I'M">HELLO, I'M</p>
+                <h1 class="hero-title" id="heroTitle">
+                    <span class="hero-name-line" data-name="MUHAMAD"><span class="name-inner">MUHAMAD</span></span>
+                    <span class="hero-name-line accent glitch" data-text="FARHAN" data-name="FARHAN"><span class="name-inner">FARHAN</span></span>
+                    <span class="hero-name-line" data-name="MUIZADDIN"><span class="name-inner">MUIZADDIN</span></span>
+                </h1>
+                <p class="hero-role" id="heroRole" aria-label="FULL-STACK DEVELOPER"><span id="heroRoleTyping"></span><span class="typing-cursor" aria-hidden="true">|</span></p>
+                <p class="hero-description" id="heroDesc">
+                    <span class="desc-line">Building modern web applications,</span>
+                    <span class="desc-line">scalable systems,</span>
+                    <span class="desc-line">and interactive digital experiences.</span>
+                </p>
+
+                <div class="hero-buttons" id="heroButtons">
+                    <a href="#projects" class="btn btn-primary" data-magnetic>
+                        <span>View My Projects</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#contact" class="btn btn-secondary" data-magnetic>
+                        <span>Contact Me</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </a>
+                </div>
+
+                <div class="hero-social" id="heroSocial">
+                    <a href="https://github.com" target="_blank" rel="noopener" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="mailto:hello@example.com" class="social-link" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE — FOTO + 3D COMPOSITION -->
+            <div class="hero-right" id="heroVisual">
+                <div class="profile-stage" id="profileStage">
+                    <!-- 3D LAYER BEHIND PHOTO -->
+                    <div class="profile-3d-layer" aria-hidden="true">
+                        <div class="hero-3d-container" id="hero3dContainer">
+                            <canvas id="threeCanvas"></canvas>
+                        </div>
+                        <div class="profile-orb"></div>
+                        <div class="hero-glow-ring"></div>
+                        <div class="hero-glow-ring-2"></div>
+                        <div class="profile-grid"></div>
+                    </div>
+
+                    <!-- FLOATING CODE SYMBOLS — minimal (1) -->
+                    <div class="profile-float code-float-1" aria-hidden="true">&lt;/&gt;</div>
+
+                    <!-- FUTURISTIC FRAME — minimal, premium -->
+                    <div class="profile-frame">
+                        <div class="profile-ring"></div>
+                        <div class="profile-ring-2"></div>
+                        <div class="profile-glow"></div>
+                        <div class="profile-image-wrap">
+                            <img id="profileImg"
+                                 src="assets/images/profile.jpg"
+                                 alt="Muhamad Farhan Muizaddin — Full-Stack Developer"
+                                 width="420" height="420"
+                                 loading="eager" decoding="async" fetchpriority="high"
+                                 onerror="this.style.display='none';document.getElementById('profileFallback').style.display='flex';this.onerror=null;const p2=this;setTimeout(()=>{if(p2.style.display==='none'){const try2=new Image();try2.onload=()=>{p2.src='assets/images/profile.png';p2.style.display='block';document.getElementById('profileFallback').style.display='none';};try2.onerror=()=>{const try3=new Image();try3.onload=()=>{p2.src='assets/images/profile.webp';p2.style.display='block';document.getElementById('profileFallback').style.display='none';};try3.src='assets/images/profile.webp';};try2.src='assets/images/profile.png';}}, 50)">
+                            <div id="profileFallback" class="profile-fallback" aria-hidden="true">
+                                <span class="fallback-initials">MFM</span>
+                                <span class="fallback-sub">MUHAMAD FARHAN MUIZADDIN</span>
+                            </div>
+                            <div class="profile-glass"></div>
+                        </div>
+
+                        <!-- FLOATING UI PANELS — max 2 -->
+                        <div class="profile-badge-float available"><span class="dot"></span> AVAILABLE</div>
+                        <div class="profile-badge-float role"><i class="fas fa-layer-group"></i> FULL-STACK</div>
+                    </div>
+                </div>
+
+                <!-- HIDDEN CODE BLOCKS FOR LEGACY JS COMPAT -->
+                <div style="display:none">
+                    <div id="codeBlock1"></div><div id="codeBlock2"></div><div id="codeBlock3"></div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator" aria-hidden="true">
+            <span>SCROLL TO EXPLORE</span>
+            <div class="scroll-line"><span></span></div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about" id="about">
+        <div class="about-background">
+            <div class="about-glow"></div>
+            <div class="about-glow-2"></div>
+        </div>
+        <div class="container about-container">
+            <div class="about-header" data-scroll-reveal="fade-up">
+                <span class="section-tag">ABOUT ME</span>
+                <h2 class="section-title">The Engineer Behind<br>the Code</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-image-col" data-scroll-reveal="fade-right">
+                    <div class="profile-image-wrapper">
+                        <div class="profile-image-placeholder">
+                            <div class="profile-gradient"></div>
+                            <div class="profile-initials">MFM</div>
+                        </div>
+                        <div class="profile-border-glow"></div>
+                        <div class="profile-status">
+                            <span class="status-dot"></span>
+                            Online
+                        </div>
+                    </div>
+                    <div class="code-decorations">
+                        <div class="code-tag code-tag-1">
+                            <span class="tag-keyword">const</span>
+                            <span class="tag-prop">developer</span>
+                            <span class="tag-brace">=</span>
+                            <span class="tag-string">'Muhamad Farhan Muizaddin'</span><span class="tag-semi">;</span>
+                        </div>
+                        <div class="code-tag code-tag-2">
+                            <span class="tag-keyword">let</span>
+                            <span class="tag-prop">experience</span>
+                            <span class="tag-brace">=</span>
+                            <span class="tag-number">5</span><span class="tag-op">+</span><span class="tag-number">years</span><span class="tag-semi">;</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-content-col" data-scroll-reveal="fade-left">
+                    <div class="about-bio">
+                        <p>
+                            A passionate <strong>Full-Stack Developer</strong> with a deep love 
+                            for building things that live on the internet. I turn complex 
+                            problems into elegant, scalable solutions.
+                        </p>
+                        <p>
+                            Specialized in modern JavaScript frameworks, 
+                            cloud architectures, and performance optimization. 
+                            Always learning, always building.
+                        </p>
+                    </div>
+                    <div class="about-info-grid">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <span class="info-label">Location</span>
+                                <span class="info-value">Indonesia</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-briefcase"></i>
+                            <div>
+                                <span class="info-label">Role</span>
+                                <span class="info-value">Full-Stack Developer</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-laptop-code"></i>
+                            <div>
+                                <span class="info-label">Focus</span>
+                                <span class="info-value">Web Development</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <span class="info-label">Status</span>
+                                <span class="info-value">Available for Work</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-item" data-counter>
+                            <span class="stat-number" data-target="42">0</span>
+                            <span class="stat-suffix">+</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                        <div class="stat-item" data-counter>
+                            <span class="stat-number" data-target="18">0</span>
+                            <span class="stat-suffix">+</span>
+                            <span class="stat-label">Technologies</span>
+                        </div>
+                        <div class="stat-item" data-counter>
+                            <span class="stat-number" data-target="5">0</span>
+                            <span class="stat-suffix">+</span>
+                            <span class="stat-label">Years Experience</span>
+                        </div>
+                        <div class="stat-item" data-counter>
+                            <span class="stat-number" data-target="30">0</span>
+                            <span class="stat-suffix">+</span>
+                            <span class="stat-label">Clients</span>
+                        </div>
+                    </div>
+                    <a href="#projects" class="btn btn-primary">
+                        <span>View My Work</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEVELOPER TERMINAL -->
+    <section class="terminal-section" id="terminal">
+        <div class="terminal-bg-glow"></div>
+        <div class="container terminal-container">
+            <div class="terminal-window" data-scroll-reveal="fade-up">
+                <div class="terminal-window-header">
+                    <div class="terminal-window-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <div class="terminal-window-title">developer-terminal.sh</div>
+                    <div class="terminal-window-controls">
+                        <button class="terminal-btn" aria-label="Minimize"></button>
+                        <button class="terminal-btn" aria-label="Maximize"></button>
+                        <button class="terminal-btn" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="terminal-window-body" id="terminalWindowBody">
+                    <div class="terminal-line" id="termLine1"></div>
+                    <div class="terminal-line" id="termLine2"></div>
+                    <div class="terminal-line" id="termLine3"></div>
+                    <div class="terminal-line" id="termLine4"></div>
+                    <div class="terminal-line" id="termLine5"></div>
+                    <div class="terminal-line" id="termLine6"></div>
+                    <div class="terminal-line" id="termLine7"></div>
+                    <div class="terminal-line" id="termLine8"></div>
+                    <div class="terminal-line cursor-line" id="termLine9">
+                        <span class="cursor-text">_</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEVELOPER CODE CARD -->
+    <!-- <section class="code-section" id="code">
+        <div class="code-bg-glow"></div>
+        <div class="container code-container">
+            <div class="code-card-wrapper" data-scroll-reveal="fade-up">
+                <div class="code-window" id="codeWindow">
+                    <div class="code-window-header">
+                        <div class="code-window-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <div class="code-window-title">app.js</div>
+                        <div class="code-window-tabs">
+                            <button class="code-tab active" data-lang="javascript">JavaScript</button>
+                            <button class="code-tab" data-lang="php">PHP</button>
+                            <button class="code-tab" data-lang="html">HTML</button>
+                        </div>
+                    </div>
+                    <div class="code-window-body" id="codeWindowBody">
+                        <pre class="code-content" id="codeContent"></pre>
+                    </div>
+                </div>
+                <div class="code-card-glow"></div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- TECH STACK SECTION -->
+    <section class="tech-stack" id="skills">
+        <div class="tech-stack-bg">
+            <div class="tech-glow-1"></div>
+            <div class="tech-glow-2"></div>
+            <canvas id="techBgCanvas"></canvas>
+        </div>
+        <div class="container tech-container">
+            <div class="tech-header" data-scroll-reveal="fade-up">
+                <span class="section-tag">TECH ARSENAL</span>
+                <h2 class="section-title">Tech Stack</h2>
+                <p class="section-desc">Tools & technologies I use to craft digital experiences</p>
+            </div>
+
+            <!-- Technology Cards -->
+            <div class="tech-grid" id="techGrid">
+                <div class="tech-card" data-category="Frontend" data-tech="HTML" data-scroll-reveal="fade-up" style="--delay:0s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-html5"></i></div>
+                            <h3 class="tech-name">HTML</h3>
+                            <span class="tech-category">Frontend</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Frontend" data-tech="CSS" data-scroll-reveal="fade-up" style="--delay:0.05s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-css3-alt"></i></div>
+                            <h3 class="tech-name">CSS</h3>
+                            <span class="tech-category">Frontend</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Frontend" data-tech="JavaScript" data-scroll-reveal="fade-up" style="--delay:0.1s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-js"></i></div>
+                            <h3 class="tech-name">JavaScript</h3>
+                            <span class="tech-category">Frontend</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Backend" data-tech="PHP" data-scroll-reveal="fade-up" style="--delay:0.15s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-php"></i></div>
+                            <h3 class="tech-name">PHP</h3>
+                            <span class="tech-category">Backend</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Database" data-tech="MySQL" data-scroll-reveal="fade-up" style="--delay:0.2s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fas fa-database"></i></div>
+                            <h3 class="tech-name">MySQL</h3>
+                            <span class="tech-category">Database</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Backend" data-tech="Node.js" data-scroll-reveal="fade-up" style="--delay:0.25s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-node-js"></i></div>
+                            <h3 class="tech-name">Node.js</h3>
+                            <span class="tech-category">Backend</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Backend" data-tech="Python" data-scroll-reveal="fade-up" style="--delay:0.3s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-python"></i></div>
+                            <h3 class="tech-name">Python</h3>
+                            <span class="tech-category">Backend</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Deployment" data-tech="Git" data-scroll-reveal="fade-up" style="--delay:0.35s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-git-alt"></i></div>
+                            <h3 class="tech-name">Git</h3>
+                            <span class="tech-category">Version Control</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Deployment" data-tech="GitHub" data-scroll-reveal="fade-up" style="--delay:0.4s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fab fa-github"></i></div>
+                            <h3 class="tech-name">GitHub</h3>
+                            <span class="tech-category">Deployment</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="API" data-tech="REST API" data-scroll-reveal="fade-up" style="--delay:0.45s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fas fa-exchange-alt"></i></div>
+                            <h3 class="tech-name">REST API</h3>
+                            <span class="tech-category">API</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+                <div class="tech-card" data-category="Deployment" data-tech="Vercel" data-scroll-reveal="fade-up" style="--delay:0.5s">
+                    <div class="tech-card-inner">
+                        <div class="tech-card-border-anim"></div>
+                        <div class="tech-card-content">
+                            <div class="tech-icon"><i class="fas fa-bolt"></i></div>
+                            <h3 class="tech-name">Vercel</h3>
+                            <span class="tech-category">Deployment</span>
+                        </div>
+                        <div class="tech-card-glow"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skill Visualization -->
+            <div class="skill-viz-wrapper" data-scroll-reveal="fade-up">
+                <div class="skill-viz-header">
+                    <h3 class="skill-viz-title">Skill Constellation</h3>
+                    <p class="skill-viz-subtitle">Hover nodes to explore connections</p>
+                </div>
+                <div class="skill-viz" id="skillViz">
+                    <svg class="skill-viz-svg" id="skillVizSvg" width="100%" height="100%" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true"></svg>
+                    <div class="skill-nodes" id="skillNodes"></div>
+                    <div class="skill-tooltip" id="skillTooltip" role="tooltip" aria-hidden="true">
+                        <span class="tooltip-category"></span>
+                        <span class="tooltip-title"></span>
+                        <span class="tooltip-desc"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Marquee -->
+        <div class="tech-marquee" aria-hidden="true">
+            <div class="marquee-track" id="marqueeTrack">
+                <span class="marquee-item"><i class="fab fa-html5"></i> HTML</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-css3-alt"></i> CSS</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-js"></i> JavaScript</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-php"></i> PHP</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fas fa-database"></i> MySQL</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-node-js"></i> Node.js</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-python"></i> Python</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-git-alt"></i> Git</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-github"></i> GitHub</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fas fa-exchange-alt"></i> REST API</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fas fa-bolt"></i> Vercel</span>
+                <span class="marquee-dot">•</span>
+                <!-- duplicate for infinite -->
+                <span class="marquee-item"><i class="fab fa-html5"></i> HTML</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-css3-alt"></i> CSS</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-js"></i> JavaScript</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-php"></i> PHP</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fas fa-database"></i> MySQL</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-node-js"></i> Node.js</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-python"></i> Python</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-git-alt"></i> Git</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fab fa-github"></i> GitHub</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fas fa-exchange-alt"></i> REST API</span>
+                <span class="marquee-dot">•</span>
+                <span class="marquee-item"><i class="fas fa-bolt"></i> Vercel</span>
+                <span class="marquee-dot">•</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section class="projects" id="projects">
+        <div class="projects-bg">
+            <div class="projects-glow"></div>
+            <div class="projects-glow-2"></div>
+            <canvas id="projectsCanvas"></canvas>
+        </div>
+        <div class="container projects-container">
+            <div class="projects-header" data-scroll-reveal="fade-up">
+                <span class="section-tag">SELECTED WORKS</span>
+                <h2 class="section-title">Featured Projects</h2>
+                <p class="section-desc">Crafted with precision — scalable, performant, and delightful</p>
+            </div>
+
+            <!-- Featured Project -->
+            <div id="featuredProject" class="featured-wrap" data-scroll-reveal="fade-up"></div>
+
+            <!-- Projects Grid Asymmetric -->
+            <div id="projectsGrid" class="projects-grid"></div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE TIMELINE -->
+    <section class="experience" id="experience">
+        <div class="exp-bg">
+            <div class="exp-glow"></div>
+            <div class="exp-glow-2"></div>
+            <canvas id="expCanvas"></canvas>
+        </div>
+        <div class="container exp-container">
+            <div class="exp-header" data-scroll-reveal="fade-up">
+                <span class="section-tag">JOURNEY</span>
+                <h2 class="section-title">Experience Timeline</h2>
+                <p class="section-desc">From first line of code to shipping products at scale</p>
+            </div>
+            <div class="timeline" id="timeline">
+                <div class="timeline-line" aria-hidden="true"></div>
+                <div class="timeline-progress" id="timelineProgress" aria-hidden="true"></div>
+
+                <article class="tl-item" data-year="2023" data-scroll-reveal="fade-up">
+                    <div class="tl-node" aria-hidden="true"><span class="tl-dot"></span><span class="tl-pulse"></span></div>
+                    <div class="tl-card">
+                        <span class="tl-year"><i class="fas fa-flag"></i> 2023 — Started Programming</span>
+                        <h3 class="tl-title">The First Commit</h3>
+                        <p class="tl-desc">Wrote my first HTML/CSS and fell in love with the web. Spent nights on freeCodeCamp and built clones to learn fundamentals.</p>
+                        <div class="tl-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
+                    </div>
+                    <div class="tl-date" aria-hidden="true">2023</div>
+                </article>
+
+                <article class="tl-item" data-year="2024" data-scroll-reveal="fade-up">
+                    <div class="tl-node" aria-hidden="true"><span class="tl-dot"></span><span class="tl-pulse"></span></div>
+                    <div class="tl-card">
+                        <span class="tl-year"><i class="fas fa-code"></i> 2024 — Built Web Applications</span>
+                        <h3 class="tl-title">Shipping Real Products</h3>
+                        <p class="tl-desc">Launched 12+ applications with PHP & MySQL. Learned REST, auth, deployment on Vercel and handling real users.</p>
+                        <div class="tl-tags"><span>PHP</span><span>MySQL</span><span>REST API</span></div>
+                    </div>
+                    <div class="tl-date" aria-hidden="true">2024</div>
+                </article>
+
+                <article class="tl-item" data-year="2025" data-scroll-reveal="fade-up">
+                    <div class="tl-node" aria-hidden="true"><span class="tl-dot"></span><span class="tl-pulse"></span></div>
+                    <div class="tl-card">
+                        <span class="tl-year"><i class="fas fa-layer-group"></i> 2025 — Full-Stack Development</span>
+                        <h3 class="tl-title">End-to-End Ownership</h3>
+                        <p class="tl-desc">Owned full-stack: Next.js frontends, Node/Python backends, DB design and CI/CD. Led 3 small teams to delivery.</p>
+                        <div class="tl-tags"><span>Next.js</span><span>Node.js</span><span>PostgreSQL</span></div>
+                    </div>
+                    <div class="tl-date" aria-hidden="true">2025</div>
+                </article>
+
+                <article class="tl-item" data-year="2026" data-scroll-reveal="fade-up">
+                    <div class="tl-node" aria-hidden="true"><span class="tl-dot"></span><span class="tl-pulse"></span></div>
+                    <div class="tl-card">
+                        <span class="tl-year"><i class="fas fa-rocket"></i> 2026 — Professional Developer</span>
+                        <h3 class="tl-title">Professional & Beyond</h3>
+                        <p class="tl-desc">Shipping at scale for clients worldwide. Focus on performance, DX and cinematic UX. Available for ambitious products.</p>
+                        <div class="tl-tags"><span>System Design</span><span>Performance</span><span>Team Lead</span></div>
+                    </div>
+                    <div class="tl-date" aria-hidden="true">2026</div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D INTERACTIVE LAB -->
+    <section class="lab" id="lab">
+        <canvas id="labCanvas" aria-hidden="true"></canvas>
+        <div class="lab-fallback" id="labFallback" hidden>
+            <div class="fallback-icon"><i class="fas fa-cube"></i></div>
+            <p>3D preview requires WebGL. Your device shows a static cinematic gradient instead.</p>
+        </div>
+        <div class="lab-vignette" aria-hidden="true"></div>
+        <div class="lab-grid-overlay" aria-hidden="true"></div>
+        <div class="container lab-container">
+            <div class="lab-header" data-scroll-reveal="fade-up">
+                <span class="section-tag lab-tag">INTERACTIVE • WEBGL</span>
+                <h2 class="section-title">Digital Atelier</h2>
+                <p class="section-desc">Move your cursor — the sphere breathes with you. Scroll to warp the field.</p>
+            </div>
+            <div class="lab-hud" id="labHud" aria-hidden="true">
+                <div class="hud-item"><span class="hud-dot"></span> 60 FPS</div>
+                <div class="hud-item"><i class="fas fa-mouse"></i> Drag to orbit</div>
+                <div class="hud-item"><i class="fas fa-compress"></i> Scroll to warp</div>
+            </div>
+            <div class="lab-cta" data-scroll-reveal="fade-up">
+                <a href="#projects" class="btn btn-primary"><span>Explore Projects</span><i class="fas fa-arrow-right"></i></a>
+                <span class="lab-hint">Built with Three.js •  Low-poly •  Additive glow</span>
+            </div>
+        </div>
+        <div class="lab-scanline" aria-hidden="true"></div>
+    </section>
+
+    <!-- INTERACTIVE TERMINAL -->
+    <section class="iterm" id="playground">
+        <div class="iterm-bg">
+            <div class="iterm-glow"></div>
+            <canvas id="itermCanvas"></canvas>
+        </div>
+        <div class="container iterm-container">
+            <div class="iterm-header" data-scroll-reveal="fade-up">
+                <span class="section-tag">PLAYGROUND</span>
+                <h2 class="section-title">Interactive Terminal</h2>
+                <p class="section-desc">Type <code>help</code> to start — try <code>about</code>, <code>skills</code>, <code>projects</code>, <code>contact</code></p>
+            </div>
+            <div class="iterm-window" data-scroll-reveal="fade-up" id="itermWindow">
+                <div class="iterm-window-header">
+                    <div class="iterm-dots"><span></span><span></span><span></span></div>
+                    <div class="iterm-title">ahmad@portfolio: ~ — zsh</div>
+                    <div class="iterm-actions"><span class="iterm-hint">Press Tab to autocomplete</span></div>
+                </div>
+                <div class="iterm-body" id="itermBody" role="log" aria-live="polite" aria-label="Terminal output">
+                    <div class="iterm-line iterm-welcome">Welcome to Ahmad's portfolio terminal. Type <span class="iterm-cmd">help</span> for commands.</div>
+                    <div id="itermLog"></div>
+                    <div class="iterm-input-line">
+                        <span class="iterm-prompt">$</span>
+                        <div class="iterm-input-wrap">
+                            <input id="itermInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input" placeholder="type a command...">
+                            <span class="iterm-cursor" id="itermCursor"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact" id="contact">
+        <div class="contact-bg">
+            <div class="contact-glow"></div>
+            <div class="contact-glow-2"></div>
+            <canvas id="contactCanvas"></canvas>
+        </div>
+        <div class="container contact-container">
+            <div class="contact-header" data-scroll-reveal="fade-up">
+                <span class="section-tag">GET IN TOUCH</span>
+                <h2 class="section-title">Let's Build Something <span class="accent">Great.</span></h2>
+                <p class="section-desc">Have an idea? Let's turn it into reality. I reply within 24h.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-form-wrap" data-scroll-reveal="fade-right">
+                    <form id="contactForm" novalidate aria-describedby="formToast">
+                        <!-- Honeypot anti-spam: harus kosong, disembunyikan dari manusia — jangan diisi, jika terisi dianggap spam -->
+                        <div class="hp-field" aria-hidden="true">
+                            <label for="website">Website</label>
+                            <input type="text" id="website" name="website" tabindex="-1" autocomplete="nope" autocorrect="off" spellcheck="false" placeholder="Leave this empty" data-lpignore="true" data-form-type="other">
+                        </div>
+                        <div class="field">
+                            <label for="cName">Name <span aria-hidden="true">*</span></label>
+                            <input id="cName" name="name" type="text" placeholder="Jane Doe" required autocomplete="name" maxlength="100" aria-describedby="errName" aria-invalid="false">
+                            <span class="field-error" id="errName" role="alert"></span>
+                        </div>
+                        <div class="field">
+                            <label for="cEmail">Email <span aria-hidden="true">*</span></label>
+                            <input id="cEmail" name="email" type="email" placeholder="jane@company.com" required autocomplete="email" maxlength="254" aria-describedby="errEmail" aria-invalid="false">
+                            <span class="field-error" id="errEmail" role="alert"></span>
+                        </div>
+                        <div class="field">
+                            <label for="cSubject">Subject <span style="font-weight:400; text-transform:none; letter-spacing:0; color:rgba(255,255,255,0.45); font-size:0.68rem;">(optional)</span></label>
+                            <input id="cSubject" name="subject" type="text" placeholder="Project inquiry — e.g. Landing page for SaaS" autocomplete="off" maxlength="200" aria-describedby="errSubject" aria-invalid="false">
+                            <span class="field-error" id="errSubject" role="alert"></span>
+                        </div>
+                        <div class="field">
+                            <label for="cMessage">Message <span aria-hidden="true">*</span></label>
+                            <textarea id="cMessage" name="message" rows="5" placeholder="Tell me about your project, timeline and budget..." required maxlength="5000" aria-describedby="errMessage charCount" aria-invalid="false"></textarea>
+                            <span class="field-error" id="errMessage" role="alert"></span>
+                            <span class="field-meta" id="charCountWrap"><span id="charCount">0</span> / 5000</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary contact-submit" id="contactSubmit" aria-live="polite">
+                            <span class="btn-text">Send Message</span>
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                            <span class="btn-spinner" aria-hidden="true"></span>
+                        </button>
+                        <p class="form-note"><i class="fas fa-shield-halved" aria-hidden="true"></i> Your email stays private. I reply within 24h. No spam.</p>
+                        <div class="form-toast" id="formToast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+                    </form>
+                </div>
+                <div class="contact-side" data-scroll-reveal="fade-left">
+                    <div class="contact-cards">
+                        <a href="mailto:mfarhanmuizaddin@gmail.com" class="contact-card">
+                            <span class="cc-icon"><i class="fas fa-envelope"></i></span>
+                            <span class="cc-body">
+                                <span class="cc-label">Email</span>
+                                <span class="cc-value">mfarhanmuizaddin@gmail.com</span>
+                            </span>
+                            <span class="cc-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                        </a>
+                        <a href="https://github.com" target="_blank" rel="noopener" class="contact-card">
+                            <span class="cc-icon"><i class="fab fa-github"></i></span>
+                            <span class="cc-body">
+                                <span class="cc-label">GitHub</span>
+                                <span class="cc-value">github.com/ahmadhia</span>
+                            </span>
+                            <span class="cc-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener" class="contact-card">
+                            <span class="cc-icon"><i class="fab fa-linkedin-in"></i></span>
+                            <span class="cc-body">
+                                <span class="cc-label">LinkedIn</span>
+                                <span class="cc-value">linkedin.com/in/ahmadhia</span>
+                            </span>
+                            <span class="cc-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                        </a>
+                    </div>
+                    <div class="contact-mini">
+                        <p><i class="fas fa-clock"></i> Avg. response — <strong>~4 hours</strong></p>
+                        <p><i class="fas fa-location-dot"></i> Indonesia — remote worldwide</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="site-footer">
+            <div class="container footer-inner">
+                <span>© 2026 Muhamad Farhan Muizaddin — Built with vanilla HTML/CSS/JS</span>
+                <span class="footer-links"><a href="#home">Back to top ↑</a></span>
+            </div>
+        </footer>
+    </section>
+    </main>
+
+    <!-- PROJECT DETAIL MODAL -->
+    <div class="project-modal" id="projectModal" aria-hidden="true">
+        <div class="modal-backdrop" id="modalBackdrop"></div>
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button class="modal-close" id="modalClose" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            <div class="modal-content" id="modalContent">
+                <!-- injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- THREE.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

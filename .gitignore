@@ -1,0 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Vercel
+.vercel/
+
+# Env — jangan commit secret, API key hanya di Vercel Environment Variables
+.env
+.env.local
+.env.production
+.env.development
+.env.*.local

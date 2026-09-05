@@ -1,0 +1,17 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Futuristic portfolio — Muhamad Farhan Muizaddin. Vanilla HTML/CSS/JS + Vercel Serverless contact API via Resend.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "resend": "^4.0.0"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "lint": "node --check api/contact.js && echo \"api/contact.js OK\" && node --check script.js && echo \"script.js OK\""
+  }
+}
