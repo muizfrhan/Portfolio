@@ -17,3 +17,8 @@ Thumbs.db
 .env.production
 .env.development
 .env.*.local
+
+# Dependencies
+node_modules/
+package-lock.json
+
