@@ -101,13 +101,13 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'POST, OPTIONS');
     // Log method mismatch untuk debugging Vercel logs — penyebab utama "Method Not Allowed"
     console.warn('[contact] Method not allowed', { method: req.method, url: req.url, ip: getClientIp(req) });
-    return res.status(405).json({ success: false, message: 'Metode tidak diizinkan. Gunakan POST.', error: 'Metode tidak diizinkan. Gunakan POST.' });
+    return res.status(405).json({ success: false, message: 'Metode tidak diizinkan. Gunakan POST.' });
   }
 
   // Batasi ukuran body (10KB cukup untuk form contact) — cek header jika ada, fallback cek body length
   const contentLength = parseInt(req.headers['content-length'] || '0', 10);
   if (contentLength && contentLength > 10240) {
-    return res.status(413).json({ success: false, message: 'Payload terlalu besar.', error: 'Payload terlalu besar.' });
+    return res.status(413).json({ success: false, message: 'Pesan terlalu besar. Persingkat dan coba lagi.' });
   }
 
   // Parse body — Vercel bisa sudah parse atau masih string
@@ -115,11 +115,11 @@ export default async function handler(req, res) {
   if (typeof body === 'string') {
     try {
       if (body.length > 10240) {
-        return res.status(413).json({ success: false, message: 'Payload terlalu besar.', error: 'Payload terlalu besar.' });
+        return res.status(413).json({ success: false, message: 'Pesan terlalu besar. Persingkat dan coba lagi.' });
       }
       body = JSON.parse(body);
     } catch {
-      return res.status(400).json({ success: false, message: 'JSON tidak valid.', error: 'JSON tidak valid.' });
+      return res.status(400).json({ success: false, message: 'Data formulir tidak valid.', fields: { message: 'JSON tidak valid.' } });
     }
   }
   // If body is object but stringified length still too large (chunked without content-length)
@@ -127,12 +127,12 @@ export default async function handler(req, res) {
     try {
       const approx = JSON.stringify(body).length;
       if (approx > 10240) {
-        return res.status(413).json({ success: false, message: 'Payload terlalu besar.', error: 'Payload terlalu besar.' });
+        return res.status(413).json({ success: false, message: 'Pesan terlalu besar. Persingkat dan coba lagi.' });
       }
     } catch {}
   }
   if (!body || typeof body !== 'object') {
-    return res.status(400).json({ success: false, message: 'Body permintaan tidak valid.', error: 'Body permintaan tidak valid.' });
+    return res.status(400).json({ success: false, message: 'Data formulir tidak valid.', fields: { message: 'Body permintaan tidak valid.' } });
   }
 
   // Honeypot — field "website" tidak boleh diisi manusia normal
@@ -152,8 +152,7 @@ export default async function handler(req, res) {
     res.setHeader('Retry-After', String(retryAfter));
     return res.status(429).json({
       success: false,
-      message: 'Terlalu banyak permintaan. Coba lagi dalam beberapa menit.',
-      error: 'Terlalu banyak permintaan. Coba lagi dalam beberapa menit.'
+      message: 'Terlalu banyak permintaan. Coba lagi dalam beberapa menit.'
     });
   }
 
@@ -172,8 +171,7 @@ export default async function handler(req, res) {
 
   if (!email) errors.email = 'Email wajib diisi.';
   else if (email.length > 254) errors.email = 'Email terlalu panjang.';
-  else if (!EMAIL_RE.test(email)) errors.email = 'Masukkan alamat email yang valid.';
-  else if (email.includes('\n') || email.includes('\r')) errors.email = 'Email tidak valid.';
+  else if (email.includes('\n') || email.includes('\r') || !EMAIL_RE.test(email)) errors.email = 'Email tidak valid.';
 
   // Subject optional — jika diisi validasi 3-200, jika kosong akan digenerate dari nama: Portfolio Contact — [name]
   if (subject) {
@@ -186,13 +184,22 @@ export default async function handler(req, res) {
   else if (message.length > 5000) errors.message = 'Pesan maksimal 5000 karakter.';
 
   if (Object.keys(errors).length > 0) {
-    return res.status(400).json({ success: false, message: 'Data formulir tidak valid.', error: 'Validasi gagal.', fields: errors });
+    // Ringkasan toast — spesifikasi: wajib kosong → aggregate; email format → "Email tidak valid."
+    let summary;
+    if (!name || !email || !message) {
+      summary = 'Nama, email, dan pesan wajib diisi.';
+    } else if (errors.email && email && !EMAIL_RE.test(email)) {
+      summary = 'Email tidak valid.';
+    } else {
+      summary = Object.values(errors)[0] || 'Data formulir tidak valid.';
+    }
+    return res.status(400).json({ success: false, message: summary, fields: errors });
   }
 
   // Header injection protection — jangan izinkan newline di subject/name/email untuk SMTP header
   const hasNewline = (s) => /[\r\n]/.test(s);
   if (hasNewline(name) || hasNewline(email) || (subject && hasNewline(subject))) {
-    return res.status(400).json({ success: false, message: 'Data formulir tidak valid.', error: 'Input tidak valid.' });
+    return res.status(400).json({ success: false, message: 'Data formulir tidak valid.', fields: { email: 'Email tidak valid.' } });
   }
 
   // Cek env — TO harus mfarhanmuizaddin@gmail.com
@@ -222,10 +229,10 @@ export default async function handler(req, res) {
     if (!resendApiKey) console.error('Missing RESEND_API_KEY');
     if (!toEmail) console.error('Missing CONTACT_EMAIL');
     // Jangan return success — return 500 agar frontend tampil error, bukan fake success
+    // Pesan generik — jangan bocorkan detail konfigurasi ke client
     return res.status(500).json({
       success: false,
-      message: 'Server belum dikonfigurasi dengan benar. Coba lagi nanti.',
-      error: 'Server belum dikonfigurasi dengan benar. Coba lagi nanti.'
+      message: 'Pesan gagal dikirim. Silakan coba lagi.'
     });
   }
 
@@ -355,8 +362,7 @@ Reply directly to this email to reply to ${name} <${email}>.`;
       // Jangan bocorkan detail internal ke client — frontend akan baca success:false dan tampil error
       return res.status(500).json({
         success: false,
-        message: 'Gagal mengirim pesan. Coba lagi nanti.',
-        error: 'Gagal mengirim email. Coba lagi nanti.'
+        message: 'Pesan gagal dikirim. Silakan coba lagi.'
       });
     }
 
@@ -365,8 +371,7 @@ Reply directly to this email to reply to ${name} <${email}>.`;
       console.error('Contact email error:', { data, error, message: 'Missing Resend ID despite no error' });
       return res.status(500).json({
         success: false,
-        message: 'Gagal mengirim pesan. Coba lagi nanti.',
-        error: 'Gagal mengirim email. Coba lagi nanti.'
+        message: 'Pesan gagal dikirim. Silakan coba lagi.'
       });
     }
 
@@ -390,8 +395,7 @@ Reply directly to this email to reply to ${name} <${email}>.`;
     console.error('[contact] Unexpected error', err);
     return res.status(500).json({
       success: false,
-      message: 'Terjadi kesalahan di sisi kami. Coba lagi nanti.',
-      error: 'Terjadi kesalahan di sisi kami. Coba lagi nanti.'
+      message: 'Pesan gagal dikirim. Silakan coba lagi.'
     });
   }
 }

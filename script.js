@@ -2720,10 +2720,11 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
 
         function setFieldError(inputEl, errId, msg){
             const err = document.getElementById(errId);
-            if(err) err.textContent = msg;
+            const text = (typeof msg === 'string') ? msg : '';
+            if(err) err.textContent = text;
             const field = err?.closest('.field') || inputEl.closest('.field');
-            if(field) field.classList.toggle('has-error', !!msg);
-            if(inputEl) inputEl.setAttribute('aria-invalid', msg ? 'true' : 'false');
+            if(field) field.classList.toggle('has-error', !!text);
+            if(inputEl) inputEl.setAttribute('aria-invalid', text ? 'true' : 'false');
         }
         function clearErrors(){
             setFieldError(nameEl,'errName','');
@@ -2731,10 +2732,21 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             setFieldError(subjectEl,'errSubject','');
             setFieldError(msgEl,'errMessage','');
         }
+        // Safe: never display [object Object] — only strings reach the toast
+        function apiMessage(data, fallback){
+            if (typeof data === 'string' && data.trim()) return data;
+            if (data && typeof data === 'object') {
+                if (typeof data.message === 'string' && data.message.trim()) return data.message;
+                if (typeof data.error === 'string' && data.error.trim()) return data.error;
+                if (data.error && typeof data.error === 'object' && typeof data.error.message === 'string' && data.error.message.trim()) return data.error.message;
+            }
+            return fallback;
+        }
         function showToast(msg, type){
             if(!toast) return;
-            // use inner span for text so ::before icon stays
-            toast.textContent = msg;
+            // coerce non-string to a safe human message (never [object Object])
+            const text = (typeof msg === 'string' && msg) ? msg : apiMessage(msg, 'Terjadi kesalahan. Coba lagi.');
+            toast.textContent = text;
             toast.className = 'form-toast ' + (type||'info');
             toast.hidden = false;
             // accessibility: force re-announce
@@ -2804,15 +2816,15 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             if(!email){
                 setFieldError(emailEl,'errEmail','Email wajib diisi.');
                 valid=false; firstInvalid = firstInvalid || emailEl;
-            } else if(!emailRe.test(email)){
-                setFieldError(emailEl,'errEmail','Masukkan alamat email yang valid.');
+            } else if(!emailRe.test(email) || email.includes('\n') || email.includes('\r')){
+                setFieldError(emailEl,'errEmail','Email tidak valid.');
                 valid=false; firstInvalid = firstInvalid || emailEl;
             } else if(email.length > 254){
                 setFieldError(emailEl,'errEmail','Email terlalu panjang.');
                 valid=false; firstInvalid = firstInvalid || emailEl;
             }
 
-            // Subject optional — sesuai spec terbaru: hanya nama/email/pesan wajib; jika diisi validasi 3-200
+            // Subject optional — jika diisi validasi 3-200, jika kosong akan digenerate dari nama
             if(subject){
                 if(subject.length < 3){
                     setFieldError(subjectEl,'errSubject','Subjek minimal 3 karakter.');
@@ -2822,7 +2834,6 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                     valid=false; firstInvalid = firstInvalid || subjectEl;
                 }
             } else {
-                // kosongkan error jika optional dan tidak diisi
                 setFieldError(subjectEl,'errSubject','');
             }
 
@@ -2837,7 +2848,15 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 valid=false; firstInvalid = firstInvalid || msgEl;
             }
 
-            return { valid, firstInvalid };
+            // Toast summary — spesifikasi test: wajib kosong / email invalid
+            let summary = 'Perbaiki kolom yang ditandai.';
+            if(!name || !email || !message){
+                summary = 'Nama, email, dan pesan wajib diisi.';
+            } else if(email && (!emailRe.test(email) || email.includes('\n') || email.includes('\r'))){
+                summary = 'Email tidak valid.';
+            }
+
+            return { valid, firstInvalid, summary };
         }
 
         // v13.0 — Method Not Allowed FIXED: frontend selalu POST, backend handle OPTIONS+POST, strict success, anti double-submit
@@ -2871,9 +2890,9 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 return;
             }
 
-            const { valid, firstInvalid } = validateFrontend();
+            const { valid, firstInvalid, summary } = validateFrontend();
             if(!valid){
-                showToast('Perbaiki kolom yang ditandai.', 'error');
+                showToast(summary || 'Perbaiki kolom yang ditandai.', 'error');
                 if(firstInvalid) firstInvalid.focus();
                 // shake button for feedback
                 if(submit){ submit.classList.add('is-error'); setTimeout(()=> submit.classList.remove('is-error'), 420); }
@@ -2931,44 +2950,40 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 console.log('[contact] response', { status: res.status, ok: res.ok, data });
 
                 // STRICT: hanya success true yang dianggap berhasil — cegah false positive
-                // Backend untuk GET/PUT/DELETE akan balas 405 dengan {success:false} — frontend harus tangani sebagai error, bukan fallback ke GET
                 if(!res.ok || !data || data.success !== true){
-                    // Pastikan error ditampilkan, bukan success palsu
-                    if(res.status===400 && data && data.fields){
+                    const fallback = 'Pesan gagal dikirim. Silakan coba lagi.';
+                    if(res.status===400 && data && data.fields && typeof data.fields === 'object'){
                         Object.entries(data.fields).forEach(([field, msg])=>{
                             const map = { name:'errName', email:'errEmail', subject:'errSubject', message:'errMessage' };
                             const inputMap = { name:nameEl, email:emailEl, subject:subjectEl, message:msgEl };
-                            if(map[field]) setFieldError(inputMap[field], map[field], msg);
+                            if(map[field]) setFieldError(inputMap[field], map[field], typeof msg === 'string' ? msg : '');
                         });
-                        showToast(data.message || data.error || 'Data formulir tidak valid. Periksa kolom yang ditandai.', 'error');
+                        showToast(apiMessage(data, 'Data formulir tidak valid. Periksa kolom yang ditandai.'), 'error');
                     } else if(res.status===400){
-                        showToast(data.message || data.error || 'Data formulir tidak valid.', 'error');
+                        showToast(apiMessage(data, 'Data formulir tidak valid.'), 'error');
                     } else if(res.status===429){
                         const retry = res.headers.get('Retry-After');
                         const hint = retry ? ` (${retry}s)` : '';
-                        showToast((data.message || data.error || 'Terlalu banyak pesan.') + hint, 'error');
+                        showToast(apiMessage(data, 'Terlalu banyak pesan.') + hint, 'error');
                     } else if(res.status===413){
-                        showToast(data.message || data.error || 'Pesan terlalu besar. Persingkat dan coba lagi.', 'error');
+                        showToast(apiMessage(data, 'Pesan terlalu besar. Persingkat dan coba lagi.'), 'error');
                     } else if(res.status===405){
-                        // Method Not Allowed — seharusnya tidak terjadi jika frontend POST konsisten
-                        // Tampilkan pesan ramah, jangan raw "Method Not Allowed"
-                        console.error('[contact] 405 Method Not Allowed — check that frontend uses POST and backend allows POST. URL:', '/api/contact');
+                        console.error('[contact] 405 Method Not Allowed — frontend must POST, backend must allow POST. URL: /api/contact');
                         showToast('Kesalahan konfigurasi layanan. Coba lagi sesaat. Jika berlanjut, hubungi via email.', 'error');
                     } else if(res.status>=500){
-                        showToast(data.message || data.error || 'Terjadi kesalahan di sisi kami. Coba lagi nanti.', 'error');
+                        showToast('⚠ ' + apiMessage(data, fallback), 'error');
                     } else {
-                        const msg = data.message || data.error || 'Gagal mengirim pesan. Coba lagi.';
-                        showToast(msg, 'error');
+                        showToast(apiMessage(data, fallback), 'error');
                     }
-                    console.warn('[contact] server response (error path)', { status: res.status, data });
+                    console.warn('[contact] server response (error path)', { status: res.status, success: data && data.success, message: typeof (data && data.message) === 'string' ? data.message : typeof (data && data.error) === 'string' ? data.error : '(non-string)' });
                     setButtonState('error');
                     isSubmitting = false;
                     return;
                 }
 
                 // HANYA jika benar-benar success === true
-                console.log('[contact] SUCCESS — email queued, Resend ID:', data.id);
-                showToast('Pesan berhasil dikirim! Saya akan merespons secepatnya.', 'success');
+                console.log('[contact] SUCCESS — email queued' + (data.id ? ', Resend ID: ' + data.id : ''));
+                showToast('✓ Pesan berhasil dikirim!\nTerima kasih, pesan Anda sudah diterima.', 'success');
                 form.reset();
                 if (honey) honey.value = '';
                 updateCount();
@@ -2978,21 +2993,20 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 return;
             } catch(err){
                 clearTimeout(timeoutId);
-                console.error('[contact] fetch error', err);
+                console.error('[contact] fetch error', err && err.name, err && err.message);
                 if(err && err.name==='AbortError'){
                     showToast('Waktu permintaan habis. Coba lagi.', 'error');
                 } else if(typeof navigator !== 'undefined' && navigator.onLine === false){
-                    showToast('Anda tampak offline. Periksa koneksi dan coba lagi.', 'error');
+                    showToast('Tidak dapat terhubung ke server. Silakan coba lagi.', 'error');
                 } else if(err instanceof TypeError && /fetch|network|Failed to fetch/i.test(String(err.message||''))){
-                    // Sering terjadi jika API tidak tersedia (mis. live-server tanpa vercel dev)
                     const isLocalStatic = location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
                     if (isLocalStatic && !location.port.includes('3000')) {
                         showToast('API tidak tersedia di mode statis lokal. Jalankan `vercel dev` atau deploy ke Vercel untuk menguji form kontak.', 'error');
                     } else {
-                        showToast('Gagal mengirim pesan. Periksa koneksi dan coba lagi.', 'error');
+                        showToast('Tidak dapat terhubung ke server. Silakan coba lagi.', 'error');
                     }
                 } else {
-                    showToast('Terjadi kesalahan. Coba lagi.', 'error');
+                    showToast('⚠ Pesan gagal dikirim.\nSilakan coba lagi beberapa saat.', 'error');
                 }
                 setButtonState('error');
                 isSubmitting = false;
