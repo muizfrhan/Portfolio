@@ -1,4 +1,4 @@
-# Ahmad Dhia — Futuristic Portfolio
+# Muhamad Farhan Muizaddin — Futuristic Portfolio
 
 Portfolio software engineer **futuristic, cinematic, premium, 3D, interactive** — bukan template Bootstrap, bukan website mahasiswa sederhana. Dibuat dengan **HTML5 + CSS3 + Vanilla JavaScript + Three.js (CDN)** tanpa framework, siap deploy ke **Vercel** sebagai static site.
 
@@ -11,10 +11,10 @@ Portfolio software engineer **futuristic, cinematic, premium, 3D, interactive** 
 - **Loading Terminal** — animasi `INITIALIZING SYSTEM...` + progress bar
 - **Navbar** — transparent → glassmorphism on scroll, active indicator, hamburger 280px slide, keyboard `Esc` & `aria-expanded`
 - **Hero** — badge `AVAILABLE FOR WORK`, gradient name, 2 CTA, social, 3D wireframe icosahedron + orbiting rings + particles (Three.js), grid + radial glow + noise + floating code blocks, custom cursor dot/ring/glow + magnetic hover
-- **About** — profile placeholder, bio, info grid, animated counter (42+ Projects etc.), code decorations
+- **About** — profile placeholder, bio, info grid, animated counters (CV-backed), code decorations
 - **Developer Terminal** — typing effect `whoami` + blink cursor, glass
 - **Code Card** — tabs JS/PHP/HTML syntax highlight tanpa library berat
-- **Tech Stack** — 11 cards interactive tilt + border conic + glow, `Skill Constellation` nodes + SVG lines + particles warp, marquee infinite `28s linear`
+- **Tech Stack** — 10 cards interactive tilt + border conic + glow, `Skill Constellation` nodes + SVG lines + particles warp, marquee infinite `28s linear`
 - **Projects** — Featured large + asymmetric grid (7/5/5/7/12), image zoom, tilt, overlay, badges, **modal glassmorphism** `backdrop blur 18px` dengan Features/Challenges/Solutions, `ESC` & backdrop click close, data dari JS array
 - **Experience Timeline** — vertical line + progress fill on scroll, glowing nodes pulse, hover lift, `2023→2026`
 - **3D Lab** — wireframe sphere + grid + particles + floating torus/box/octa, mouse drag orbit, scroll warp, performance `lowQuality` di mobile, WebGL fallback
@@ -30,7 +30,7 @@ Portfolio software engineer **futuristic, cinematic, premium, 3D, interactive** 
 ├── index.html      # semantic HTML, SEO OG, skip-link, main landmark
 ├── style.css       # ~3650 lines, CSS vars, responsive, reduced-motion
 ├── script.js       # vanilla ES6, modular init, rAF, IntersectionObserver
-├── favicon.svg     # AD gradient
+├── favicon.svg     # MF gradient
 ├── robots.txt
 ├── sitemap.xml
 ├── vercel.json     # headers & cleanUrls
@@ -98,11 +98,11 @@ Edit `index.html` → ganti `https://your-domain.vercel.app/` di:
 ## 🎨 Cara Mengganti Nama
 
 1. **Hero & About**
-   - `index.html` cari `Ahmad Dhia` (hero `title-name`, about `profile-initials` AD, `code-tag`)
+   - `index.html` cari `Muhamad Farhan Muizaddin` (meta, hero `data-name`, about `profile-initials` MFM, `code-tag`, footer)
    - `style.css` tidak perlu
-2. **Logo navbar** `AD` → ganti `index.html: <span class="logo-text">AD</span>`
-3. **Favicon** ganti `favicon.svg` text `AD` dan gradient
-4. **Footer & meta** `© 2026 Ahmad Dhia` di `index.html` footer & `application/ld+json`
+2. **Logo navbar** — ganti gambar di `assets/images/logo-navbar.png`
+3. **Favicon** ganti `favicon.svg` text `MF` dan gradient
+4. **Footer & meta** `© 2026 Muhamad Farhan Muizaddin` di `index.html` footer & `application/ld+json`
 
 ---
 
@@ -113,21 +113,21 @@ Buka `script.js` → array `projectsData` di atas (line ~25):
 ```js
 const projectsData = [
   {
-    id: 'nexora',
+    id: 'apss',
     featured: true, // hanya 1 yang true
-    title: 'Nexora — AI SaaS Dashboard',
-    category: 'Featured • SaaS',
+    title: 'Aplikasi Pengaduan Sarana Sekolah (APSS)',
+    category: 'Web Application',
     description: '...',
     longDescription: '...',
-    image: 'gradient-a', // a-f mapping di gradientMap
-    icon: 'fa-brain', // Font Awesome
-    technologies: ['Next.js','Node.js',...],
+    image: 'gradient-a', // a-f di gradientMap, atau path gambar 'assets/...'
+    icon: 'fa-clipboard-list', // Font Awesome
+    technologies: ['PHP Native','MySQL','Bootstrap 5',...],
     features: ['...','...'],
     challenges: '...',
     solutions: '...',
-    github: 'https://github.com/you/repo',
+    github: 'https://github.com/muizfrhan/aplikasi-pengaduan-sarana-sekolah',
     demo: 'https://demo.vercel.app',
-    year: '2024'
+    year: '2026'
   },
   // tambah objek lagi...
 ];
@@ -160,7 +160,7 @@ Jangan lupa `application/ld+json` `sameAs` dan `og:url`.
 
 ## 📧 Cara Mengganti Email
 
-1. `index.html` contact card `mailto:ahmad@example.com` → ganti 2 tempat (href & text)
+1. `index.html` contact card `mailto:mfarhanmuizaddin@gmail.com` → ganti 2 tempat (href & text)
 2. `script.js` tidak perlu (form no backend)
 3. Untuk backend: lihat komen di `script.js` fungsi `initContact` → pilih:
    - **Formspree**: `fetch('https://formspree.io/f/YOUR_ID', {method:'POST', body:new FormData(form)})`

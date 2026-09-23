@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
-    return res.status(405).json({ success: false, message: 'Use GET for status check.' });
+    return res.status(405).json({ success: false, message: 'Gunakan GET untuk pemeriksaan status.' });
   }
   const hasResendKey = !!process.env.RESEND_API_KEY;
   const hasContactEmail = !!process.env.CONTACT_EMAIL;
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     success: true,
-    message: 'Contact API status',
+    message: 'Status API Kontak',
     debug: {
       hasResendKey,
       keyPrefix,
@@ -34,6 +34,6 @@ export default async function handler(req, res) {
       vercelEnv: process.env.VERCEL_ENV || 'unknown',
       nodeVersion: process.version
     },
-    hint: 'Jika hasResendKey false atau hasContactEmail false, set env di Vercel Dashboard → Settings → Environment Variables (Production) lalu Redeploy.'
+    hint: 'Jika hasResendKey false atau hasContactEmail false, atur env di Vercel Dashboard → Settings → Environment Variables (Production) lalu Redeploy.'
   });
 }

@@ -16,105 +16,85 @@
     let isLoaded = false;
 
     // ============================================
-    // PROJECTS DATA - Edit here to add/remove projects
+    // PROJECTS DATA — 4 proyek (APSS unggulan + proyek lain)
     // ============================================
     const projectsData = [
         {
-            id: 'nexora',
+            id: 'apss',
             featured: true,
-            title: 'Nexora — AI SaaS Dashboard',
-            category: 'Featured • SaaS',
-            description: 'Analytics dashboard for AI teams. Real-time pipelines, model monitoring and collaborative workspaces — built for scale.',
-            longDescription: 'Nexora empowers AI teams to monitor models, track data pipelines, and collaborate on experiments in one unified workspace. Designed for high-throughput and low-latency.',
-            image: 'gradient-a',
-            icon: 'fa-brain',
-            technologies: ['Next.js', 'Node.js', 'PostgreSQL', 'Prisma', 'Tailwind', 'Vercel'],
-            features: ['Real-time streaming with WebSockets', 'Role-based workspaces & permissions', 'Model registry & versioning', 'Custom chart builder with export'],
-            challenges: 'Handling high-frequency ingestion (12k evt/s) while keeping dashboard interaction at 60fps and avoiding layout thrash on large datasets.',
-            solutions: 'Virtualized tables, Web Worker aggregations, incremental SSR + SWR caching and canvas-based chart renderer with RAF throttling.',
-            github: '#',
+            title: 'Aplikasi Pengaduan Sarana Sekolah (APSS)',
+            category: 'Web Application',
+            description: 'Sistem pelaporan sarana dan prasarana sekolah berbasis web — pengguna mengirim pengaduan, pengelola memantau, memproses, dan memberikan feedback terhadap laporan.',
+            longDescription: 'APSS adalah sistem informasi berbasis web untuk mempermudah pelaporan kerusakan sarana dan prasarana sekolah. Pengguna mengirim pengaduan secara online, sedangkan Admin dan Guru memverifikasi, menindaklanjuti, dan memantau seluruh laporan — dilengkapi landing page responsif, autentikasi multi-role, dashboard analitik, manajemen data, dan export laporan.',
+            image: 'assets/images/projects/apss-landing.png',
+            icon: 'fa-clipboard-list',
+            technologies: ['PHP Native', 'MySQL', 'Bootstrap 5', 'HTML', 'CSS', 'JavaScript', 'AJAX', 'Chart.js', 'SweetAlert2'],
+            features: ['Autentikasi multi-role (Admin, Guru, User)', 'Dashboard admin dengan statistik & grafik', 'Manajemen dan monitoring pengaduan', 'Timeline status & progress laporan', 'Export laporan PDF dan Excel'],
+            challenges: 'Menyatukan alur pengaduan multi-role — dari pengiriman laporan oleh siswa hingga verifikasi, tindak lanjut, dan pelaporan oleh Admin/Guru — dalam satu sistem yang konsisten dan mudah dipantau.',
+            solutions: 'Autentikasi berbasis role, modul CRUD terpusat (pengaduan, kategori, ruangan, pengguna), grafik Chart.js untuk statistik, serta ekspor PDF/Excel untuk kebutuhan pelaporan.',
+            github: 'https://github.com/muizfrhan/aplikasi-pengaduan-sarana-sekolah',
             demo: '#',
-            year: '2024'
+            urlLabel: 'github.com/muizfrhan/aplikasi-pengaduan-sarana-sekolah',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: '2026'
         },
         {
-            id: 'lumina',
-            title: 'Lumina E-Commerce',
-            category: 'E-Commerce',
-            description: 'Headless commerce storefront with lightning-fast SSR, cart sync and payment orchestration.',
-            longDescription: 'Lumina is a headless storefront focused on conversion. Edge-rendered PLPs, optimistic cart and modular payment providers.',
-            image: 'gradient-b',
-            icon: 'fa-bag-shopping',
-            technologies: ['React', 'PHP', 'MySQL', 'REST API', 'Stripe'],
-            features: ['Edge SSR for 98 Lighthouse score', 'Optimistic cart & wishlist sync', 'Stripe + Midtrans payment orchestration', 'Admin CMS for catalog'],
-            challenges: 'SEO for 20k+ SKUs and cart consistency across tabs/devices.',
-            solutions: 'Incremental Static Regeneration, BroadcastChannel cart sync and background revalidation queue.',
-            github: '#',
+            id: 'tiket-pesawat',
+            title: 'Tiket Pesawat',
+            category: 'Ticket Booking System',
+            description: 'Sistem informasi penjualan tiket pesawat berbasis web — mencakup booking, jadwal penerbangan, manajemen bandara dan pesawat, tarif, hingga laporan operasional.',
+            longDescription: 'Sistem informasi penjualan tiket pesawat yang dibangun dengan CodeIgniter dan MySQL. Mengelola data bandara, pesawat, jadwal penerbangan, tarif, customer, serta proses booking tiket — dilengkapi modul laporan dan login multi-level (Admin, Petugas, Manajer, SuperUser).',
+            image: 'assets/images/projects/tiket-pesawat.png',
+            icon: 'fa-plane',
+            technologies: ['CodeIgniter', 'PHP', 'MySQL', 'HTML', 'CSS', 'JavaScript'],
+            features: ['Login multi-level (Admin, Petugas, Manajer, SuperUser)', 'Manajemen booking tiket', 'Jadwal dan data penerbangan', 'Master data bandara, pesawat, dan tarif', 'Modul laporan operasional'],
+            challenges: 'Menghubungkan alur penjualan tiket — dari data master bandara dan pesawat, jadwal, tarif, hingga booking dan laporan — dalam satu sistem berbasis CodeIgniter.',
+            solutions: 'Arsitektur MVC CodeIgniter dengan model terpisah per modul (bandara, pesawat, jadwal, tarif, booking, customer, laporan) di atas basis data MySQL.',
+            github: 'https://github.com/muizfrhan/Tiket-Pesawat',
             demo: '#',
-            year: '2024'
+            urlLabel: 'github.com/muizfrhan/Tiket-Pesawat',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: 'CV'
         },
         {
-            id: 'voltpay',
-            title: 'VoltPay Wallet',
-            category: 'Fintech',
-            description: 'Secure digital wallet with QR payments, ledger and fraud detection hooks.',
-            longDescription: 'VoltPay handles wallet ledger, QRIS payments and transaction reconciliation with idempotency and audit trails.',
-            image: 'gradient-c',
-            icon: 'fa-bolt',
-            technologies: ['Node.js', 'MySQL', 'REST API', 'JavaScript', 'Vercel'],
-            features: ['Idempotent ledger & double-entry', 'QRIS generation & scan', 'Webhook retry with HMAC', 'Fraud-heuristic scoring'],
-            challenges: 'Consistency of ledger under concurrent transfers and webhook delivery guarantees.',
-            solutions: 'DB transactions with row-level locking, outbox pattern and exponential backoff with dead-letter queue.',
-            github: '#',
+            id: 'sipekerba',
+            title: 'SIPEKERBA',
+            category: 'Sistem Informasi',
+            description: 'Sistem Pengaduan Kerusakan Barang — pelapor mengirim laporan kerusakan barang secara daring, admin memproses status pengaduan, mengelola akun, dan menyusun laporan berperiode.',
+            longDescription: 'SIPEKERBA (Sistem Pengaduan Kerusakan Barang) adalah aplikasi untuk mencatat laporan kerusakan barang ke dalam database agar data tersimpan rapi dan penanganan dapat dilakukan lebih cepat. Mencakup halaman depan untuk pengecekan status pengaduan via nomor pengaduan, form pengaduan dengan nomor otomatis, login dan registrasi yang diaktivasi oleh admin, dashboard admin, data pengaduan dengan tiga status proses, manajemen akun, serta modul report harian, bulanan, dan tahunan — dibangun dengan PHP native dan MySQL.',
+            image: 'assets/images/projects/sipekerba-frontend.png',
+            icon: 'fa-tools',
+            technologies: ['PHP Native', 'MySQL', 'JavaScript', 'HTML', 'CSS', 'Bootstrap', 'AdminLTE'],
+            features: ['Form pengaduan dengan nomor pengaduan otomatis', 'Cek status pengaduan via nomor pengaduan', 'Login, registrasi, dan aktivasi akun oleh admin', 'Dashboard admin dan manajemen pengguna', 'Tracking status: diajukan → diproses → selesai', 'Laporan harian, bulanan, dan tahunan'],
+            challenges: 'Menyatukan alur pengaduan lintas peran — form dan pengecekan status di halaman depan, pemrosesan status oleh admin, manajemen akun, hingga laporan berperiode — dalam satu aplikasi PHP native di atas database MySQL.',
+            solutions: 'Fungsi CRUD terpusat di function.php (insertPengaduan, updatePengaduan, registrasi), pemisahan folder auth/, admin/, dan templates/, tiga status pengaduan, serta modul report dengan filter tanggal, bulan, dan tahun memakai template AdminLTE.',
+            github: 'https://github.com/muizfrhan/sipekerba',
             demo: '#',
-            year: '2023'
+            urlLabel: 'github.com/muizfrhan/sipekerba',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: 'CV'
         },
         {
-            id: 'chronicle',
-            title: 'Chronicle CMS',
-            category: 'CMS • Editorial',
-            description: 'Headless CMS for editorial teams — live preview, scheduling and image optimization pipeline.',
-            longDescription: 'Chronicle gives editors live preview, scheduled publishing and an image pipeline that auto-optimizes to WebP/AVIF.',
-            image: 'gradient-d',
-            icon: 'fa-newspaper',
-            technologies: ['PHP', 'MySQL', 'JavaScript', 'GitHub Actions'],
-            features: ['Live preview via iframe bridge', 'Scheduled publish with cron', 'Image CDN transform pipeline', 'Draft → Review → Publish flow'],
-            challenges: 'Preview fidelity and cache purging across CDN on publish.',
-            solutions: 'Preview token bridge and tag-based cache invalidation with surrogate keys.',
-            github: '#',
+            id: 'sigaka',
+            title: 'Sigaka',
+            category: 'Payroll System',
+            description: 'Sistem penggajian karyawan berbasis web — mengelola, mengatur, dan mengotomatiskan pembayaran gaji perusahaan beserta absensi, data master, peminjaman, dan laporan.',
+            longDescription: 'Sigaka (Sistem Penggajian Karyawan) adalah aplikasi untuk mengelola, mengatur, dan mengotomatiskan pembayaran karyawan, sehingga perusahaan dapat melacak seluruh pembayaran dengan lebih mudah. Dibangun dengan arsitektur MVC CodeIgniter dan database MySQL — mencakup halaman awal, autentikasi, dashboard admin, data master karyawan dan jabatan, absensi, data gaji, peminjaman, hingga modul laporan.',
+            image: 'assets/images/projects/sigaka-landing.png',
+            icon: 'fa-wallet',
+            technologies: ['CodeIgniter', 'PHP', 'MySQL', 'Bootstrap', 'JavaScript', 'HTML', 'CSS'],
+            features: ['Autentikasi login & dashboard admin', 'Data master karyawan dan jabatan', 'Pencatatan absensi karyawan', 'Data dan perhitungan gaji karyawan', 'Modul peminjaman karyawan', 'Laporan penggajian dan pencetakan'],
+            challenges: 'Menghubungkan seluruh siklus penggajian — data karyawan, absensi, peminjaman, hingga perhitungan gaji dan pelaporan — dalam satu sistem MVC yang konsisten di atas database MySQL.',
+            solutions: 'Arsitektur MVC CodeIgniter dengan controller terpisah per modul (Auth, Dashboard, Karyawan, Jabatan, Absen, Gaji, Pinjam, Laporan), pemisahan view frontend/backend, serta template admin Bootstrap untuk antarmuka yang konsisten.',
+            github: 'https://github.com/muizfrhan/Sigaka',
             demo: '#',
-            year: '2023'
-        },
-        {
-            id: 'atlas',
-            title: 'Atlas API Gateway',
-            category: 'Infrastructure',
-            description: 'Gateway aggregating microservices with rate-limit, auth and observability.',
-            longDescription: 'Atlas sits in front of microservices, handling auth, rate limiting, request tracing and aggregated docs.',
-            image: 'gradient-e',
-            icon: 'fa-diagram-project',
-            technologies: ['Node.js', 'Python', 'REST API', 'Git', 'Vercel'],
-            features: ['JWT + API key dual auth', 'Token bucket rate limiting', 'OpenAPI aggregation', 'Grafana + traces'],
-            challenges: 'Low-latency routing and consistent rate limits across instances.',
-            solutions: 'LRU cache + Redis sliding window and edge middleware with streaming.',
-            github: '#',
-            demo: '#',
-            year: '2024'
-        },
-        {
-            id: 'orbit',
-            title: 'Orbit Analytics',
-            category: 'Analytics',
-            description: 'Product analytics with funnels, retention and cohort charts — privacy-first.',
-            longDescription: 'Orbit tracks product events without cookies, building funnels and retention cohorts with clickhouse-style rollups.',
-            image: 'gradient-f',
-            icon: 'fa-chart-line',
-            technologies: ['JavaScript', 'Python', 'MySQL', 'Vercel', 'GitHub'],
-            features: ['Cookie-less tracking snippet', 'Funnel & retention engine', 'Cohort heatmaps', 'CSV & webhook exports'],
-            challenges: 'Fast cohort queries over millions of events without pre-aggregation lag.',
-            solutions: 'Materialized rollups, columnar in-memory cache and query planner with sampling.',
-            github: '#',
-            demo: '#',
-            year: '2024'
+            urlLabel: 'github.com/muizfrhan/Sigaka',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: 'CV'
         }
     ];
 
@@ -210,27 +190,72 @@
     // NAVBAR
     // ============================================
     function initNavbar() {
-        let lastScrollY = 0;
+        // Navbar scrolled — single lightweight rAF, passive
         let scrollTicking = false;
-
-        window.addEventListener('scroll', () => {
-            if (!scrollTicking) {
-                requestAnimationFrame(() => {
-                    const currentScrollY = window.scrollY;
-                    if (currentScrollY > 100) navbar.classList.add('scrolled');
-                    else navbar.classList.remove('scrolled');
-                    updateActiveNavLink();
-                    scrollTicking = false;
-                });
-                scrollTicking = true;
+        function onNavScroll(){
+            if (scrollTicking) return;
+            scrollTicking = true;
+            requestAnimationFrame(()=>{
+                const y = window.scrollY;
+                if (y > 80) navbar.classList.add('scrolled');
+                else navbar.classList.remove('scrolled');
+                scrollTicking = false;
+            });
+        }
+        window.addEventListener('scroll', onNavScroll, {passive:true});
+        // initial check
+        onNavScroll();
+        // Active link via IntersectionObserver — jauh lebih ringan dari per-scroll loop
+        try {
+            const sections = document.querySelectorAll('section[id]');
+            const linkMap = new Map();
+            document.querySelectorAll('.nav-link[href^="#"]').forEach(a=>{
+                const id = a.getAttribute('href').slice(1);
+                linkMap.set(id, a);
+            });
+            if ('IntersectionObserver' in window && sections.length){
+                const io = new IntersectionObserver((entries)=>{
+                    // pilih section paling terlihat di viewport atas
+                    let topMost = null;
+                    let topRatio = -1;
+                    entries.forEach(e=>{
+                        if(e.isIntersecting && e.intersectionRatio > topRatio){
+                            topRatio = e.intersectionRatio;
+                            topMost = e.target.id;
+                        }
+                    });
+                    if (topMost && linkMap.has(topMost)){
+                        document.querySelectorAll('.nav-link').forEach(l=> l.classList.remove('active'));
+                        linkMap.get(topMost).classList.add('active');
+                    }
+                }, { rootMargin:'-45% 0px -45% 0px', threshold:[0,0.25,0.5,0.75,1] });
+                sections.forEach(s=> io.observe(s));
+            } else {
+                // fallback — throttle
+                let tick=false;
+                window.addEventListener('scroll', ()=>{
+                    if(tick) return;
+                    tick=true;
+                    requestAnimationFrame(()=>{
+                        const y = window.scrollY + 220;
+                        let cur=null;
+                        sections.forEach(s=>{ if(s.offsetTop <= y) cur=s.id; });
+                        if(cur && linkMap.has(cur)){
+                            document.querySelectorAll('.nav-link').forEach(l=> l.classList.remove('active'));
+                            linkMap.get(cur).classList.add('active');
+                        }
+                        tick=false;
+                    });
+                }, {passive:true});
             }
-        }, {passive:true});
+        } catch(e){ /* no crash */ }
 
         // Mobile menu toggle
         function setNav(open){
             navToggle.classList.toggle('active', open);
             navLinks.classList.toggle('open', open);
             navToggle.setAttribute('aria-expanded', String(open));
+            document.body.classList.toggle('nav-open', open);
             document.body.style.overflow = open ? 'hidden' : '';
         }
         navToggle.addEventListener('click', () => {
@@ -256,20 +281,7 @@
     }
 
     function updateActiveNavLink() {
-        const sections = document.querySelectorAll('section[id]');
-        const scrollY = window.scrollY;
-
-        sections.forEach(section => {
-            const sectionHeight = section.offsetHeight;
-            const sectionTop = section.offsetTop - 200;
-            const sectionId = section.getAttribute('id');
-            const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-
-            if (navLink && scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                navLink.classList.add('active');
-            }
-        });
+        // deprecated — now handled by IntersectionObserver in initNavbar
     }
 
     // ============================================
@@ -279,66 +291,73 @@
         const canvas = heroCanvas;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
+        if (!ctx) return;
         let particles = [];
-        let animationId;
+        let animationId=null;
+        let isVisible=true;
 
         function resizeCanvas() {
-            canvas.width = canvas.parentElement.offsetWidth;
-            canvas.height = canvas.parentElement.offsetHeight;
+            try{
+                const parent = canvas.parentElement;
+                if(!parent) return;
+                canvas.width = parent.offsetWidth;
+                canvas.height = parent.offsetHeight;
+            }catch{}
         }
 
         function createParticles() {
             particles = [];
-            const particleCount = isMobile ? 30 : 60;
+            // kurangi jumlah untuk 60fps smooth
+            const particleCount = isMobile ? 18 : (isLowEnd ? 24 : 32);
             for (let i = 0; i < particleCount; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: Math.random() * 2 + 0.5,
-                    speedX: (Math.random() - 0.5) * 0.5,
-                    speedY: (Math.random() - 0.5) * 0.5,
-                    opacity: Math.random() * 0.5 + 0.1,
+                    size: Math.random() * 1.6 + 0.4,
+                    speedX: (Math.random() - 0.5) * 0.32,
+                    speedY: (Math.random() - 0.5) * 0.32,
+                    opacity: Math.random() * 0.42 + 0.08,
                     color: Math.random() > 0.5 ? '0, 240, 255' : '123, 47, 255'
                 });
             }
         }
 
         function drawParticles() {
+            if (!isVisible) { animationId=null; return; }
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(p => {
+            // update & draw dots
+            for(let k=0;k<particles.length;k++){
+                const p = particles[k];
                 p.x += p.speedX;
                 p.y += p.speedY;
-
                 if (p.x < 0) p.x = canvas.width;
                 if (p.x > canvas.width) p.x = 0;
                 if (p.y < 0) p.y = canvas.height;
                 if (p.y > canvas.height) p.y = 0;
-
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
                 ctx.fill();
-            });
-
-            // Draw connections
+            }
+            // Draw connections — optimized: skip sqrt kecuali dekat, threshold 110
+            const maxDist = 110;
+            const maxDist2 = maxDist*maxDist;
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 150) {
+                    const d2 = dx*dx + dy*dy;
+                    if (d2 < maxDist2) {
+                        const distance = Math.sqrt(d2);
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(0, 240, 255, ${0.05 * (1 - distance / 150)})`;
+                        ctx.strokeStyle = `rgba(0, 240, 255, ${0.045 * (1 - distance / maxDist)})`;
                         ctx.lineWidth = 0.5;
                         ctx.stroke();
                     }
                 }
             }
-
             animationId = requestAnimationFrame(drawParticles);
         }
 
@@ -348,26 +367,41 @@
         if (!prefersReducedMotion) {
             drawParticles();
         } else {
-            // Draw once
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
+            for(let k=0;k<particles.length;k++){
+                const p=particles[k];
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
                 ctx.fill();
-            });
+            }
         }
 
+        let resizeTimer=null;
         window.addEventListener('resize', () => {
-            resizeCanvas();
-            createParticles();
+            clearTimeout(resizeTimer);
+            resizeTimer=setTimeout(()=>{ resizeCanvas(); createParticles(); }, 120);
         }, {passive:true});
 
-        // pause when offscreen
-        observeVisibility(document.getElementById('home'), ()=>{
-            if(!prefersReducedMotion && !animationId) drawParticles();
-        }, ()=>{
-            if(animationId){ cancelAnimationFrame(animationId); animationId=null; }
+        // pause when offscreen / tab hidden
+        try{
+            if('IntersectionObserver' in window){
+                const io = new IntersectionObserver((entries)=>{
+                    entries.forEach(e=>{
+                        isVisible = e.isIntersecting;
+                        if(isVisible && !animationId && !prefersReducedMotion){
+                            drawParticles();
+                        } else if(!isVisible && animationId){
+                            cancelAnimationFrame(animationId); animationId=null;
+                        }
+                    });
+                }, {threshold:0});
+                io.observe(document.getElementById('home'));
+            }
+        }catch{}
+        document.addEventListener('visibilitychange', ()=>{
+            if(document.hidden){ if(animationId){ cancelAnimationFrame(animationId); animationId=null; } }
+            else if(isVisible && !animationId && !prefersReducedMotion) drawParticles();
         });
     }
 
@@ -375,17 +409,22 @@
     // THREE.JS 3D SCENE
     // ============================================
     function initThreeJS() {
-        if (isMobile || typeof THREE === 'undefined' || prefersReducedMotion) {
-            if (threeContainer) {
-                threeContainer.style.display = 'none';
-            }
+        // matikan total di mobile/low-end agar tidak berat — hero sudah pakai foto han.jpeg yang lebih penting
+        if (typeof THREE === 'undefined' || prefersReducedMotion) {
+            if (threeContainer) threeContainer.style.display = 'none';
+            return;
+        }
+        // low-end atau layar kecil: nonaktifkan Three hero untuk 60fps, hanya canvas 2D yang jalan
+        if (isMobile || isLowEnd || window.innerWidth < 1024) {
+            if (threeContainer) threeContainer.style.display = 'none';
             return;
         }
 
         try {
             const container = threeContainer;
-            const width = container.offsetWidth;
-            const height = container.offsetHeight;
+            if(!container) return;
+            const width = container.offsetWidth || 300;
+            const height = container.offsetHeight || 300;
 
             // Scene
             const scene = new THREE.Scene();
@@ -399,10 +438,10 @@
             const renderer = new THREE.WebGLRenderer({
                 canvas: threeCanvas,
                 alpha: true,
-                antialias: true
+                antialias: false
             });
             renderer.setSize(width, height);
-            renderer.setPixelRatio(perfPixelRatio);
+            renderer.setPixelRatio(Math.min(perfPixelRatio, 1.2));
             renderer.setClearColor(0x000000, 0);
 
             // Wireframe Icosahedron
@@ -450,8 +489,8 @@
             ring2.rotation.z = Math.PI / 4;
             scene.add(ring2);
 
-            // Particles
-            const particleCount = 200;
+            // Particles — dikurangi dari 200 ke 90 untuk smooth
+            const particleCount = 90;
             const particleGeometry = new THREE.BufferGeometry();
             const positions = new Float32Array(particleCount * 3);
             const colors = new Float32Array(particleCount * 3);
@@ -525,26 +564,29 @@
             let mouseX3d = 0;
             let mouseY3d = 0;
 
+            let heroRaf=null;
+            let isHeroThreeVisible=true;
             function animate() {
-                requestAnimationFrame(animate);
+                if(!isHeroThreeVisible || document.hidden){ heroRaf=null; return; }
+                heroRaf=requestAnimationFrame(animate);
 
                 // Rotate icosahedron
-                icosahedron.rotation.y += 0.003;
-                icosahedron.rotation.x += 0.001;
+                icosahedron.rotation.y += 0.0022;
+                icosahedron.rotation.x += 0.0008;
 
                 // Rotate core in opposite direction
-                core.rotation.y -= 0.005;
-                core.rotation.x -= 0.002;
+                core.rotation.y -= 0.0035;
+                core.rotation.x -= 0.0014;
 
                 // Rotate rings
-                ring1.rotation.z += 0.002;
-                ring2.rotation.z -= 0.001;
-                ring1.rotation.x = Math.PI / 2 + Math.sin(Date.now() * 0.001) * 0.2;
-                ring2.rotation.x = Math.PI / 3 + Math.cos(Date.now() * 0.001) * 0.2;
+                ring1.rotation.z += 0.0014;
+                ring2.rotation.z -= 0.0008;
+                ring1.rotation.x = Math.PI / 2 + Math.sin(Date.now() * 0.001) * 0.15;
+                ring2.rotation.x = Math.PI / 3 + Math.cos(Date.now() * 0.001) * 0.15;
 
                 // Rotate particles
-                particles.rotation.y += 0.0005;
-                particles.rotation.x += 0.0002;
+                particles.rotation.y += 0.00035;
+                particles.rotation.x += 0.00014;
 
                 // Mouse parallax
                 currentRotX += (targetRotX - currentRotX) * 0.02;
@@ -566,6 +608,24 @@
             }
 
             if (!prefersReducedMotion) {
+                // pause when hero offscreen
+                try{
+                    if('IntersectionObserver' in window){
+                        const io3 = new IntersectionObserver((entries)=>{
+                            entries.forEach(e=>{
+                                isHeroThreeVisible = e.isIntersecting;
+                                if(isHeroThreeVisible && !heroRaf) animate();
+                                else if(!isHeroThreeVisible && heroRaf){ cancelAnimationFrame(heroRaf); heroRaf=null; }
+                            });
+                        }, {threshold:0});
+                        const heroSec = document.getElementById('home');
+                        if(heroSec) io3.observe(heroSec);
+                    }
+                }catch{}
+                document.addEventListener('visibilitychange', ()=>{
+                    if(document.hidden){ if(heroRaf){ cancelAnimationFrame(heroRaf); heroRaf=null; } }
+                    else if(isHeroThreeVisible && !heroRaf) animate();
+                });
                 animate();
             } else {
                 renderer.render(scene, camera);
@@ -606,42 +666,56 @@
     // ============================================
     function initHeroParallax() {
         if (isMobile || prefersReducedMotion) return;
-        const heroVisual = document.getElementById('heroVisual');
-        const codeBlocks = document.querySelectorAll('.floating-code-block');
         const profileStage = document.getElementById('profileStage');
         const profileFrame = document.querySelector('.profile-frame');
         const profile3d = document.querySelector('.profile-3d-layer');
         const heroBg = document.querySelector('.hero-background');
-
-        function updateParallax() {
-            if (isLoaded && !isMobile) {
-                const scrollY = window.scrollY;
-                const hero = document.getElementById('home');
-                if (hero) {
-                    const rect = hero.getBoundingClientRect();
-                    const prog = Math.min(Math.max(0, -rect.top / (rect.height || 800)), 1);
-                    // depth layers: bg slowest, 3d medium, photo fastest
-                    if (heroBg) heroBg.style.transform = `translateY(${prog * 18}px)`;
-                    if (profile3d) profile3d.style.transform = `translateY(${prog * 32}px)`;
-                    if (profileFrame) profileFrame.style.transform = `translateY(${prog * 12}px)`;
-                    if (profileStage) profileStage.style.transform = `translateY(${prog * 8}px)`;
-                }
-                codeBlocks.forEach((block, i) => {
-                    const offset = (i + 1) * 20;
-                    const parallax = Math.min(window.scrollY * 0.14, 200);
-                    block.style.transform = `translateY(${parallax * (offset / 100)}px)`;
-                });
+        const hero = document.getElementById('home');
+        if (!hero) return;
+        let ticking=false;
+        let isHeroVisible=true;
+        // pause when hero offscreen
+        try{
+            if('IntersectionObserver' in window){
+                const io = new IntersectionObserver((entries)=>{
+                    entries.forEach(e=>{ isHeroVisible = e.isIntersecting; if(!isHeroVisible){
+                        // reset transforms when offscreen to avoid stray styles
+                        if(heroBg) heroBg.style.transform='';
+                        if(profile3d) profile3d.style.transform='';
+                        if(profileFrame) profileFrame.style.transform='';
+                        if(profileStage) profileStage.style.transform='';
+                    }});
+                }, {threshold:0});
+                io.observe(hero);
             }
-            requestAnimationFrame(updateParallax);
+        }catch{}
+        function apply(){
+            if(!isHeroVisible || !isLoaded) { ticking=false; return; }
+            const rect = hero.getBoundingClientRect();
+            if(rect.bottom < -100 || rect.top > window.innerHeight) { ticking=false; return; }
+            const prog = Math.min(Math.max(0, -rect.top / (rect.height || 800)), 1);
+            // depth layers: gunakan translate3d untuk GPU, jauh lebih ringan dari filter
+            if (heroBg) heroBg.style.transform = `translate3d(0,${prog * 12}px,0)`;
+            if (profile3d) profile3d.style.transform = `translate3d(0,${prog * 18}px,0)`;
+            if (profileFrame) profileFrame.style.transform = `translate3d(0,${prog * 8}px,0)`;
+            if (profileStage) profileStage.style.transform = `translate3d(0,${prog * 6}px,0)`;
+            ticking=false;
         }
-        if (!prefersReducedMotion) updateParallax();
+        function onScroll(){
+            if(ticking) return;
+            ticking=true;
+            requestAnimationFrame(apply);
+        }
+        window.addEventListener('scroll', onScroll, {passive:true});
+        // initial
+        requestAnimationFrame(apply);
     }
 
     // ============================================
     // MOUSE PARALLAX ON HERO — Cinematic depth
     // ============================================
     function initMouseParallax() {
-        if (isMobile || prefersReducedMotion) return;
+        if (isMobile || prefersReducedMotion || isLowEnd) return;
         const heroVisual = document.getElementById('heroVisual');
         const profileStage = document.getElementById('profileStage');
         const profileFrame = document.querySelector('.profile-frame');
@@ -650,32 +724,52 @@
         const badges = document.querySelectorAll('.profile-badge-float');
         const floats = document.querySelectorAll('.profile-float');
         const codeBlocks = document.querySelectorAll('.floating-code-block');
-
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 2;
-            const y = (e.clientY / window.innerHeight - 0.5) * 2;
-
-            if (profileStage) {
-                // depth: background 1px, 3D 6px, photo 3px, UI 7px — subtle premium
-                if (profileFrame) profileFrame.style.transform = `translate3d(${x * 3}px, ${y * 2.5}px, 0)`;
-                if (profile3d) profile3d.style.transform = `translate3d(${x * 6}px, ${y * 4}px, 0)`;
-                if (heroBg) heroBg.style.transform = `translate3d(${x * 1.2}px, ${y * 1}px, 0)`;
-                badges.forEach((b,i)=>{ b.style.transform = `translate3d(${x * (5+i*1.2)}px, ${y * (4+i*1)}px, 0)`; });
-                floats.forEach((f,i)=>{ f.style.transform = `translate3d(${x * (6+i*1.5)}px, ${y * (5+i*1)}px, 0)`; });
-            } else if (heroVisual) {
-                // legacy fallback (old heroVisual absolute)
-                const isNew = heroVisual.classList.contains('hero-right');
-                if (isNew) {
-                    heroVisual.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
-                } else {
-                    heroVisual.style.transform = `translateY(-50%) translateX(${x * 10}px) translateY(${y * 10}px)`;
-                }
+        const hero = document.getElementById('home');
+        let raf=null;
+        let lastX=0, lastY=0;
+        let isHeroInView=true;
+        try{
+            if('IntersectionObserver' in window && hero){
+                const ioM = new IntersectionObserver((entries)=>{
+                    entries.forEach(e=> isHeroInView=e.isIntersecting);
+                }, {threshold:0});
+                ioM.observe(hero);
             }
-            codeBlocks.forEach((block, i) => {
-                const factor = (i + 1) * 5;
-                block.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+        }catch{}
+        document.addEventListener('mousemove', (e) => {
+            if(!isHeroInView) return;
+            // throttled — hanya hitung posisi, render di rAF
+            lastX = (e.clientX / window.innerWidth - 0.5) * 2;
+            lastY = (e.clientY / window.innerHeight - 0.5) * 2;
+            if(raf) return;
+            raf = requestAnimationFrame(()=>{
+                raf=null;
+                // jika sudah scroll jauh, matikan parallax mouse agar tidak konflik dengan scroll parallax
+                const scrollProg = hero ? Math.min(Math.max(0, -hero.getBoundingClientRect().top / 600), 1) : 0;
+                if(scrollProg > 0.22) return;
+                const x = lastX, y = lastY;
+                if (profileStage) {
+                    if (profileFrame) profileFrame.style.transform = `translate3d(${x * 3}px, ${y * 2.5}px, 0)`;
+                    if (profile3d) profile3d.style.transform = `translate3d(${x * 6}px, ${y * 4}px, 0)`;
+                    if (heroBg) heroBg.style.transform = `translate3d(${x * 1.2}px, ${y * 1}px, 0)`;
+                    badges.forEach((b,i)=>{ b.style.transform = `translate3d(${x * (5+i*1.2)}px, ${y * (4+i*1)}px, 0)`; });
+                    floats.forEach((f,i)=>{ f.style.transform = `translate3d(${x * (6+i*1.5)}px, ${y * (5+i*1)}px, 0)`; });
+                } else if (heroVisual) {
+                    const isNew = heroVisual.classList.contains('hero-right');
+                    if (isNew) {
+                        heroVisual.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+                    } else {
+                        heroVisual.style.transform = `translateY(-50%) translateX(${x * 10}px) translateY(${y * 10}px)`;
+                    }
+                }
+                if(codeBlocks.length){
+                    codeBlocks.forEach((block, i) => {
+                        const factor = (i + 1) * 5;
+                        block.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+                    });
+                }
             });
-        });
+        }, {passive:true});
     }
 
     function initProfileImageFallback(){
@@ -695,7 +789,7 @@
     }
 
     function initMagneticButtons(){
-        if(isMobile || prefersReducedMotion) return;
+        if(isMobile || prefersReducedMotion || isLowEnd) return;
         const btns = document.querySelectorAll('[data-magnetic]');
         btns.forEach(btn=>{
             let raf=null;
@@ -738,13 +832,11 @@
             if(eyebrow) eyebrow.classList.add('is-visible');
             nameLines.forEach(l=> l.classList.add('is-visible'));
             if(role) role.classList.add('is-visible');
-            if(roleTyping) roleTyping.textContent = 'FULL-STACK DEVELOPER';
+            if(roleTyping) roleTyping.textContent = 'SOFTWARE ENGINEER';
             if(roleCursor) roleCursor.classList.add('is-visible');
             if(desc) desc.classList.add('is-visible');
             descLines.forEach(l=> l.classList.add('is-visible'));
             if(badge) badge.classList.add('is-visible');
-            const statusCard = document.querySelector('.hero-status-card');
-            if(statusCard) statusCard.classList.add('is-visible');
             if(buttons) buttons.classList.add('is-visible');
             if(social) social.classList.add('is-visible');
             return;
@@ -794,7 +886,7 @@
             if(!role || !roleTyping) return;
             role.classList.add('is-visible');
             if(roleCursor) roleCursor.classList.add('is-visible');
-            const full = 'FULL-STACK DEVELOPER';
+            const full = 'SOFTWARE ENGINEER';
             let i=0;
             roleTyping.textContent = '';
             const t = setInterval(()=>{
@@ -815,33 +907,14 @@
             });
         }
 
-        function revealStatusAndCTA(){
-            const statusCard = document.querySelector('.hero-status-card');
-            if(statusCard) statusCard.classList.add('is-visible');
-            if(buttons) buttons.classList.add('is-visible');
-            if(social) social.classList.add('is-visible');
-            if(badge) badge.classList.add('is-visible');
-        }
-
-        // --- Sequence after loader ---
-        // isLoaded is set true after loader hide (800ms). initHeroTextCinematic is called in initAll which is after loader.
-        // So now schedule per spec.
-        setTimeout(revealEyebrow, 200);
-        setTimeout(revealName, 400);
-        // FARHAN is second line, but revealName already staggers 0/150/300 from 400 => 400,550,700 matches spec
-        setTimeout(startTyping, 1000);
-        setTimeout(revealDesc, 2000);
-        setTimeout(()=>{
-            const statusCard = document.querySelector('.hero-status-card');
-            if(statusCard) statusCard.classList.add('is-visible');
-        }, 1750);
-        setTimeout(()=>{
-            if(buttons) buttons.classList.add('is-visible');
-        }, 2200);
-        setTimeout(()=>{
-            if(social) social.classList.add('is-visible');
-            if(badge) badge.classList.add('is-visible');
-        }, 2400);
+        // --- Sequence after loader — badge → greeting → headline → role → desc → CTA → social ---
+        setTimeout(()=>{ if(badge) badge.classList.add('is-visible'); }, 150);
+        setTimeout(revealEyebrow, 350);
+        setTimeout(revealName, 600);
+        setTimeout(startTyping, 1150);
+        setTimeout(revealDesc, 1900);
+        setTimeout(()=>{ if(buttons) buttons.classList.add('is-visible'); }, 2250);
+        setTimeout(()=>{ if(social) social.classList.add('is-visible'); }, 2500);
 
         // --- Glitch every 3.5-6s, very subtle, 280ms ---
         const farhan = document.querySelector('.hero-name-line.glitch');
@@ -887,24 +960,35 @@
             });
         }
 
-        // --- Scroll fade/blur ---
+        // --- Scroll fade (tanpa blur berat untuk smooth 60fps) ---
         if(hero && heroLeft && !prefersReducedMotion){
             let ticking=false;
+            let heroVisible=true;
+            try{
+                if('IntersectionObserver' in window){
+                    const io2 = new IntersectionObserver((entries)=>{
+                        entries.forEach(e=> heroVisible = e.isIntersecting);
+                    }, {threshold:0});
+                    io2.observe(hero);
+                }
+            }catch{}
             window.addEventListener('scroll', ()=>{
+                if(!heroVisible) return;
                 if(ticking) return;
                 ticking=true;
                 requestAnimationFrame(()=>{
                     const rect = hero.getBoundingClientRect();
-                    const prog = Math.min(Math.max(0, -rect.top / 420), 1);
-                    if(prog>0.08){
+                    if(rect.bottom < -80 || rect.top > window.innerHeight){ ticking=false; return; }
+                    const prog = Math.min(Math.max(0, -rect.top / 480), 1);
+                    if(prog>0.07){
                         heroLeft.classList.add('is-scrolled');
-                        heroLeft.style.opacity = String(1 - prog*0.65);
-                        heroLeft.style.filter = `blur(${prog*2.2}px)`;
-                        heroLeft.style.transform = `translateY(${-prog*18}px)`;
+                        // hanya opacity + translate3d — blur dihapus karena sangat berat di scroll
+                        heroLeft.style.opacity = String(1 - prog*0.45);
+                        heroLeft.style.transform = `translate3d(0,${-prog*14}px,0)`;
+                        // filter blur sengaja tidak dipakai agar scroll smooth
                     } else {
                         heroLeft.classList.remove('is-scrolled');
                         heroLeft.style.opacity = '';
-                        heroLeft.style.filter = '';
                         heroLeft.style.transform = '';
                     }
                     ticking=false;
@@ -947,7 +1031,10 @@
         if (element.dataset.counted) return;
         element.dataset.counted = 'true';
 
-        const target = parseInt(element.dataset.target);
+        const numberElPre = element.querySelector('.stat-number');
+        const rawTarget = numberElPre ? numberElPre.dataset.target : element.dataset.target;
+        const target = parseInt(rawTarget, 10);
+        if (Number.isNaN(target)) return;
         const duration = 2000;
         const startTime = performance.now();
 
@@ -998,11 +1085,11 @@
                 termLine1: { text: '$ whoami', delay: 0 },
                 termLine2: { text: '', delay: 600, html: (i) => {
                     const data = [
-                        { cls: 'Name:', val: ' Ahmad Dhia', highlight: false },
-                        { cls: 'Role:', val: ' Full-Stack Developer', highlight: true },
-                        { cls: 'Location:', val: ' Indonesia', highlight: false },
-                        { cls: 'Focus:', val: ' Web Development', highlight: true },
-                        { cls: 'Status:', val: ' Available', highlight: true }
+                        { cls: 'Nama:', val: ' Muhamad Farhan Muizaddin', highlight: false },
+                        { cls: 'Peran:', val: ' Software Engineer', highlight: true },
+                        { cls: 'Lokasi:', val: ' Kp. Situ RT003/002, Desa Sukaremi, Kec. Megamendung, Kab. Bogor', highlight: false },
+                        { cls: 'Fokus:', val: ' Web Development', highlight: true },
+                        { cls: 'Pendidikan:', val: ' SMK WIKRAMA 1 Garut — RPL (2019–2022)', highlight: false }
                     ];
                     let result = '';
                     data.forEach((item, idx) => {
@@ -1014,12 +1101,12 @@
                 termLine3: { text: '', delay: 2000 },
                 termLine4: { text: '$ skills', delay: 2500 },
                 termLine5: { text: '', delay: 3100, html: (i) => {
-                    return '<span class="info">JavaScript &nbsp; Node.js &nbsp; Python &nbsp; React &nbsp; Next.js</span>\n<span class="info">PHP &nbsp; Laravel &nbsp; PostgreSQL &nbsp; AWS &nbsp; Docker</span>';
+                    return '<span class="info">HTML &nbsp; CSS &nbsp; JavaScript &nbsp; jQuery</span>\n<span class="info">PHP &nbsp; Laravel &nbsp; CodeIgniter &nbsp; Node.js &nbsp; Express.js &nbsp; MySQL</span>';
                 }},
                 termLine6: { text: '', delay: 4500 },
-                termLine7: { text: '$ experience', delay: 5000 },
+                termLine7: { text: '$ background', delay: 5000 },
                 termLine8: { text: '', delay: 5600, html: (i) => {
-                    return '<span class="info">5+ years building scalable web applications</span>\n<span class="info">30+ clients, 42+ projects shipped</span>';
+                    return '<span class="info">Magang: leader front-end, arsitektur e-learning, API</span>\n<span class="info">Organisasi: Mudabbir &amp; Pramuka Ambalan Prabu Kiansantang</span>';
                 }},
                 termLine9: { text: '', delay: 7000 }
             };
@@ -1068,7 +1155,7 @@
         if (!codeContent || !codeTabs.length) return;
 
         const codeSnippets = {
-            javascript: `<span class="cm">// Full-Stack Developer Portfolio</span>
+            javascript: `<span class="cm">// Software Engineer Portfolio</span>
 <span class="cm">// Built with passion and precision</span>
 
 <span class="kw">class</span> <span class="cls">Developer</span> <span class="op">{</span>
@@ -1090,7 +1177,7 @@
   <span class="op">}</span>
 <span class="op">}</span>
 
-<span class="kw">const</span> <span class="prop">me</span> <span class="op">=</span> <span class="kw">new</span> <span class="cls">Developer</span><span class="op">(</span><span class="str">"Ahmad Dhia"</span><span class="op">,</span> <span class="str">"Full-Stack"</span><span class="op">);</span>
+<span class="kw">const</span> <span class="prop">me</span> <span class="op">=</span> <span class="kw">new</span> <span class="cls">Developer</span><span class="op">(</span><span class="str">"Muhamad Farhan Muizaddin"</span><span class="op">,</span> <span class="str">"Software Engineer"</span><span class="op">);</span>
 me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</span> <span class="cm">// Deployed! ✨</span>`,
 
             php: `<span class="cm">// API Endpoint Handler</span>
@@ -1128,8 +1215,8 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         <span class="kw">&lt;img</span> <span class="prop">src</span><span class="op">=</span><span class="str">"profile.jpg"</span> <span class="prop">alt</span><span class="op">=</span><span class="str">"Profile"</span><span class="kw">/&gt;</span>
       <span class="kw">&lt;/div&gt;</span>
       <span class="kw">&lt;div</span> <span class="prop">class</span><span class="op">=</span><span class="str">"about-content"</span><span class="kw">&gt;</span>
-        <span class="kw">&lt;p</span><span class="kw">&gt;</span>Full-Stack Developer<span class="kw">&lt;/p&gt;</span>
-        <span class="kw">&lt;button</span> <span class="prop">class</span><span class="op">=</span><span class="str">"btn"</span><span class="kw">&gt;</span>View Projects<span class="kw">&lt;/button&gt;</span>
+        <span class="kw">&lt;p</span><span class="kw">&gt;</span>Software Engineer<span class="kw">&lt;/p&gt;</span>
+        <span class="kw">&lt;button</span> <span class="prop">class</span><span class="op">=</span><span class="str">"btn"</span><span class="kw">&gt;</span>Lihat Proyeks<span class="kw">&lt;/button&gt;</span>
       <span class="kw">&lt;/div&gt;</span>
     <span class="kw">&lt;/div&gt;</span>
   <span class="kw">&lt;/div&gt;</span>
@@ -1161,39 +1248,46 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const canvas = document.getElementById('techBgCanvas');
         if (!canvas || prefersReducedMotion) return;
         const ctx = canvas.getContext('2d');
+        if(!ctx) return;
+        // skip entirely on very low-end to save battery
+        if(isLowEnd && isMobile) return;
         let particles = [];
-        let raf;
+        let raf=null;
+        let visible=true;
+        const dpr = Math.min(window.devicePixelRatio||1, 1.2);
 
         function resize() {
             const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width * (window.devicePixelRatio || 1);
-            canvas.height = rect.height * (window.devicePixelRatio || 1);
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
             canvas.style.width = rect.width + 'px';
             canvas.style.height = rect.height + 'px';
-            ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             create();
         }
         function create() {
             particles = [];
-            const w = canvas.width / (window.devicePixelRatio || 1);
-            const h = canvas.height / (window.devicePixelRatio || 1);
-            const count = isMobile ? 18 : 32;
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
+            const count = isMobile ? 10 : (isLowEnd ? 14 : 20);
             for (let i = 0; i < count; i++) {
                 particles.push({
                     x: Math.random() * w,
                     y: Math.random() * h,
-                    r: Math.random() * 1.6 + 0.4,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3,
-                    o: Math.random() * 0.4 + 0.15
+                    r: Math.random() * 1.4 + 0.3,
+                    vx: (Math.random() - 0.5) * 0.22,
+                    vy: (Math.random() - 0.5) * 0.22,
+                    o: Math.random() * 0.32 + 0.1
                 });
             }
         }
         function draw() {
-            const w = canvas.width / (window.devicePixelRatio || 1);
-            const h = canvas.height / (window.devicePixelRatio || 1);
+            if(!visible || document.hidden){ raf=null; return; }
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
             ctx.clearRect(0, 0, w, h);
-            particles.forEach(p => {
+            for(let i=0;i<particles.length;i++){
+                const p=particles[i];
                 p.x += p.vx; p.y += p.vy;
                 if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
                 if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
@@ -1201,16 +1295,29 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(0,240,255,${p.o})`;
                 ctx.fill();
-            });
+            }
             raf = requestAnimationFrame(draw);
         }
         resize();
         if (!prefersReducedMotion) draw();
         let t;
-        window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(resize, 120); });
+        window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(resize, 150); }, {passive:true});
+        try{
+            if('IntersectionObserver' in window){
+                const io = new IntersectionObserver((entries)=>{
+                    entries.forEach(e=>{
+                        visible = e.isIntersecting;
+                        if(visible && !raf && !prefersReducedMotion) draw();
+                        else if(!visible && raf){ cancelAnimationFrame(raf); raf=null; }
+                    });
+                }, {threshold:0});
+                const sec=document.getElementById('skills');
+                if(sec) io.observe(sec);
+            }
+        }catch{}
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) cancelAnimationFrame(raf);
-            else if (!prefersReducedMotion) draw();
+            if (document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+            else if (visible && !raf && !prefersReducedMotion) draw();
         });
     }
 
@@ -1229,7 +1336,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         }, { threshold: 0.2 });
         cards.forEach(c => obs.observe(c));
 
-        if (isMobile || prefersReducedMotion) return;
+        if (isMobile || prefersReducedMotion || isLowEnd) return;
 
         cards.forEach(card => {
             const inner = card.querySelector('.tech-card-inner');
@@ -1267,33 +1374,59 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         if (!viz || !svg || !nodesWrap) return;
 
         const categories = [
-            { id: 'Frontend', label: 'Frontend', icon: 'fa-layer-group', desc: 'HTML • CSS • JavaScript • React', count: '3 stack', color: '#00f0ff' },
-            { id: 'Backend', label: 'Backend', icon: 'fa-server', desc: 'PHP • Node.js • Python', count: '3 stack', color: '#7b2fff' },
-            { id: 'Database', label: 'Database', icon: 'fa-database', desc: 'MySQL • PostgreSQL • Redis', count: '1 core', color: '#2ecc71' },
-            { id: 'API', label: 'API', icon: 'fa-code-branch', desc: 'REST API • GraphQL • JSON', count: 'REST', color: '#ffd700' },
-            { id: 'UI/UX', label: 'UI/UX', icon: 'fa-palette', desc: 'Figma • Responsive • Motion', count: 'Design', color: '#ff7ab6' },
-            { id: 'Deployment', label: 'Deployment', icon: 'fa-rocket', desc: 'Git • GitHub • Vercel', count: '3 tools', color: '#ff006e' }
+            { id: 'Frontend', label: 'Frontend', icon: 'fa-code', desc: 'HTML • CSS • JavaScript • jQuery', count: '4 teknologi', color: '#00f0ff' },
+            { id: 'Backend', label: 'Backend', icon: 'fa-server', desc: 'PHP • Laravel • CodeIgniter • Node.js • Express.js', count: '5 teknologi', color: '#7b2fff' },
+            { id: 'Database', label: 'Database', icon: 'fa-database', desc: 'MySQL • phpMyAdmin', count: '2 teknologi', color: '#2ecc71' },
+            { id: 'API', label: 'API', icon: 'fa-plug', desc: 'RESTful API • Sanctum • Passport • Integration', count: '4 kemampuan', color: '#ffd700' },
+            { id: 'UI/UX', label: 'UI/UX', icon: 'fa-palette', desc: 'Implementasi desain UI/UX', count: 'Implementasi', color: '#ff7ab6' },
+            { id: 'Arsitektur', label: 'Arsitektur', icon: 'fa-diagram-project', desc: 'System Architecture • CRUD • Authentication', count: '3 fondasi', color: '#ff006e' }
         ];
 
-        const center = { x: 400, y: 250, id: 'center', label: 'FULL STACK', icon: 'fa-infinity', desc: 'End-to-end development' };
+        const center = { x: 400, y: 250, id: 'center', label: 'SOFTWARE<br>ENGINEER', plainLabel: 'Software Engineer', icon: 'fa-infinity', desc: 'Web development end-to-end' };
+        const isCoarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
-        // layout calc
+        // layout calc — visual space (px) dihitung dulu, lalu dikonversi ke viewBox 800x500
+        // agar jarak antar node aman di HP (preserveAspectRatio=none meregangkan sumbu)
         function getLayout() {
-            const isNarrow = window.innerWidth < 769;
-            const cx = 400, cy = isNarrow ? 175 : 250;
-            const rx = isNarrow ? 150 : 250;
-            // compensate for preserveAspectRatio=none stretch (container aspect vs viewBox)
+            const vw = window.innerWidth;
+            const isNarrow = vw < 769;
             const vizEl = document.getElementById('skillViz');
-            let ry = isNarrow ? 135 : 175;
-            if (isNarrow && vizEl) {
-                const w = vizEl.clientWidth || 400;
-                const h = vizEl.clientHeight || 500;
-                const scaleX = w / 800;
-                const scaleY = h / 500;
-                const desiredVisualRy = rx * 0.85; // make visual ~circular
-                ry = desiredVisualRy * (scaleX / scaleY);
-                ry = Math.max(62, Math.min(110, ry));
-            }
+            const cw = (vizEl && vizEl.clientWidth) || vw || 800;
+            const ch = (vizEl && vizEl.clientHeight) || 500;
+
+            // ukuran node (sesuai CSS breakpoint)
+            let centerPx = 118, catPx = 92;
+            if (vw <= 375) { centerPx = 72; catPx = 64; }
+            else if (vw <= 480) { centerPx = 84; catPx = 72; }
+            else if (isNarrow) { centerPx = 96; catPx = 78; }
+
+            // jarak minimum visual antara pusat dan node kategori
+            const minDist = (centerPx / 2) + (catPx / 2) + 16;
+            const pad = (catPx / 2) + 8;
+            const tooltipPad = isNarrow ? 64 : 12; // ruang tooltip bawah di HP
+
+            // elips dalam pixel container
+            const cxV = cw / 2;
+            const cyV = isNarrow
+                ? Math.max(pad + minDist, (ch - tooltipPad) * 0.42)
+                : ch / 2;
+            let rxV = Math.max(minDist, cw / 2 - pad);
+            let ryV = Math.max(minDist, Math.min(
+                isNarrow ? (ch - tooltipPad) * 0.34 : ch * 0.35,
+                cyV - pad,
+                (ch - tooltipPad) - cyV
+            ));
+            // pastikan atas/bawah tidak menabrak center
+            ryV = Math.max(ryV, minDist);
+
+            // konversi px → viewBox
+            const sx = 800 / cw;
+            const sy = 500 / ch;
+            const cx = cxV * sx;
+            const cy = cyV * sy;
+            const rx = rxV * sx;
+            const ry = ryV * sy;
+
             const positions = [];
             categories.forEach((cat, i) => {
                 const angle = (-90 + i * 60) * Math.PI / 180;
@@ -1375,11 +1508,12 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             const div = document.createElement('div');
             div.className = isCenter ? 'skill-node skill-node-center' : 'skill-node skill-node-cat';
             if (!isCenter) div.dataset.cat = data.id;
+            if (isCenter) div.setAttribute('aria-label', data.plainLabel || 'Software Engineer');
             div.innerHTML = `
                 <span class="node-pulse" style="--pulse-delay:${Math.random()*1.2}s"></span>
                 <i class="fas ${data.icon} node-icon" aria-hidden="true"></i>
                 <span class="node-label">${data.label}</span>
-                ${!isCenter ? `<span class="node-count">${data.count}</span>` : `<span class="node-count" style="font-size:0.6rem; letter-spacing:1px; opacity:0.8">CORE</span>`}
+                ${!isCenter ? `<span class="node-count">${data.count}</span>` : ''}
             `;
             if (isCenter) {
                 div.style.left = (x/800*100)+'%';
@@ -1391,75 +1525,111 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
 
         function bindHover() {
             const catNodes = nodesWrap.querySelectorAll('.skill-node-cat');
+            const hideAll = () => {
+                lineEls.forEach(l => l.classList.remove('active'));
+                catNodes.forEach(n => n.classList.remove('active'));
+                const centerNodeAll = nodesWrap.querySelector('.skill-node-center');
+                if (centerNodeAll) centerNodeAll.classList.remove('active');
+                if (tooltip) {
+                    tooltip.classList.remove('visible');
+                    tooltip.setAttribute('aria-hidden', 'true');
+                }
+                particleEls.forEach(p => p.el.style.opacity = '0');
+            };
+            const showCat = (cat) => {
+                lineEls.forEach(l => l.classList.toggle('active', l.dataset.cat === cat));
+                catNodes.forEach(n => n.classList.toggle('active', n.dataset.cat === cat));
+                const centerActive = nodesWrap.querySelector('.skill-node-center');
+                if (centerActive) centerActive.classList.remove('active');
+                const data = categories.find(c => c.id === cat);
+                if (data && tooltip) {
+                    tooltip.querySelector('.tooltip-category').textContent = data.id;
+                    tooltip.querySelector('.tooltip-title').textContent = data.label;
+                    tooltip.querySelector('.tooltip-desc').textContent = data.desc;
+                    tooltip.classList.add('visible');
+                    tooltip.setAttribute('aria-hidden', 'false');
+                }
+                particleEls.forEach(p => {
+                    p.el.style.opacity = p.el.dataset.cat === cat ? '1' : '0';
+                });
+            };
+
             catNodes.forEach(node => {
                 const cat = node.dataset.cat;
-                const show = () => {
-                    // active line
-                    lineEls.forEach(l => l.classList.toggle('active', l.dataset.cat === cat));
-                    // active node
-                    catNodes.forEach(n => n.classList.toggle('active', n.dataset.cat === cat));
-                    // tooltip
-                    const data = categories.find(c => c.id === cat);
-                    if (data && tooltip) {
-                        tooltip.querySelector('.tooltip-category').textContent = data.id;
-                        tooltip.querySelector('.tooltip-title').textContent = data.label;
-                        tooltip.querySelector('.tooltip-desc').textContent = data.desc;
+                if (isCoarse) {
+                    // HP / tablet: ketuk untuk toggle
+                    node.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (node.classList.contains('active')) hideAll();
+                        else showCat(cat);
+                    });
+                } else {
+                    node.addEventListener('mouseenter', () => showCat(cat));
+                    node.addEventListener('mouseleave', hideAll);
+                }
+                node.addEventListener('focus', () => showCat(cat));
+                node.addEventListener('blur', hideAll);
+            });
+
+            // center — nyalakan semua garis
+            const centerNode = nodesWrap.querySelector('.skill-node-center');
+            if (centerNode) {
+                const showCenter = () => {
+                    lineEls.forEach(l => l.classList.add('active'));
+                    catNodes.forEach(n => n.classList.remove('active'));
+                    if (tooltip) {
+                        tooltip.querySelector('.tooltip-category').textContent = 'CORE';
+                        tooltip.querySelector('.tooltip-title').textContent = 'Software Engineer Core';
+                        tooltip.querySelector('.tooltip-desc').textContent = 'Menghubungkan frontend, backend, API, dan database';
                         tooltip.classList.add('visible');
                         tooltip.setAttribute('aria-hidden', 'false');
                     }
-                    // particle boost
-                    particleEls.forEach(p => {
-                        if (p.el.dataset.cat === cat) p.el.style.opacity = '1';
+                };
+                if (isCoarse) {
+                    centerNode.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (tooltip && tooltip.classList.contains('visible') &&
+                            !centerNode.classList.contains('active') &&
+                            !nodesWrap.querySelector('.skill-node-cat.active')) {
+                            // sudah terbuka dari node lain — toggle mati
+                            hideAll();
+                        } else {
+                            centerNode.classList.add('active');
+                            showCenter();
+                        }
                     });
-                };
-                const hide = () => {
-                    lineEls.forEach(l => l.classList.remove('active'));
-                    catNodes.forEach(n => n.classList.remove('active'));
-                    if (tooltip) {
-                        tooltip.classList.remove('visible');
-                        tooltip.setAttribute('aria-hidden', 'true');
-                    }
-                    particleEls.forEach(p => p.el.style.opacity = p.el.dataset.cat === cat ? '0.7' : '0');
-                };
-                node.addEventListener('mouseenter', show);
-                node.addEventListener('mouseleave', hide);
-                node.addEventListener('focus', show);
-                node.addEventListener('blur', hide);
-            });
+                } else {
+                    centerNode.addEventListener('mouseenter', showCenter);
+                    centerNode.addEventListener('mouseleave', hideAll);
+                }
+                centerNode.addEventListener('focus', showCenter);
+                centerNode.addEventListener('blur', hideAll);
+            }
 
-            // center hover lights all
-            const centerNode = nodesWrap.querySelector('.skill-node-center');
-            if (centerNode) {
-                centerNode.addEventListener('mouseenter', () => {
-                    lineEls.forEach(l => l.classList.add('active'));
-                    if (tooltip) {
-                        tooltip.querySelector('.tooltip-category').textContent = 'CORE';
-                        tooltip.querySelector('.tooltip-title').textContent = 'Full-Stack Core';
-                        tooltip.querySelector('.tooltip-desc').textContent = 'Connecting all domains into one system';
-                        tooltip.classList.add('visible');
-                    }
-                });
-                centerNode.addEventListener('mouseleave', () => {
-                    lineEls.forEach(l => l.classList.remove('active'));
-                    if (tooltip) tooltip.classList.remove('visible');
+            // ketuk area luar node untuk menutup (khusus touch)
+            if (isCoarse) {
+                viz.addEventListener('click', (e) => {
+                    if (!e.target.closest('.skill-node')) hideAll();
                 });
             }
         }
-
-        // animate particles along lines
-        let raf;
+        // animate particles along lines — optimized + pause offscreen
+        let raf=null;
+        let vizVisible=true;
         function animateParticles() {
             if (prefersReducedMotion) {
                 particleEls.forEach(p => p.el.style.opacity = '0.5');
                 return;
             }
-            const speed = 0.0035;
+            const speed = isLowEnd ? 0.0022 : 0.0032;
             function frame() {
-                particleEls.forEach(p => {
-                    p.progress += speed * (0.7 + Math.random()*0.6);
+                if(!vizVisible || document.hidden){ raf=null; return; }
+                for(let idx=0; idx<particleEls.length; idx++){
+                    const p = particleEls[idx];
+                    p.progress += speed * (0.7 + Math.random()*0.5);
                     if (p.progress > 1) p.progress = 0;
                     const line = lineEls[p.idx];
-                    if (!line) return;
+                    if (!line) continue;
                     const x1 = parseFloat(line.getAttribute('x1'));
                     const y1 = parseFloat(line.getAttribute('y1'));
                     const x2 = parseFloat(line.getAttribute('x2'));
@@ -1468,36 +1638,55 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                     const y = y1 + (y2 - y1) * p.progress;
                     p.el.setAttribute('cx', x);
                     p.el.setAttribute('cy', y);
-                    // fade near ends
                     const fade = Math.sin(p.progress * Math.PI);
                     p.el.style.opacity = String(0.2 + fade * 0.8);
-                });
+                }
                 raf = requestAnimationFrame(frame);
             }
             frame();
         }
 
         build();
+        // observe visibility for skill viz
+        try{
+            if('IntersectionObserver' in window){
+                const ioViz = new IntersectionObserver((entries)=>{
+                    entries.forEach(e=>{
+                        vizVisible=e.isIntersecting;
+                        if(vizVisible && !raf) animateParticles();
+                        else if(!vizVisible && raf){ cancelAnimationFrame(raf); raf=null; }
+                    });
+                }, {threshold:0.08});
+                ioViz.observe(viz);
+            }
+        }catch{}
         animateParticles();
 
-        // parallax on mouse move for nodes (desktop only)
-        if (!isMobile && !prefersReducedMotion) {
+        // parallax on mouse move for nodes (desktop only) — throttled
+        if (!isMobile && !prefersReducedMotion && !isLowEnd) {
+            let rafM=null;
+            let mx=0, my=0;
             viz.addEventListener('mousemove', (e) => {
                 const rect = viz.getBoundingClientRect();
-                const mx = (e.clientX - rect.left) / rect.width - 0.5;
-                const my = (e.clientY - rect.top) / rect.height - 0.5;
-                nodesWrap.querySelectorAll('.skill-node').forEach((n, i) => {
-                    const depth = n.classList.contains('skill-node-center') ? 6 : 10 + (i % 3) * 4;
-                    n.style.transform = `translate(-50%, -50%) translate(${mx * depth}px, ${my * depth}px) ${n.classList.contains('active') ? 'scale(1.14)' : ''}`;
+                mx = (e.clientX - rect.left) / rect.width - 0.5;
+                my = (e.clientY - rect.top) / rect.height - 0.5;
+                if(rafM) return;
+                rafM = requestAnimationFrame(()=>{
+                    rafM=null;
+                    nodesWrap.querySelectorAll('.skill-node').forEach((n, i) => {
+                        const depth = n.classList.contains('skill-node-center') ? 6 : 10 + (i % 3) * 4;
+                        n.style.transform = `translate(-50%, -50%) translate(${mx * depth}px, ${my * depth}px) ${n.classList.contains('active') ? 'scale(1.14)' : ''}`;
+                    });
+                    svg.style.transform = `translate(${mx * -8}px, ${my * -6}px)`;
                 });
-                svg.style.transform = `translate(${mx * -8}px, ${my * -6}px)`;
-            });
+            }, {passive:true});
             viz.addEventListener('mouseleave', () => {
+                if(rafM){ cancelAnimationFrame(rafM); rafM=null; }
                 nodesWrap.querySelectorAll('.skill-node').forEach(n => {
                     n.style.transform = 'translate(-50%, -50%)';
                 });
                 svg.style.transform = 'translate(0,0)';
-            });
+            }, {passive:true});
         }
 
         let resizeTimer;
@@ -1559,7 +1748,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             ro.observe(el);
         });
 
-        if (!isMobile && !prefersReducedMotion) {
+        if (!isMobile && !prefersReducedMotion && !isLowEnd) {
             document.querySelectorAll('.featured-project, .project-card').forEach(card => {
                 let raf = null;
                 const innerHover = card; // transform card itself
@@ -1598,29 +1787,41 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         initProjectsCanvas();
     }
 
+    function projectBg(p) {
+        if (p.image && (p.image.indexOf('/') !== -1 || /\.(png|jpe?g|webp|gif|svg)$/i.test(p.image))) {
+            return `url('${p.image}') center/cover no-repeat`;
+        }
+        return gradientMap[p.image] || gradientMap['gradient-a'];
+    }
+
+    function isImagePath(img) {
+        return !!(img && (img.indexOf('/') !== -1 || /\.(png|jpe?g|webp|gif|svg)$/i.test(img)));
+    }
+
     function renderFeatured(p) {
-        const bg = gradientMap[p.image] || gradientMap['gradient-a'];
+        const bg = projectBg(p);
+        const hasImage = isImagePath(p.image);
         const techs = p.technologies.map((t,i) => `<span class="tech-pill ${i<3?'highlight':''}">${t}</span>`).join('');
         return `
         <article class="featured-project" data-project-id="${p.id}" tabindex="0" aria-label="View ${p.title} details" role="button">
             <div class="featured-preview">
                 <div class="browser-bar">
                     <div class="browser-dots"><span></span><span></span><span></span></div>
-                    <div class="browser-url"><i class="fas fa-lock"></i> ${p.id}.vercel.app — Preview</div>
+                    <div class="browser-url"><i class="fas fa-lock"></i> ${p.urlLabel || (p.id + '.vercel.app — Pratinjau')}</div>
                 </div>
                 <div class="preview-stage">
                     <div class="preview-bg" style="background:${bg}"></div>
-                    <div class="preview-icon-wrap"><i class="fas ${p.icon}"></i></div>
-                    <div class="preview-overlay"><span><i class="fas fa-eye"></i> View Case Study</span></div>
+                    ${hasImage ? '' : `<div class="preview-icon-wrap"><i class="fas ${p.icon}"></i></div>`}
+                    <div class="preview-overlay"><span><i class="fas fa-eye"></i> Lihat Studi Kasus</span></div>
                 </div>
             </div>
             <div class="featured-info">
-                <span class="featured-badge"><i class="fas fa-star"></i> FEATURED • ${p.year}</span>
+                <span class="featured-badge"><i class="fas fa-star"></i> UNGGULAN • ${p.year}</span>
                 <h3 class="featured-title">${p.title}</h3>
                 <p class="featured-desc">${p.description}</p>
                 <div class="featured-techs">${techs}</div>
                 <div class="featured-actions">
-                    <a href="${p.demo}" class="btn-solid-sm" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                    ${p.demo && p.demo !== '#' ? `<a href="${p.demo}" class="btn-solid-sm" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i> Live Demo</a>` : `<a href="${p.github}" class="btn-solid-sm" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fas fa-eye"></i> View Project</a>`}
                     <a href="${p.github}" class="btn-ghost" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-github"></i> GitHub</a>
                     <button class="btn-ghost" data-open-modal="${p.id}" aria-label="Open details"><i class="fas fa-arrow-right"></i> Details</button>
                 </div>
@@ -1629,15 +1830,15 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     }
 
     function renderCard(p, spanClass, index) {
-        const bg = gradientMap[p.image] || gradientMap['gradient-b'];
+        const bg = projectBg(p) || gradientMap['gradient-b'];
         const techs = p.technologies.slice(0,3).map(t => `<span class="tech-pill">${t}</span>`).join('');
         const extra = p.technologies.length > 3 ? `<span class="tech-pill">+${p.technologies.length-3}</span>` : '';
         return `
         <article class="project-card ${spanClass}" data-project-id="${p.id}" tabindex="0" role="button" aria-label="View ${p.title} details">
             <div class="card-preview">
                 <div class="card-preview-bg" style="background:${bg}"></div>
-                <div class="card-preview-icon"><i class="fas ${p.icon}"></i></div>
-                <div class="card-overlay"><span><i class="fas fa-eye"></i> View Project</span></div>
+                ${isImagePath(p.image) ? '' : `<div class="card-preview-icon"><i class="fas ${p.icon}"></i></div>`}
+                <div class="card-overlay"><span><i class="fas fa-eye"></i> Lihat Proyek</span></div>
             </div>
             <div class="card-body">
                 <span class="card-eyebrow">${p.category} • ${p.year}</span>
@@ -1645,10 +1846,10 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 <p class="card-desc">${p.description}</p>
                 <div class="card-techs">${techs}${extra}</div>
                 <div class="card-footer">
-                    <button class="card-cta">View detail <i class="fas fa-arrow-right"></i></button>
+                    <button class="card-cta">Lihat detail <i class="fas fa-arrow-right"></i></button>
                     <div class="card-links">
-                        <a href="${p.github}" class="card-link" target="_blank" rel="noopener" aria-label="GitHub" onclick="event.stopPropagation()"><i class="fab fa-github"></i></a>
-                        <a href="${p.demo}" class="card-link" target="_blank" rel="noopener" aria-label="Live demo" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>
+                        ${p.github && p.github !== '#' ? `<a href="${p.github}" class="card-link" target="_blank" rel="noopener" aria-label="GitHub" onclick="event.stopPropagation()"><i class="fab fa-github"></i></a>` : ''}
+                        ${p.demo && p.demo !== '#' ? `<a href="${p.demo}" class="card-link" target="_blank" rel="noopener" aria-label="Live demo" onclick="event.stopPropagation()"><i class="fas fa-external-link-alt"></i></a>` : ''}
                     </div>
                 </div>
             </div>
@@ -1660,34 +1861,52 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const canvas = document.getElementById('projectsCanvas');
         if (!canvas || prefersReducedMotion) return;
         const ctx = canvas.getContext('2d');
+        if(!ctx) return;
+        if(isLowEnd && isMobile) return;
         let particles = [];
-        let raf;
+        let raf=null;
+        let visible=true;
+        const dpr = Math.min(window.devicePixelRatio||1, 1.2);
         function resize() {
             const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width * (window.devicePixelRatio || 1);
-            canvas.height = rect.height * (window.devicePixelRatio || 1);
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
             canvas.style.width = rect.width + 'px';
             canvas.style.height = rect.height + 'px';
-            ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             create();
         }
         function create() {
             particles = [];
-            const w = canvas.width / (window.devicePixelRatio || 1);
-            const h = canvas.height / (window.devicePixelRatio || 1);
-            const count = isMobile ? 14 : 26;
-            for (let i=0;i<count;i++) particles.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.4+0.3, vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25, o: Math.random()*0.35+0.12, c: Math.random()>0.5?'0,240,255':'123,47,255' });
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
+            const count = isMobile ? 8 : (isLowEnd ? 12 : 16);
+            for (let i=0;i<count;i++) particles.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.2+0.3, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2, o: Math.random()*0.28+0.08, c: Math.random()>0.5?'0,240,255':'123,47,255' });
         }
         function draw() {
-            const w = canvas.width / (window.devicePixelRatio || 1);
-            const h = canvas.height / (window.devicePixelRatio || 1);
+            if(!visible || document.hidden){ raf=null; return; }
+            const w = canvas.width / dpr;
+            const h = canvas.height / dpr;
             ctx.clearRect(0,0,w,h);
-            particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(${p.c},${p.o})`; ctx.fill(); });
+            for(let i=0;i<particles.length;i++){ const p=particles[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(${p.c},${p.o})`; ctx.fill(); }
             raf=requestAnimationFrame(draw);
         }
         resize(); draw();
-        let t; window.addEventListener('resize', ()=>{ clearTimeout(t); t=setTimeout(resize,120); });
-        document.addEventListener('visibilitychange', ()=>{ if(document.hidden) cancelAnimationFrame(raf); else draw(); });
+        let t; window.addEventListener('resize', ()=>{ clearTimeout(t); t=setTimeout(resize,150); }, {passive:true});
+        try{
+            if('IntersectionObserver' in window){
+                const io = new IntersectionObserver((entries)=>{
+                    entries.forEach(e=>{
+                        visible=e.isIntersecting;
+                        if(visible && !raf && !prefersReducedMotion) draw();
+                        else if(!visible && raf){ cancelAnimationFrame(raf); raf=null; }
+                    });
+                }, {threshold:0});
+                const sec=document.getElementById('projects');
+                if(sec) io.observe(sec);
+            }
+        }catch{}
+        document.addEventListener('visibilitychange', ()=>{ if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } } else if(visible && !raf && !prefersReducedMotion) draw(); });
     }
 
     // Modal logic
@@ -1698,7 +1917,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const modal = document.getElementById('projectModal');
         const content = document.getElementById('modalContent');
         if (!modal || !content) return;
-        const bg = gradientMap[data.image] || gradientMap['gradient-a'];
+        const bg = projectBg(data);
         content.innerHTML = `
             <div class="modal-hero">
                 <div class="modal-hero-bg" style="background:${bg}"></div>
@@ -1711,30 +1930,40 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             </div>
             <div class="modal-body">
                 <div class="modal-section">
-                    <h4><i class="fas fa-align-left"></i> About Project</h4>
+                    <h4><i class="fas fa-align-left"></i> Tentang Proyek</h4>
                     <p style="color:var(--text-secondary); line-height:1.7; font-size:0.94rem;">${data.description} ${data.longDescription}</p>
                 </div>
                 <div class="modal-section">
-                    <h4><i class="fas fa-list-check"></i> Key Features</h4>
+                    <h4><i class="fas fa-circle-info"></i> Detail Proyek</h4>
+                    <div class="modal-meta">
+                        <div class="modal-meta-row"><span>Project</span><strong>${data.title}</strong></div>
+                        ${data.role ? `<div class="modal-meta-row"><span>Role</span><strong>${data.role}</strong></div>` : ''}
+                        ${data.type ? `<div class="modal-meta-row"><span>Type</span><strong>${data.type}</strong></div>` : ''}
+                        <div class="modal-meta-row"><span>Technology</span><strong>${data.technologies.join(', ')}</strong></div>
+                        ${data.github && data.github !== '#' ? `<div class="modal-meta-row"><span>Repository</span><strong><a href="${data.github}" target="_blank" rel="noopener">GitHub</a></strong></div>` : ''}
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h4><i class="fas fa-list-check"></i> Fitur Utama</h4>
                     <ul class="modal-features">${data.features.map(f=>`<li>${f}</li>`).join('')}</ul>
                 </div>
                 <div class="modal-section">
-                    <h4><i class="fas fa-layer-group"></i> Technologies</h4>
+                    <h4><i class="fas fa-layer-group"></i> Teknologi</h4>
                     <div class="modal-techs">${data.technologies.map(t=>`<span class="tech-pill highlight">${t}</span>`).join('')}</div>
                 </div>
                 <div class="challenge-grid">
                     <div class="challenge-card">
-                        <h5 class="challenge"><i class="fas fa-triangle-exclamation"></i> Challenge</h5>
+                        <h5 class="challenge"><i class="fas fa-triangle-exclamation"></i> Tantangan</h5>
                         <p>${data.challenges}</p>
                     </div>
                     <div class="challenge-card">
-                        <h5 class="solution"><i class="fas fa-lightbulb"></i> Solution</h5>
+                        <h5 class="solution"><i class="fas fa-lightbulb"></i> Solusi</h5>
                         <p>${data.solutions}</p>
                     </div>
                 </div>
                 <div class="modal-actions">
-                    <a href="${data.demo}" target="_blank" rel="noopener" class="btn-solid-sm"><i class="fas fa-external-link-alt"></i> Live Demo</a>
-                    <a href="${data.github}" target="_blank" rel="noopener" class="btn-ghost"><i class="fab fa-github"></i> View Code</a>
+                    ${data.demo && data.demo !== '#' ? `<a href="${data.demo}" target="_blank" rel="noopener" class="btn-solid-sm"><i class="fas fa-external-link-alt"></i> Demo Langsung</a>` : ''}
+                    ${data.github && data.github !== '#' ? `<a href="${data.github}" target="_blank" rel="noopener" class="btn-solid-sm"><i class="fab fa-github"></i> Lihat di GitHub</a>` : ''}
                 </div>
             </div>
         `;
@@ -1794,31 +2023,49 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const expCanvas = document.getElementById('expCanvas');
         if (!exp || !timeline || !progress) return;
 
-        // subtle particles bg
-        if (expCanvas && !prefersReducedMotion) {
+        // subtle particles bg — dikurangi & pause offscreen
+        if (expCanvas && !prefersReducedMotion && !(isLowEnd && isMobile)) {
             const ctx = expCanvas.getContext('2d');
-            let particles = [], raf;
-            function resize() {
-                const r = expCanvas.parentElement.getBoundingClientRect();
-                expCanvas.width = r.width * (window.devicePixelRatio || 1);
-                expCanvas.height = r.height * (window.devicePixelRatio || 1);
-                expCanvas.style.width = r.width + 'px';
-                expCanvas.style.height = r.height + 'px';
-                ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
-                particles = [];
-                const count = isMobile ? 12 : 22;
-                const w = r.width, h = r.height;
-                for (let i=0;i<count;i++) particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.3+0.3, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2, o:Math.random()*0.25+0.08});
+            if(!ctx) {/* skip */}
+            else {
+                let particles = [], raf=null;
+                let expVisible=true;
+                const dprExp = Math.min(window.devicePixelRatio||1, 1.2);
+                function resize() {
+                    const r = expCanvas.parentElement.getBoundingClientRect();
+                    expCanvas.width = r.width * dprExp;
+                    expCanvas.height = r.height * dprExp;
+                    expCanvas.style.width = r.width + 'px';
+                    expCanvas.style.height = r.height + 'px';
+                    ctx.setTransform(dprExp, 0, 0, dprExp, 0, 0);
+                    particles = [];
+                    const count = isMobile ? 7 : (isLowEnd ? 10 : 14);
+                    const w = r.width, h = r.height;
+                    for (let i=0;i<count;i++) particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.1+0.25, vx:(Math.random()-0.5)*0.16, vy:(Math.random()-0.5)*0.16, o:Math.random()*0.20+0.06});
+                }
+                function draw() {
+                    if(!expVisible || document.hidden){ raf=null; return; }
+                    const w = expCanvas.width/dprExp, h = expCanvas.height/dprExp;
+                    ctx.clearRect(0,0,w,h);
+                    for(let i=0;i<particles.length;i++){ const p=particles[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(123,47,255,${p.o})`; ctx.fill(); }
+                    raf=requestAnimationFrame(draw);
+                }
+                resize(); draw();
+                let t; window.addEventListener('resize',()=>{clearTimeout(t); t=setTimeout(resize,150);}, {passive:true});
+                try{
+                    if('IntersectionObserver' in window){
+                        const ioE = new IntersectionObserver((entries)=>{
+                            entries.forEach(e=>{
+                                expVisible=e.isIntersecting;
+                                if(expVisible && !raf) draw();
+                                else if(!expVisible && raf){ cancelAnimationFrame(raf); raf=null; }
+                            });
+                        }, {threshold:0});
+                        ioE.observe(exp);
+                    }
+                }catch{}
+                document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } } else if(expVisible && !raf) draw(); });
             }
-            function draw() {
-                const w = expCanvas.width/(window.devicePixelRatio||1), h = expCanvas.height/(window.devicePixelRatio||1);
-                ctx.clearRect(0,0,w,h);
-                particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(123,47,255,${p.o})`; ctx.fill(); });
-                raf=requestAnimationFrame(draw);
-            }
-            resize(); draw();
-            let t; window.addEventListener('resize',()=>{clearTimeout(t); t=setTimeout(resize,120);});
-            document.addEventListener('visibilitychange',()=>{ if(document.hidden) cancelAnimationFrame(raf); else draw(); });
         }
 
         // observer for items
@@ -1833,33 +2080,49 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         },{threshold:0.2, rootMargin:'0px 0px -40px 0px'});
         items.forEach(it=>io.observe(it));
 
-        // progress line on scroll
+        // progress line on scroll — throttled + hanya saat timeline terlihat
         let ticking=false;
+        let timelineVisible=true;
+        try{
+            if('IntersectionObserver' in window){
+                const ioT = new IntersectionObserver((entries)=>{
+                    entries.forEach(e=> timelineVisible=e.isIntersecting);
+                }, {threshold:0});
+                ioT.observe(exp);
+            }
+        }catch{}
         function updateProgress(){
+            if(!timelineVisible){ ticking=false; return; }
             const rect = timeline.getBoundingClientRect();
+            if(rect.bottom < -120 || rect.top > window.innerHeight + 200){ ticking=false; return; }
             const vh = window.innerHeight;
             const total = rect.height;
-            const visibleTop = Math.max(0, vh/2 - rect.top); // center based progress
-            // alternative: progress based on how much timeline scrolled into view
             const start = rect.top - vh*0.6;
-            const end = rect.bottom - vh*0.4;
             const scrolled = Math.min(Math.max(0, -start), total + (vh*0.2));
             const pct = Math.min(1, Math.max(0, scrolled / (total + vh*0.1)));
-            progress.style.height = (pct * 100) + '%';
-            // highlight active item based on center
+            // gunakan transform scaleY lebih murah dari height — responsive left
+            const isMobileTl = window.innerWidth <= 900;
+            progress.style.transform = isMobileTl ? `scaleY(${pct})` : `translateX(-50%) scaleY(${pct})`;
+            progress.style.transformOrigin = 'top';
+            // highlight active item — hanya jika timeline di viewport
             const centerY = vh * 0.5;
             let activeIdx = -1;
-            items.forEach((item, idx)=>{
-                const r = item.getBoundingClientRect();
-                if(r.top < centerY && r.bottom > centerY*0.3) activeIdx = idx;
-            });
-            items.forEach((it,i)=> it.classList.toggle('active', i===activeIdx));
+            // loop cuma jika visible
+            for(let idx=0; idx<items.length; idx++){
+                const r = items[idx].getBoundingClientRect();
+                if(r.top < centerY && r.bottom > centerY*0.3){ activeIdx = idx; break; }
+            }
+            for(let i=0;i<items.length;i++) items[i].classList.toggle('active', i===activeIdx);
             ticking=false;
         }
+        // set initial transform origin
+        progress.style.transformOrigin='top';
+        progress.style.willChange='transform';
         window.addEventListener('scroll', ()=>{
+            if(!timelineVisible) return;
             if(!ticking){ requestAnimationFrame(updateProgress); ticking=true; }
         }, {passive:true});
-        window.addEventListener('resize', updateProgress);
+        window.addEventListener('resize', updateProgress, {passive:true});
         updateProgress();
     }
 
@@ -1887,26 +2150,37 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             return;
         }
 
-        // mobile quality reduction — capped for 60fps
-        const lowQuality = isLowEnd;
-        const pixelRatio = perfPixelRatio;
-        const particleCount = lowQuality ? 70 : 180;
-        const floatCount = lowQuality ? 2 : 5;
+        // mobile quality reduction — capped for 60fps, kurangi lebih agresif
+        const lowQuality = isLowEnd || isMobile;
+        const pixelRatio = Math.min(perfPixelRatio, lowQuality ? 1 : 1.2);
+        const particleCount = lowQuality ? 32 : 85;
+        const floatCount = lowQuality ? 1 : 3;
+        // skip lab 3D total di mobile sangat low-end untuk anti lag
+        if (isMobile && isLowEnd && window.innerWidth < 480) {
+            canvas.style.display='none';
+            if(fallback) fallback.hidden=false;
+            return;
+        }
 
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x050510, 0.035);
 
-        const camera = new THREE.PerspectiveCamera(58, section.clientWidth / section.clientHeight, 0.1, 100);
-        camera.position.set(0, 0.6, 7.2);
+        // portrait / mobile: FOV lebih lebar + kamera mundur agar bola tidak terpotong
+        const isPortraitLab = section.clientWidth < 600 || section.clientWidth < section.clientHeight;
+        let camBaseZ = isPortraitLab ? 8.8 : 7.2;
+        let camBaseY = isPortraitLab ? 0.35 : 0.6;
+        let camFov = isPortraitLab ? 66 : 58;
+        const camera = new THREE.PerspectiveCamera(camFov, section.clientWidth / section.clientHeight, 0.1, 100);
+        camera.position.set(0, camBaseY, camBaseZ);
 
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: !lowQuality });
         renderer.setPixelRatio(pixelRatio);
         renderer.setSize(section.clientWidth, section.clientHeight);
         renderer.setClearColor(0x050510, 0);
 
-        // grid
-        const gridGeo = new THREE.PlaneGeometry(36, 36, lowQuality? 18:32, lowQuality? 18:32);
-        const gridMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.07 });
+        // grid — kurangi segment untuk ringan
+        const gridGeo = new THREE.PlaneGeometry(36, 36, lowQuality? 10:18, lowQuality? 10:18);
+        const gridMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.06 });
         const grid = new THREE.Mesh(gridGeo, gridMat);
         grid.rotation.x = -Math.PI / 2.25;
         grid.position.y = -2.2;
@@ -1995,30 +2269,57 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             targetRotY = nx * 0.9;
             targetRotX = ny * 0.45;
         });
-        // touch drag
-        let dragging=false, lastX=0;
-        section.addEventListener('touchstart', (e)=>{ dragging=true; lastX=e.touches[0].clientX; }, {passive:true});
+        // touch drag — dukung sumbu X (orbit) + Y (tilt ringan), jangan blokir scroll vertikal
+        let dragging=false, lastX=0, lastY=0, axisLock=null;
+        section.addEventListener('touchstart', (e)=>{
+            dragging=true; axisLock=null;
+            lastX=e.touches[0].clientX;
+            lastY=e.touches[0].clientY;
+        }, {passive:true});
         section.addEventListener('touchmove', (e)=>{
             if(!dragging) return;
-            const dx = e.touches[0].clientX - lastX;
-            targetRotY += dx * 0.008;
-            lastX = e.touches[0].clientX;
-        }, {passive:true});
-        section.addEventListener('touchend', ()=> dragging=false);
-
-        window.addEventListener('scroll', ()=>{
-            const rect = section.getBoundingClientRect();
-            const vh = window.innerHeight;
-            if(rect.top < vh && rect.bottom > 0){
-                const prog = 1 - Math.abs((rect.top + rect.height/2 - vh/2) / (vh*0.6));
-                targetWarp = Math.max(0, Math.min(1, prog)) * 0.9;
+            const t=e.touches[0];
+            const dx=t.clientX-lastX;
+            const dy=t.clientY-lastY;
+            if(axisLock===null){
+                if(Math.abs(dx)>4 || Math.abs(dy)>4){
+                    axisLock = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+                }
             }
+            if(axisLock==='x'){
+                targetRotY += dx * 0.01;
+                targetRotX = Math.max(-0.5, Math.min(0.5, targetRotX + dy * 0.004));
+            }
+            lastX=t.clientX;
+            lastY=t.clientY;
+        }, {passive:true});
+        section.addEventListener('touchend', ()=>{ dragging=false; axisLock=null; }, {passive:true});
+        section.addEventListener('touchcancel', ()=>{ dragging=false; axisLock=null; }, {passive:true});
+
+        // scroll warp — throttled via rAF flag
+        let warpTick=false;
+        window.addEventListener('scroll', ()=>{
+            if(warpTick) return;
+            warpTick=true;
+            requestAnimationFrame(()=>{
+                warpTick=false;
+                const rect = section.getBoundingClientRect();
+                const vh = window.innerHeight;
+                if(rect.top < vh && rect.bottom > 0){
+                    const prog = 1 - Math.abs((rect.top + rect.height/2 - vh/2) / (vh*0.6));
+                    targetWarp = Math.max(0, Math.min(1, prog)) * 0.9;
+                }
+            });
         }, {passive:true});
 
-        let raf;
+        let raf=null;
+        let labVisible=true;
+        let frameCount=0;
         function animate(){
+            if(!labVisible || document.hidden){ raf=null; return; }
             raf=requestAnimationFrame(animate);
             const t = Date.now()*0.001;
+            frameCount++;
 
             curRotX += (targetRotX - curRotX)*0.04;
             curRotY += (targetRotY - curRotY)*0.04;
@@ -2037,15 +2338,13 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             shell.rotation.y -= 0.0012;
             shell.rotation.x = Math.sin(t*0.3)*0.15;
 
-            // grid subtle wave
-            const posAttr = gridGeo.attributes.position;
-            // avoid heavy per-vertex every frame on lowQuality — skip wave there
-            if(!lowQuality){
+            // grid subtle wave — only every 2 frames and skip on lowQuality
+            if(!lowQuality && frameCount % 2 === 0){
+                const posAttr = gridGeo.attributes.position;
                 for(let i=0;i<posAttr.count;i++){
                     const ox = posAttr.getX(i), oy = posAttr.getY(i);
-                    // original z is 0 plane, add wave based on distance
                     const dist = Math.sqrt(ox*ox + oy*oy);
-                    posAttr.setZ(i, Math.sin(dist*0.55 - t*1.4)*0.14 * (1 - dist/20));
+                    posAttr.setZ(i, Math.sin(dist*0.55 - t*1.4)*0.12 * (1 - dist/20));
                 }
                 posAttr.needsUpdate = true;
             }
@@ -2069,9 +2368,9 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             points.rotation.x += 0.0002;
 
             // camera warp
-            camera.position.z = 7.2 - warp*1.1;
+            camera.position.z = camBaseZ - warp*1.1;
             camera.position.x = curRotY * 0.9;
-            camera.position.y = 0.6 + curRotX * 0.5;
+            camera.position.y = camBaseY + curRotX * 0.5;
             camera.lookAt(0,0,0);
 
             // sprite pulse
@@ -2086,26 +2385,49 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         }
 
         if(!prefersReducedMotion){
+            // observer to pause when lab offscreen
+            try{
+                if('IntersectionObserver' in window){
+                    const ioLab = new IntersectionObserver((entries)=>{
+                        entries.forEach(e=>{
+                            labVisible = e.isIntersecting;
+                            if(labVisible && !raf) animate();
+                            else if(!labVisible && raf){ cancelAnimationFrame(raf); raf=null; }
+                        });
+                    }, {threshold:0.05});
+                    ioLab.observe(section);
+                }
+            }catch{}
             animate();
         } else {
             renderer.render(scene,camera);
         }
 
-        // resize
+        // resize — debounced & passive; update kamera untuk portrait/landscape
         let rt;
         window.addEventListener('resize', ()=>{
             clearTimeout(rt);
             rt=setTimeout(()=>{
-                camera.aspect = section.clientWidth / section.clientHeight;
+                const w = section.clientWidth;
+                const h = section.clientHeight;
+                if(!w || !h) return;
+                const portrait = w < 600 || w < h;
+                camFov = portrait ? 66 : 58;
+                camBaseZ = portrait ? 8.8 : 7.2;
+                camBaseY = portrait ? 0.35 : 0.6;
+                camera.fov = camFov;
+                camera.aspect = w / h;
                 camera.updateProjectionMatrix();
-                renderer.setSize(section.clientWidth, section.clientHeight);
-                renderer.setPixelRatio(perfPixelRatio);
-            },120);
+                camera.position.z = camBaseZ - warp*1.1;
+                camera.position.y = camBaseY + curRotX * 0.5;
+                renderer.setSize(w, h);
+                renderer.setPixelRatio(pixelRatio);
+            },150);
         }, {passive:true});
 
         document.addEventListener('visibilitychange', ()=>{
-            if(document.hidden) cancelAnimationFrame(raf);
-            else if(!prefersReducedMotion) animate();
+            if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+            else if(labVisible && !raf && !prefersReducedMotion) animate();
         });
     }
 
@@ -2121,30 +2443,50 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const canvasEl = document.getElementById('itermCanvas');
         if (!win || !body || !log || !input) return;
 
-        // bg canvas subtle
-        if (canvasEl && !prefersReducedMotion) {
+        // bg canvas subtle — optimized
+        if (canvasEl && !prefersReducedMotion && !(isLowEnd && isMobile)) {
             const ctx = canvasEl.getContext('2d');
-            let parts = [], raf;
-            function resize() {
-                const r = canvasEl.parentElement.getBoundingClientRect();
-                canvasEl.width = r.width * (window.devicePixelRatio||1);
-                canvasEl.height = r.height * (window.devicePixelRatio||1);
-                canvasEl.style.width = r.width+'px';
-                canvasEl.style.height = r.height+'px';
-                ctx.setTransform(window.devicePixelRatio||1,0,0,window.devicePixelRatio||1,0,0);
-                parts = [];
-                const c = isMobile?10:18;
-                for(let i=0;i<c;i++) parts.push({x:Math.random()*r.width, y:Math.random()*r.height, r:Math.random()*1.2+0.4, vx:(Math.random()-0.5)*0.18, vy:(Math.random()-0.5)*0.18, o:Math.random()*0.22+0.06});
+            if(!ctx) {/* skip */}
+            else {
+                let parts = [], raf=null;
+                let itermVisible=true;
+                const dprI = Math.min(window.devicePixelRatio||1, 1.2);
+                function resize() {
+                    const r = canvasEl.parentElement.getBoundingClientRect();
+                    canvasEl.width = r.width * dprI;
+                    canvasEl.height = r.height * dprI;
+                    canvasEl.style.width = r.width+'px';
+                    canvasEl.style.height = r.height+'px';
+                    ctx.setTransform(dprI,0,0,dprI,0,0);
+                    parts = [];
+                    const c = isMobile?6: (isLowEnd ? 8 : 10);
+                    for(let i=0;i<c;i++) parts.push({x:Math.random()*r.width, y:Math.random()*r.height, r:Math.random()*1+0.3, vx:(Math.random()-0.5)*0.14, vy:(Math.random()-0.5)*0.14, o:Math.random()*0.16+0.05});
+                }
+                function draw(){
+                    if(!itermVisible || document.hidden){ raf=null; return; }
+                    const w = canvasEl.width/dprI, h=canvasEl.height/dprI;
+                    ctx.clearRect(0,0,w,h);
+                    for(let i=0;i<parts.length;i++){ const p=parts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(0,240,255,${p.o})`; ctx.fill(); }
+                    raf=requestAnimationFrame(draw);
+                }
+                resize(); draw();
+                let tI;
+                window.addEventListener('resize', ()=>{ clearTimeout(tI); tI=setTimeout(resize,150); }, {passive:true});
+                document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } } else if(itermVisible && !raf) draw(); });
+                try{
+                    if('IntersectionObserver' in window){
+                        const ioI = new IntersectionObserver((entries)=>{
+                            entries.forEach(e=>{
+                                itermVisible=e.isIntersecting;
+                                if(itermVisible && !raf) draw();
+                                else if(!itermVisible && raf){ cancelAnimationFrame(raf); raf=null; }
+                            });
+                        }, {threshold:0});
+                        const secI=document.getElementById('playground');
+                        if(secI) ioI.observe(secI);
+                    }
+                }catch{}
             }
-            function draw(){
-                const w = canvasEl.width/(window.devicePixelRatio||1), h=canvasEl.height/(window.devicePixelRatio||1);
-                ctx.clearRect(0,0,w,h);
-                parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(0,240,255,${p.o})`; ctx.fill(); });
-                raf=requestAnimationFrame(draw);
-            }
-            resize(); draw();
-            window.addEventListener('resize', resize);
-            document.addEventListener('visibilitychange',()=>{ if(document.hidden) cancelAnimationFrame(raf); else draw(); });
         }
 
         const commands = ['help','about','skills','projects','contact','clear'];
@@ -2174,34 +2516,35 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             hIndex = history.length;
 
             if(cmd === 'help'){
-                addLine(`<span class="iterm-out-title">Available commands:</span>`, 'iterm-line--help');
-                addLine(`  <span class="iterm-cmd">about</span>    — show programmer info`, 'iterm-line--out');
-                addLine(`  <span class="iterm-cmd">skills</span>   — scroll to Tech Stack`, 'iterm-line--out');
-                addLine(`  <span class="iterm-cmd">projects</span> — scroll to Projects`, 'iterm-line--out');
-                addLine(`  <span class="iterm-cmd">contact</span>  — scroll to Contact`, 'iterm-line--out');
-                addLine(`  <span class="iterm-cmd">clear</span>    — clear terminal`, 'iterm-line--out');
-                addLine(`  <span class="iterm-cmd">help</span>     — show this help`, 'iterm-line--out');
+                addLine(`<span class="iterm-out-title">Perintah tersedia:</span>`, 'iterm-line--help');
+                addLine(`  <span class="iterm-cmd">about</span>    — tampilkan info programmer`, 'iterm-line--out');
+                addLine(`  <span class="iterm-cmd">skills</span>   — gulir ke Tumpukan Teknologi`, 'iterm-line--out');
+                addLine(`  <span class="iterm-cmd">projects</span> — gulir ke Proyek`, 'iterm-line--out');
+                addLine(`  <span class="iterm-cmd">contact</span>  — gulir ke Kontak`, 'iterm-line--out');
+                addLine(`  <span class="iterm-cmd">clear</span>    — bersihkan terminal`, 'iterm-line--out');
+                addLine(`  <span class="iterm-cmd">help</span>     — tampilkan bantuan ini`, 'iterm-line--out');
             } else if(cmd === 'about'){
-                addLine(`<span class="iterm-out-title">Ahmad Dhia — Full-Stack Developer</span>`, 'iterm-line--success');
-                addLine(`  Location : Indonesia`, 'iterm-line--out');
-                addLine(`  Role     : Full-Stack Developer`, 'iterm-line--out');
-                addLine(`  Focus    : Web Development, Performance, DX`, 'iterm-line--out');
-                addLine(`  Stack    : JavaScript • Node.js • PHP • MySQL • Python`, 'iterm-line--out');
-                addLine(`  Status   : <span style="color:#7CFFB2">Available for work</span> — let's build something great.`, 'iterm-line--out');
-                addLine(`  Tip: type <span class="iterm-cmd">projects</span> to see work`, 'iterm-line--out');
+                addLine(`<span class="iterm-out-title">Muhamad Farhan Muizaddin — Software Engineer</span>`, 'iterm-line--success');
+                addLine(`  Lokasi   : Kp. Situ RT003/002, Desa Sukaremi, Kec. Megamendung, Kab. Bogor`, 'iterm-line--out');
+                addLine(`  Peran    : Software Engineer`, 'iterm-line--out');
+                addLine(`  Fokus    : Web Development, RESTful API, Database`, 'iterm-line--out');
+                addLine(`  Pendidikan: SMK WIKRAMA 1 Garut — RPL (2019–2022)`, 'iterm-line--out');
+                addLine(`  Tumpukan : PHP • Laravel • CodeIgniter • Node.js • Express.js • RESTful API • MySQL • JavaScript`, 'iterm-line--out');
+                addLine(`  Status   : <span style="color:#7CFFB2">Terbuka untuk kolaborasi</span>`, 'iterm-line--out');
+                addLine(`  Tips: ketik <span class="iterm-cmd">projects</span> untuk melihat karya`, 'iterm-line--out');
             } else if(cmd === 'skills'){
-                addLine(`→ Navigating to <span class="iterm-cmd">Tech Stack</span>...`, 'iterm-line--success');
+                addLine(`→ Menuju <span class="iterm-cmd">Tumpukan Teknologi</span>...`, 'iterm-line--success');
                 setTimeout(()=> document.getElementById('skills')?.scrollIntoView({behavior:'smooth', block:'start'}), 220);
             } else if(cmd === 'projects'){
-                addLine(`→ Opening <span class="iterm-cmd">Projects</span>...`, 'iterm-line--success');
+                addLine(`→ Membuka <span class="iterm-cmd">Proyek</span>...`, 'iterm-line--success');
                 setTimeout(()=> document.getElementById('projects')?.scrollIntoView({behavior:'smooth', block:'start'}), 220);
             } else if(cmd === 'contact'){
-                addLine(`→ Jumping to <span class="iterm-cmd">Contact</span>...`, 'iterm-line--success');
+                addLine(`→ Melompat ke <span class="iterm-cmd">Kontak</span>...`, 'iterm-line--success');
                 setTimeout(()=> document.getElementById('contact')?.scrollIntoView({behavior:'smooth', block:'start'}), 220);
             } else if(cmd === 'clear'){
                 log.innerHTML = '';
             } else {
-                addLine(`command not found: <span class="iterm-cmd">${escapeHtml(cmd)}</span> — type <span class="iterm-cmd">help</span>`, 'iterm-line--error');
+                addLine(`perintah tidak ditemukan: <span class="iterm-cmd">${escapeHtml(cmd)}</span> — ketik <span class="iterm-cmd">help</span>`, 'iterm-line--error');
             }
         }
 
@@ -2232,7 +2575,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         input.addEventListener('focus', ()=> win.classList.add('focused'));
         input.addEventListener('blur', ()=> win.classList.remove('focused'));
 
-        win.addEventListener('click', ()=> input.focus());
+        win.addEventListener('click', ()=> input.focus({preventScroll:true}));
 
         input.addEventListener('keydown', (e)=>{
             if(e.key === 'Enter'){
@@ -2283,7 +2626,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         // focus when visible
         const io = new IntersectionObserver((entries)=>{
             entries.forEach(ent=>{
-                if(ent.isIntersecting) setTimeout(()=> input.focus(), 400);
+                if(ent.isIntersecting) setTimeout(()=> input.focus({preventScroll:true}), 400);
             });
         },{threshold:0.4});
         io.observe(win);
@@ -2305,31 +2648,50 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const contactCanvas = document.getElementById('contactCanvas');
         if(!form || !nameEl || !emailEl || !msgEl || !subjectEl) return;
 
-        // bg canvas
-        if(contactCanvas && !prefersReducedMotion){
+        // bg canvas — optimized, low count, pause offscreen
+        if(contactCanvas && !prefersReducedMotion && !(isLowEnd && isMobile)){
             const ctx = contactCanvas.getContext('2d');
-            let parts=[], raf;
-            function resize(){
-                const r = contactCanvas.parentElement.getBoundingClientRect();
-                contactCanvas.width = r.width*(window.devicePixelRatio||1);
-                contactCanvas.height = r.height*(window.devicePixelRatio||1);
-                contactCanvas.style.width=r.width+'px';
-                contactCanvas.style.height=r.height+'px';
-                ctx.setTransform(window.devicePixelRatio||1,0,0,window.devicePixelRatio||1,0,0);
-                parts=[];
-                const c = isMobile?10:18;
-                for(let i=0;i<c;i++) parts.push({x:Math.random()*r.width, y:Math.random()*r.height, r:Math.random()*1.2+0.4, vx:(Math.random()-0.5)*0.18, vy:(Math.random()-0.5)*0.18, o:Math.random()*0.20+0.06});
+            if(!ctx) {/* skip */}
+            else {
+                let parts=[], raf=null;
+                let contactVisible=true;
+                const dprC = Math.min(window.devicePixelRatio||1, 1.2);
+                function resize(){
+                    const r = contactCanvas.parentElement.getBoundingClientRect();
+                    contactCanvas.width = r.width*dprC;
+                    contactCanvas.height = r.height*dprC;
+                    contactCanvas.style.width=r.width+'px';
+                    contactCanvas.style.height=r.height+'px';
+                    ctx.setTransform(dprC,0,0,dprC,0,0);
+                    parts=[];
+                    const c = isMobile?6: (isLowEnd ? 8 : 10);
+                    for(let i=0;i<c;i++) parts.push({x:Math.random()*r.width, y:Math.random()*r.height, r:Math.random()*1+0.3, vx:(Math.random()-0.5)*0.14, vy:(Math.random()-0.5)*0.14, o:Math.random()*0.16+0.05});
+                }
+                function draw(){
+                    if(!contactVisible || document.hidden){ raf=null; return; }
+                    const w=contactCanvas.width/dprC, h=contactCanvas.height/dprC;
+                    ctx.clearRect(0,0,w,h);
+                    for(let i=0;i<parts.length;i++){ const p=parts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(0,240,255,${p.o})`; ctx.fill(); }
+                    raf=requestAnimationFrame(draw);
+                }
+                resize(); draw();
+                let tC;
+                window.addEventListener('resize', ()=>{ clearTimeout(tC); tC=setTimeout(resize,150); }, {passive:true});
+                document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } } else if(contactVisible && !raf) draw(); });
+                try{
+                    if('IntersectionObserver' in window){
+                        const ioC = new IntersectionObserver((entries)=>{
+                            entries.forEach(e=>{
+                                contactVisible=e.isIntersecting;
+                                if(contactVisible && !raf) draw();
+                                else if(!contactVisible && raf){ cancelAnimationFrame(raf); raf=null; }
+                            });
+                        }, {threshold:0});
+                        const secC=document.getElementById('contact');
+                        if(secC) ioC.observe(secC);
+                    }
+                }catch{}
             }
-            function draw(){
-                const w=contactCanvas.width/(window.devicePixelRatio||1), h=contactCanvas.height/(window.devicePixelRatio||1);
-                ctx.clearRect(0,0,w,h);
-                parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=w; if(p.x>w)p.x=0; if(p.y<0)p.y=h; if(p.y>h)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(0,240,255,${p.o})`; ctx.fill(); });
-                raf=requestAnimationFrame(draw);
-            }
-            resize(); draw();
-            window.addEventListener('resize', resize, {passive:true});
-            document.addEventListener('visibilitychange',()=>{ if(document.hidden) cancelAnimationFrame(raf); else draw(); });
-            observeVisibility(document.getElementById('contact'), ()=>{ if(!raf) draw(); }, ()=>{ if(raf){ cancelAnimationFrame(raf); raf=null; } });
         }
 
         // char count — 5000 max, warn at 80%
@@ -2398,23 +2760,23 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             if(state==='loading'){
                 submit.disabled = true;
                 submit.classList.add('is-loading');
-                btnTextEl.textContent = 'Sending...';
+                btnTextEl.textContent = 'Mengirim...';
                 if(btnIconEl) btnIconEl.style.opacity='0';
                 submit.setAttribute('aria-busy','true');
             } else if(state==='success'){
                 submit.classList.add('is-success');
-                btnTextEl.textContent = 'Message Sent ✓';
+                btnTextEl.textContent = 'Pesan Terkirim ✓';
                 if(btnIconEl){ btnIconEl.className='fas fa-check'; btnIconEl.style.opacity='1'; btnIconEl.style.transform='scale(1.1)'; }
                 submit.disabled = true;
                 btnResetTimer = setTimeout(()=> setButtonState('idle'), 2400);
             } else if(state==='error'){
                 submit.classList.add('is-error');
-                btnTextEl.textContent = 'Try Again';
+                btnTextEl.textContent = 'Coba Lagi';
                 if(btnIconEl){ btnIconEl.className='fas fa-rotate-right'; btnIconEl.style.opacity='1'; }
                 btnResetTimer = setTimeout(()=> setButtonState('idle'), 2200);
             } else {
                 // idle
-                btnTextEl.textContent = 'Send Message';
+                btnTextEl.textContent = 'Kirim Pesan';
                 if(btnIconEl){ btnIconEl.className='fas fa-paper-plane'; btnIconEl.style.opacity='1'; btnIconEl.style.transform=''; }
                 submit.disabled = false;
                 submit.removeAttribute('aria-busy');
@@ -2431,32 +2793,32 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             let firstInvalid = null;
 
             if(!name || name.length < 2){
-                setFieldError(nameEl,'errName', !name ? 'Name is required.' : 'Name must be at least 2 characters.');
+                setFieldError(nameEl,'errName', !name ? 'Nama wajib diisi.' : 'Nama minimal 2 karakter.');
                 valid=false; firstInvalid = firstInvalid || nameEl;
             } else if(name.length > 100){
-                setFieldError(nameEl,'errName','Name must be under 100 characters.');
+                setFieldError(nameEl,'errName','Nama maksimal 100 karakter.');
                 valid=false; firstInvalid = firstInvalid || nameEl;
             }
 
             const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if(!email){
-                setFieldError(emailEl,'errEmail','Email is required.');
+                setFieldError(emailEl,'errEmail','Email wajib diisi.');
                 valid=false; firstInvalid = firstInvalid || emailEl;
             } else if(!emailRe.test(email)){
-                setFieldError(emailEl,'errEmail','Please enter a valid email address.');
+                setFieldError(emailEl,'errEmail','Masukkan alamat email yang valid.');
                 valid=false; firstInvalid = firstInvalid || emailEl;
             } else if(email.length > 254){
-                setFieldError(emailEl,'errEmail','Email is too long.');
+                setFieldError(emailEl,'errEmail','Email terlalu panjang.');
                 valid=false; firstInvalid = firstInvalid || emailEl;
             }
 
             // Subject optional — sesuai spec terbaru: hanya nama/email/pesan wajib; jika diisi validasi 3-200
             if(subject){
                 if(subject.length < 3){
-                    setFieldError(subjectEl,'errSubject','Subject must be at least 3 characters.');
+                    setFieldError(subjectEl,'errSubject','Subjek minimal 3 karakter.');
                     valid=false; firstInvalid = firstInvalid || subjectEl;
                 } else if(subject.length > 200){
-                    setFieldError(subjectEl,'errSubject','Subject must be under 200 characters.');
+                    setFieldError(subjectEl,'errSubject','Subjek maksimal 200 karakter.');
                     valid=false; firstInvalid = firstInvalid || subjectEl;
                 }
             } else {
@@ -2465,44 +2827,53 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             }
 
             if(!message){
-                setFieldError(msgEl,'errMessage','Message is required.');
+                setFieldError(msgEl,'errMessage','Pesan wajib diisi.');
                 valid=false; firstInvalid = firstInvalid || msgEl;
             } else if(message.length < 10){
-                setFieldError(msgEl,'errMessage','Message must be at least 10 characters.');
+                setFieldError(msgEl,'errMessage','Pesan minimal 10 karakter.');
                 valid=false; firstInvalid = firstInvalid || msgEl;
             } else if(message.length > 5000){
-                setFieldError(msgEl,'errMessage','Message must be under 5000 characters.');
+                setFieldError(msgEl,'errMessage','Pesan maksimal 5000 karakter.');
                 valid=false; firstInvalid = firstInvalid || msgEl;
             }
 
             return { valid, firstInvalid };
         }
 
-        // v12.3 — debug total: log version agar tahu deployment terbaru ter-load
-        console.log('[contact] initContact v12.3 — TO mfarhanmuizaddin@gmail.com via Resend, strict success check');
+        // v13.0 — Method Not Allowed FIXED: frontend selalu POST, backend handle OPTIONS+POST, strict success, anti double-submit
+        console.log('[contact] initContact v13.0 — TO mfarhanmuizaddin@gmail.com via Resend, POST ketat');
         // Pastikan honeypot kosong saat load — cegah autofill browser yang sebabkan fake success tanpa email
         const honeyInit = form.querySelector('input[name="website"]');
         if (honeyInit) {
             honeyInit.value = '';
             // double clear after short delay (beberapa browser autofill setelah load)
             setTimeout(()=> { if (honeyInit) honeyInit.value = ''; }, 500);
+            // cegah browser password manager mengisi honeypot
+            honeyInit.setAttribute('autocomplete', 'off');
         }
+
+        let isSubmitting = false;
 
         form.addEventListener('submit', async (e)=>{
             e.preventDefault();
-            console.log('[contact] submit intercepted — honeypot check, validation, fetch /api/contact');
+            e.stopPropagation();
+            console.log('[contact] submit intercepted — honeypot check, validation, fetch POST /api/contact');
+            if (isSubmitting) {
+                console.warn('[contact] already submitting — ignore double click');
+                return;
+            }
             // Honeypot check first — silent return, no error shown to bot
             const honey = form.querySelector('input[name="website"]');
             if(honey && honey.value.trim()){
                 console.warn('[contact] honeypot filled — treating as spam, not sending', { value: honey.value });
                 // Pretend success for bot — jangan kirim email
-                showToast('Message sent successfully.', 'success');
+                showToast('Pesan berhasil dikirim.', 'success');
                 return;
             }
 
             const { valid, firstInvalid } = validateFrontend();
             if(!valid){
-                showToast('Please fix the highlighted fields.', 'error');
+                showToast('Perbaiki kolom yang ditandai.', 'error');
                 if(firstInvalid) firstInvalid.focus();
                 // shake button for feedback
                 if(submit){ submit.classList.add('is-error'); setTimeout(()=> submit.classList.remove('is-error'), 420); }
@@ -2511,7 +2882,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
 
             // Offline check
             if(typeof navigator !== 'undefined' && navigator.onLine === false){
-                showToast('Unable to send your message. Please check your connection and try again.', 'error');
+                showToast('Anda tampak offline. Periksa koneksi dan coba lagi.', 'error');
                 setButtonState('error');
                 return;
             }
@@ -2524,13 +2895,14 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 website: honey ? honey.value : '' // honeypot, server will drop if filled
             };
 
+            isSubmitting = true;
             setButtonState('loading');
 
             const controller = new AbortController();
             const timeoutId = setTimeout(()=> controller.abort(), 15000);
 
             try {
-                console.log('[contact] fetching /api/contact', { payload: { ...payload, website: payload.website ? '[filled honeypot]' : '' } });
+                console.log('[contact] fetching POST /api/contact', { payload: { ...payload, website: payload.website ? '[filled honeypot]' : '' } });
                 const res = await fetch('/api/contact', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -2545,13 +2917,21 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                     data = await res.json().catch(()=> ({}));
                 } else {
                     const txt = await res.text().catch(()=> '');
+                    // Jika backend mengembalikan HTML (mis. static server tanpa API), deteksi 405 palsu
+                    if (txt && txt.trim().startsWith('<!DOCTYPE') || txt.includes('Method Not Allowed')) {
+                        console.error('[contact] Non-JSON response — likely static server without API. Run vercel dev or deploy to Vercel.');
+                        showToast('Layanan sementara tidak tersedia. Coba lagi nanti atau hubungi via email.', 'error');
+                        setButtonState('error');
+                        isSubmitting = false;
+                        return;
+                    }
                     try{ data = JSON.parse(txt); } catch{ data = { error: txt || res.statusText, message: txt || res.statusText }; }
                 }
 
                 console.log('[contact] response', { status: res.status, ok: res.ok, data });
 
                 // STRICT: hanya success true yang dianggap berhasil — cegah false positive
-                // Sesuai spec: if (!response.ok || !result.success) throw
+                // Backend untuk GET/PUT/DELETE akan balas 405 dengan {success:false} — frontend harus tangani sebagai error, bukan fallback ke GET
                 if(!res.ok || !data || data.success !== true){
                     // Pastikan error ditampilkan, bukan success palsu
                     if(res.status===400 && data && data.fields){
@@ -2560,47 +2940,62 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                             const inputMap = { name:nameEl, email:emailEl, subject:subjectEl, message:msgEl };
                             if(map[field]) setFieldError(inputMap[field], map[field], msg);
                         });
-                        showToast(data.message || data.error || 'Invalid form data. Please check the highlighted fields.', 'error');
+                        showToast(data.message || data.error || 'Data formulir tidak valid. Periksa kolom yang ditandai.', 'error');
                     } else if(res.status===400){
-                        showToast(data.message || data.error || 'Invalid form data.', 'error');
+                        showToast(data.message || data.error || 'Data formulir tidak valid.', 'error');
                     } else if(res.status===429){
-                        showToast(data.message || data.error || 'Too many messages. Please wait a few minutes and try again.', 'error');
+                        const retry = res.headers.get('Retry-After');
+                        const hint = retry ? ` (${retry}s)` : '';
+                        showToast((data.message || data.error || 'Terlalu banyak pesan.') + hint, 'error');
                     } else if(res.status===413){
-                        showToast(data.message || data.error || 'Message is too large. Please shorten it and try again.', 'error');
+                        showToast(data.message || data.error || 'Pesan terlalu besar. Persingkat dan coba lagi.', 'error');
                     } else if(res.status===405){
-                        showToast(data.message || data.error || 'Method not allowed.', 'error');
+                        // Method Not Allowed — seharusnya tidak terjadi jika frontend POST konsisten
+                        // Tampilkan pesan ramah, jangan raw "Method Not Allowed"
+                        console.error('[contact] 405 Method Not Allowed — check that frontend uses POST and backend allows POST. URL:', '/api/contact');
+                        showToast('Kesalahan konfigurasi layanan. Coba lagi sesaat. Jika berlanjut, hubungi via email.', 'error');
                     } else if(res.status>=500){
-                        showToast(data.message || 'Something went wrong on our side. Please try again later.', 'error');
+                        showToast(data.message || data.error || 'Terjadi kesalahan di sisi kami. Coba lagi nanti.', 'error');
                     } else {
-                        const msg = data.message || data.error || 'Unable to send your message. Please try again.';
+                        const msg = data.message || data.error || 'Gagal mengirim pesan. Coba lagi.';
                         showToast(msg, 'error');
                     }
                     console.warn('[contact] server response (error path)', { status: res.status, data });
                     setButtonState('error');
+                    isSubmitting = false;
                     return;
                 }
 
                 // HANYA jika benar-benar success === true
                 console.log('[contact] SUCCESS — email queued, Resend ID:', data.id);
-                showToast('Message sent successfully.', 'success');
+                showToast('Pesan berhasil dikirim! Saya akan merespons secepatnya.', 'success');
                 form.reset();
+                if (honey) honey.value = '';
                 updateCount();
                 clearErrors();
                 setButtonState('success');
+                isSubmitting = false;
                 return;
             } catch(err){
                 clearTimeout(timeoutId);
                 console.error('[contact] fetch error', err);
                 if(err && err.name==='AbortError'){
-                    showToast('Request timed out. Please try again.', 'error');
+                    showToast('Waktu permintaan habis. Coba lagi.', 'error');
                 } else if(typeof navigator !== 'undefined' && navigator.onLine === false){
-                    showToast('Unable to send your message. Please check your connection and try again.', 'error');
+                    showToast('Anda tampak offline. Periksa koneksi dan coba lagi.', 'error');
                 } else if(err instanceof TypeError && /fetch|network|Failed to fetch/i.test(String(err.message||''))){
-                    showToast('Unable to send your message. Please check your connection and try again.', 'error');
+                    // Sering terjadi jika API tidak tersedia (mis. live-server tanpa vercel dev)
+                    const isLocalStatic = location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+                    if (isLocalStatic && !location.port.includes('3000')) {
+                        showToast('API tidak tersedia di mode statis lokal. Jalankan `vercel dev` atau deploy ke Vercel untuk menguji form kontak.', 'error');
+                    } else {
+                        showToast('Gagal mengirim pesan. Periksa koneksi dan coba lagi.', 'error');
+                    }
                 } else {
-                    showToast('Something went wrong. Please try again.', 'error');
+                    showToast('Terjadi kesalahan. Coba lagi.', 'error');
                 }
                 setButtonState('error');
+                isSubmitting = false;
             }
         });
 
@@ -2648,13 +3043,75 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     }
 
     // ============================================
+    // HERO AMBIENT — floating particles & code fragments
+    // ============================================
+    function initHeroAmbient(){
+        if(prefersReducedMotion) return;
+        const particleWrap = document.getElementById('floatingParticles');
+        const fragmentWrap = document.getElementById('codeFragments');
+        if(!particleWrap && !fragmentWrap) return;
+
+        // --- tiny floating particles (CSS animated, GPU cheap) ---
+        if(particleWrap && !particleWrap.childElementCount){
+            const count = isMobile ? 8 : (isLowEnd ? 12 : 18);
+            const frag = document.createDocumentFragment();
+            for(let i=0;i<count;i++){
+                const p = document.createElement('span');
+                p.className = 'hero-particle' + (Math.random()>0.55 ? ' purple' : '');
+                p.style.left = (Math.random()*100).toFixed(2) + '%';
+                p.style.top  = (55 + Math.random()*45).toFixed(2) + '%';
+                p.style.animationDuration = (7 + Math.random()*7).toFixed(1) + 's';
+                p.style.animationDelay = (Math.random()*10).toFixed(1) + 's';
+                p.style.width = p.style.height = (2 + Math.random()*2).toFixed(1) + 'px';
+                frag.appendChild(p);
+            }
+            particleWrap.appendChild(frag);
+        }
+
+        // --- subtle code fragments drifting in background ---
+        if(fragmentWrap && !fragmentWrap.childElementCount){
+            const snippets = [
+                'const dev = "full-stack";',
+                'git commit -m "ship it"',
+                'npm run build',
+                'function deploy() {',
+                'SELECT * FROM projects;',
+                'async/await → promise',
+                '</> { portfolio }',
+                'php artisan serve',
+                'return <Fast />;',
+                'kubectl rollout status'
+            ];
+            const count = isMobile ? 4 : (isLowEnd ? 5 : 7);
+            const frag = document.createDocumentFragment();
+            for(let i=0;i<count;i++){
+                const el = document.createElement('span');
+                el.className = 'code-fragment' + (Math.random()>0.6 ? ' frag-purple' : '');
+                el.textContent = snippets[i % snippets.length];
+                el.style.left = (Math.random()*92).toFixed(2) + '%';
+                el.style.top  = (8 + Math.random()*80).toFixed(2) + '%';
+                el.style.animationDuration = (10 + Math.random()*8).toFixed(1) + 's';
+                el.style.animationDelay = (Math.random()*12).toFixed(1) + 's';
+                frag.appendChild(el);
+            }
+            fragmentWrap.appendChild(frag);
+        }
+    }
+
+    // ============================================
     // INIT ALL
     // ============================================
+    function initFooterYear(){
+        const el = document.getElementById('footerYear');
+        if(el) el.textContent = String(new Date().getFullYear());
+    }
+
     function initAll() {
         initNavbar();
         initHeroCanvas();
         initThreeJS();
         initNoise();
+        initHeroAmbient();
         initHeroParallax();
         initMouseParallax();
         initProfileImageFallback();
@@ -2670,12 +3127,14 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         initLab3D();
         initIterm();
         initContact();
+        initFooterYear();
     }
 
     // ============================================
     // START
     // ============================================
     document.addEventListener('DOMContentLoaded', () => {
+        initFooterYear();
         initLoader();
     });
 
