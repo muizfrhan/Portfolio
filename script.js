@@ -56,7 +56,7 @@
             urlLabel: 'github.com/muizfrhan/Tiket-Pesawat',
             role: 'Software Engineer / Developer',
             type: 'Web Application',
-            year: 'CV'
+            year: '2023'
         },
         {
             id: 'sipekerba',
@@ -75,7 +75,7 @@
             urlLabel: 'github.com/muizfrhan/sipekerba',
             role: 'Software Engineer / Developer',
             type: 'Web Application',
-            year: 'CV'
+            year: '2023'
         },
         {
             id: 'sigaka',
@@ -94,7 +94,7 @@
             urlLabel: 'github.com/muizfrhan/Sigaka',
             role: 'Software Engineer / Developer',
             type: 'Web Application',
-            year: 'CV'
+            year: '2023'
         },
         {
             id: 'system-management-hotel',
@@ -1937,39 +1937,66 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const content = document.getElementById('modalContent');
         if (!modal || !content) return;
         const bg = projectBg(data);
+        const hasImage = isImagePath(data.image);
+        const hasDemo = data.demo && data.demo !== '#';
+        const hasGithub = data.github && data.github !== '#';
+        // Preview: gambar asli memakai <img> (ada alt text), gradient tetap pakai gradientMap
+        const preview = hasImage
+            ? `<div class="pd-shot">
+                   <i class="fas ${data.icon} pd-shot-fallback" aria-hidden="true"></i>
+                   <img class="pd-shot-img" src="${data.image}" alt="${data.title} project preview" width="1440" height="900" loading="lazy" decoding="async" onerror="this.style.display='none'">
+               </div>`
+            : `<div class="pd-shot pd-shot--solid" style="background:${bg}">
+                   <i class="fas ${data.icon} pd-shot-fallback" aria-hidden="true"></i>
+               </div>`;
         content.innerHTML = `
-            <div class="modal-hero">
-                <div class="modal-hero-bg" style="background:${bg}"></div>
-                <div class="modal-hero-overlay"></div>
-                <div class="modal-hero-content">
-                    <span class="modal-badge"><i class="fas ${data.icon}"></i> ${data.category} • ${data.year}</span>
-                    <h3 id="modalTitle">${data.title}</h3>
-                    <p id="modalSubtitle">${data.longDescription}</p>
+            <header class="pd-head">
+                <span class="modal-badge"><i class="fas ${data.icon}"></i> ${data.category} <em>•</em> ${data.year}</span>
+                <h3 id="modalTitle">${data.title}</h3>
+                <p id="modalSubtitle">${data.description}</p>
+            </header>
+
+            <figure class="pd-preview">
+                <div class="pd-preview-bar">
+                    <span class="pd-dot"></span><span class="pd-dot"></span><span class="pd-dot"></span>
+                    <span class="pd-preview-url"><i class="fas fa-lock"></i> ${data.urlLabel || data.title}</span>
                 </div>
+                ${preview}
+                <figcaption>Pratinjau antarmuka ${data.title}</figcaption>
+            </figure>
+
+            <div class="pd-actions">
+                ${hasGithub ? `<a href="${data.github}" class="pd-btn pd-btn-primary" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub Repository <i class="fas fa-arrow-up-right-from-square pd-arrow" aria-hidden="true"></i></a>` : ''}
+                ${hasDemo ? `<a href="${data.demo}" class="pd-btn pd-btn-ghost" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Live Demo <i class="fas fa-arrow-up-right-from-square pd-arrow" aria-hidden="true"></i></a>` : ''}
             </div>
+
             <div class="modal-body">
-                <div class="modal-section">
+                <section class="modal-section">
                     <h4><i class="fas fa-align-left"></i> Tentang Proyek</h4>
-                    <p style="color:var(--text-secondary); line-height:1.7; font-size:0.94rem;">${data.description} ${data.longDescription}</p>
+                    <p class="pd-about">${data.longDescription}</p>
+                </section>
+
+                <div class="pd-cols">
+                    <section class="modal-section pd-info">
+                        <h4><i class="fas fa-circle-info"></i> Detail Proyek</h4>
+                        <dl class="modal-meta">
+                            <div class="modal-meta-row"><dt>Project</dt><dd>${data.title}</dd></div>
+                            ${data.role ? `<div class="modal-meta-row"><dt>Role</dt><dd>${data.role}</dd></div>` : ''}
+                            ${data.type ? `<div class="modal-meta-row"><dt>Type</dt><dd>${data.type}</dd></div>` : ''}
+                            ${data.year ? `<div class="modal-meta-row"><dt>Tahun</dt><dd>${data.year}</dd></div>` : ''}
+                        </dl>
+                    </section>
+                    <section class="modal-section pd-tech">
+                        <h4><i class="fas fa-layer-group"></i> Teknologi</h4>
+                        <div class="modal-techs">${data.technologies.map(t=>`<span class="tech-pill highlight">${t}</span>`).join('')}</div>
+                    </section>
                 </div>
-                <div class="modal-section">
-                    <h4><i class="fas fa-circle-info"></i> Detail Proyek</h4>
-                    <div class="modal-meta">
-                        <div class="modal-meta-row"><span>Project</span><strong>${data.title}</strong></div>
-                        ${data.role ? `<div class="modal-meta-row"><span>Role</span><strong>${data.role}</strong></div>` : ''}
-                        ${data.type ? `<div class="modal-meta-row"><span>Type</span><strong>${data.type}</strong></div>` : ''}
-                        <div class="modal-meta-row"><span>Technology</span><strong>${data.technologies.join(', ')}</strong></div>
-                        ${data.github && data.github !== '#' ? `<div class="modal-meta-row"><span>Repository</span><strong><a href="${data.github}" target="_blank" rel="noopener">GitHub</a></strong></div>` : ''}
-                    </div>
-                </div>
-                <div class="modal-section">
+
+                <section class="modal-section">
                     <h4><i class="fas fa-list-check"></i> Fitur Utama</h4>
                     <ul class="modal-features">${data.features.map(f=>`<li>${f}</li>`).join('')}</ul>
-                </div>
-                <div class="modal-section">
-                    <h4><i class="fas fa-layer-group"></i> Teknologi</h4>
-                    <div class="modal-techs">${data.technologies.map(t=>`<span class="tech-pill highlight">${t}</span>`).join('')}</div>
-                </div>
+                </section>
+
                 <div class="challenge-grid">
                     <div class="challenge-card">
                         <h5 class="challenge"><i class="fas fa-triangle-exclamation"></i> Tantangan</h5>
@@ -1980,15 +2007,12 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                         <p>${data.solutions}</p>
                     </div>
                 </div>
-                <div class="modal-actions">
-                    ${data.demo && data.demo !== '#' ? `<a href="${data.demo}" target="_blank" rel="noopener" class="btn-solid-sm"><i class="fas fa-external-link-alt"></i> Demo Langsung</a>` : ''}
-                    ${data.github && data.github !== '#' ? `<a href="${data.github}" target="_blank" rel="noopener" class="btn-solid-sm"><i class="fab fa-github"></i> Lihat di GitHub</a>` : ''}
-                </div>
             </div>
         `;
         lastFocus = document.activeElement;
         modal.classList.add('open');
         modal.setAttribute('aria-hidden','false');
+        modal.scrollTop = 0;
         document.body.classList.add('modal-open');
         // focus close btn
         setTimeout(()=> document.getElementById('modalClose')?.focus(), 60);
