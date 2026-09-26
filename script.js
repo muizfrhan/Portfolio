@@ -16,7 +16,7 @@
     let isLoaded = false;
 
     // ============================================
-    // PROJECTS DATA — 4 proyek (APSS unggulan + proyek lain)
+    // PROJECTS DATA — 5 proyek (APSS unggulan + proyek lain)
     // ============================================
     const projectsData = [
         {
@@ -95,6 +95,25 @@
             role: 'Software Engineer / Developer',
             type: 'Web Application',
             year: 'CV'
+        },
+        {
+            id: 'system-management-hotel',
+            title: 'System Management Hotel',
+            category: 'Hotel Management System',
+            description: 'Sistem manajemen hotel berbasis web — tamu memesan kamar secara online, sementara resepsionis dan admin mengelola reservasi, check-in/out, pembayaran, housekeeping, dan laporan operasional dalam satu portal.',
+            longDescription: 'Lokanata HMS adalah sistem manajemen hotel yang mengelola seluruh operasional hotel secara digital, dari pemesanan kamar online oleh tamu, pengelolaan reservasi oleh resepsionis, hingga manajemen tata graha (housekeeping). Dibangun dengan Laravel 12 sebagai REST API dan Vue.js 3 + Vite sebagai antarmuka — mencakup landing page hotel publik, pemesanan dan pelacakan reservasi, dashboard statistik berbasis grafik, manajemen kamar, tipe kamar, fasilitas, staf, pembayaran, pencetakan faktur PDF, serta laporan pendapatan dan reservasi.',
+            image: 'assets/images/projects/system-management-hotel.png',
+            icon: 'fa-hotel',
+            technologies: ['Laravel 12', 'Vue.js 3', 'PHP 8.2', 'Vite', 'Tailwind CSS', 'Pinia', 'MySQL', 'Laravel Sanctum', 'Chart.js', 'Docker'],
+            features: ['Landing page hotel publik dengan pencarian kamar, fasilitas, dan galeri', 'Pemesanan kamar online oleh tamu dan pelacakan status reservasi', 'Autentikasi session Sanctum dengan pembatasan role (Admin, Resepsionis, Tata Graha)', 'Dashboard admin dengan statistik kamar, grafik pendapatan, dan status reservasi', 'Modul reservasi: terima/tolak booking online dan pembuatan reservasi manual', 'Proses check-in, check-out, pembayaran, serta pencetakan faktur PDF', 'Manajemen kamar, tipe kamar, fasilitas, data tamu, dan staf', 'Modul housekeeping untuk memperbarui status kebersihan kamar', 'Laporan pendapatan dan reservasi, serta pengaturan sistem'],
+            challenges: 'Menyatukan empat aktor dengan hak akses berbeda — tamu, resepsionis, tata graha, dan admin — ke dalam satu alur operasional hotel yang konsisten, mulai dari pemesanan kamar, penerimaan tamu di front desk, hingga pelaporan pendapatan.',
+            solutions: 'Arsitektur REST API Laravel 12 dengan RoleMiddleware dan autentikasi session Sanctum untuk SPA, service layer terpisah (Reservasi, CheckInOut, Pembayaran, RoomStatus, Laporan), serta front-end Vue 3 dengan Pinia untuk state management dan Vue Router role-based.',
+            github: 'https://github.com/muizfrhan/system-management-hotel',
+            demo: '#',
+            urlLabel: 'github.com/muizfrhan/system-management-hotel',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: '2026'
         }
     ];
 
