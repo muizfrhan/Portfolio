@@ -5628,8 +5628,18 @@ body { text-rendering: optimizeLegibility; }
     color: var(--accent-cyan);
 }
 
-/* ---------- Responsif ---------- */
-@media (max-width: 900px) {
+/* ---------- Responsif ----------
+   Tiga tingkat, dipilih dari hasil pengukuran nyata (lebar 360-1920px):
+
+   1. <=1024px - search dan chip dipisah ke dua baris. Sebelumnya keduanya
+     -sharing satu baris, sehingga chip terpotong (butuh 635px) dan tombol
+      "dll" ikut hilang di luar layar.
+   2. <=600px  - chip boleh membungkus ke beberapa baris. Keputusan ini
+      menggantikan scroll horizontal: dengan scroll, "dll" dan 3 chip
+      terakhir tidak bisa disentuh sama sekali di layar 360px.
+   3. <=480px  - ukuran chip dikecilkan agar tetap muat 3 per baris. */
+
+@media (max-width: 1024px) {
     .project-toolbar {
         flex-direction: column;
         gap: 12px;
@@ -5637,36 +5647,81 @@ body { text-rendering: optimizeLegibility; }
     }
 
     .project-search {
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         width: 100%;
-        max-width: 420px;
+        max-width: 480px;
     }
 
     .project-filters-row {
         width: 100%;
-        max-width: 560px;
-        overflow-x: auto;
-        scrollbar-width: none;
-        padding-bottom: 2px;
+        max-width: 660px;
+        justify-content: center;
+    /* Tidak ada scroll: chip membungkus sendiri bila tidak muat. */
+        overflow: visible;
     }
 
-    .project-filters-row::-webkit-scrollbar {
-        display: none;
+    .project-filters {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .project-filters-row {
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
+    .filter-chip {
+        font-size: 0.78rem;
+        padding: 9px 14px;
+    }
+
+    .filter-chip .chip-count {
+        font-size: 0.66rem;
+        padding: 1px 6px;
+    }
+
+    /* Menu "dll" dipusatkan supaya tidak keluar viewport saat chip
+       membungkus ke baris terakhir. */
     .more-menu {
         right: auto;
-        left: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(250px, calc(100vw - 32px));
     }
 }
 
 @media (max-width: 480px) {
+    .project-toolbar {
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .project-search input {
+        font-size: 0.82rem;
+        padding: 10px 36px 10px 36px;
+    }
+
+    .filter-chip {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+        gap: 6px;
+    }
+
     .slides-head {
         align-items: center;
     }
 
     .slides-track .project-card {
         flex: 0 0 84%;
+    }
+}
+
+/* Layar sangat sempit (320px): sembunyikan hitungan agar chip muat. */
+@media (max-width: 360px) {
+    .filter-chip .chip-count {
+        display: none;
     }
 }
 
