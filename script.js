@@ -1760,11 +1760,14 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     // featured (1) + 3 kartu = 4. Sisanya masuk ke slide.
     const GRID_LIMIT = 4;
 
+    // Hanya beberapa kategori yang ditampilkan langsung. Sisanya
+    // disembunyikan di menu "dll" supaya barisnya tidak ramai.
+    const KATEGORI_UTAMA = ['php', 'codeigniter', 'laravel', 'ajax'];
+
     // Beberapa proyek menulis teknologi yang sebenarnya sama dengan nama
     // berbeda ("PHP Native" vs "PHP 8.2", "Bootstrap 5" vs "Bootstrap").
     // Tanpa normalisasi ini, filter "php" hanya akan cocok ke sebagian
-    // proyek. Peta ini menyatukannya supaya satu chip benar-benar mewakili
-    // satu teknologi.
+    // proyek. Peta ini menyatukannya supaya satu chip mewakili satu teknologi.
     const TEK_ALIAS = {
         'php native': 'php',
         'php 8.2': 'php',
@@ -1781,41 +1784,99 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     }
 
     let filterAktif = 'all';
+    let cariAktif = '';
 
-    // Proyek cocok dengan filter bila salah satu teknologinya (sudah
-    // dinormalisasi) sama dengan filter.
-    function cocokFilter(p, filter) {
-        if (filter === 'all') return true;
-        return p.technologies.some(t => normTek(t) === filter);
+    // Proyek cocok bila teknologinya cocok DAN pencariansnya cocok.
+    function cocokProyek(p) {
+        const olehFilter = filterAktif === 'all'
+            || p.technologies.some(t => normTek(t) === filterAktif);
+
+        if (!olehFilter) return false;
+        if (!cariAktif) return true;
+
+        // Pencarian menutupi judul, deskripsi, kategori, dan teknologi.
+        const q = cariAktif;
+        return [p.title, p.description, p.longDescription, p.category, p.technologies.join(' ')]
+            .join(' ')
+            .toLowerCase()
+            .includes(q);
     }
 
-    // Kumpulkan seluruh teknologi yang dipakai + jumlah proyeknya, lalu urut
-    // dari yang paling sering muncul. Chip dibuat otomatis, jadi menambah
-    // proyek baru cukup dengan menambah teknologinya di projectsData.
-    function bangunFilterChips() {
-        const wrap = document.getElementById('projectFilters');
-        if (!wrap) return;
-
+    // Hitung berapa proyek untuk tiap teknologi (setelah normalisasi).
+    function hitungTeknologi() {
         const hitung = new Map();
         projectsData.forEach(p => {
             new Set(p.technologies.map(normTek)).forEach(k => {
                 hitung.set(k, (hitung.get(k) || 0) + 1);
             });
         });
+        return hitung;
+    }
 
-        const urut = [...hitung.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-        // Semua teknologi ditampilkan, bukan hanya 10 teratas: membatasi
-        // daftar membuat sebagian teknologi (mis. Vue.js) mustahil difilter.
+    // Nama tampilan yang benar. Kata kunci seperti ini tidak bisa
+    // diturunkan dari huruf kecil, jadi ditulis eksplisit. Nilai yang tidak
+    // ada di sini akan difallback ke title-case biasa.
+    const LABEL_TEK = {
+        php: 'PHP',
+        codeigniter: 'CodeIgniter',
+        laravel: 'Laravel',
+        ajax: 'AJAX',
+        api: 'API',
+        mysql: 'MySQL',
+        css: 'CSS',
+        html: 'HTML',
+        javascript: 'JavaScript',
+        'chart.js': 'Chart.js',
+        'tailwind css': 'Tailwind CSS',
+        'vue.js': 'Vue.js',
+        'node.js': 'Node.js',
+        'express.js': 'Express.js',
+        adminlte: 'AdminLTE',
+        sweetalert2: 'SweetAlert2',
+        vite: 'Vite',
+        docker: 'Docker',
+        pinia: 'Pinia',
+        'laravel sanctum': 'Sanctum',
+    };
 
-        const chip = (key, label, n) =>
-            `<button type="button" class="filter-chip" data-filter="${key}" aria-pressed="${key === filterAktif}">
+    function labelChip(k) {
+        if (LABEL_TEK[k]) return LABEL_TEK[k];
+        return k.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    function bangunToolbar() {
+        const wrap = document.getElementById('projectFilters');
+        const menu = document.getElementById('moreMenu');
+        if (!wrap || !menu) return;
+
+        const hitung = hitungTeknologi();
+        const ada = k => hitung.has(k);
+
+        // Chip utama: hanya kategori yang benar-benar dipakai proyek.
+        const utama = KATEGORI_UTAMA.filter(ada);
+
+        const chip = (k, label, n) =>
+            `<button type="button" class="filter-chip" data-filter="${k}" aria-pressed="false">
                 ${label}<span class="chip-count">${n}</span>
             </button>`;
 
         wrap.innerHTML =
             chip('all', 'Semua', projectsData.length) +
-            urut.map(([k, n]) => chip(k, k, n)).join('');
+            utama.map(k => chip(k, labelChip(k), hitung.get(k))).join('');
+
+        // Menu "dll": semua teknologi di luar kategori utama, urut abjad.
+        const sisa = [...hitung.keys()]
+            .filter(k => !KATEGORI_UTAMA.includes(k))
+            .sort((a, b) => (hitung.get(b) - hitung.get(a)) || a.localeCompare(b));
+
+        menu.innerHTML = sisa.length
+            ? sisa.map(k => `
+                <button type="button" class="more-menu-item" data-filter="${k}" aria-pressed="false">
+                    <span>${labelChip(k)}</span><span class="chip-count">${hitung.get(k)}</span>
+                </button>`).join('')
+            : '<p class="more-empty" style="padding:10px 12px;color:var(--text-secondary);font-size:.8rem;margin:0">Tidak ada kategori lain</p>';
     }
+
 
     function renderProyek() {
         const featuredWrap = document.getElementById('featuredProject');
@@ -1824,9 +1885,9 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const track = document.getElementById('slidesTrack');
         if (!featuredWrap || !grid) return;
 
-        const cocok = projectsData.filter(p => cocokFilter(p, filterAktif));
+        const cocok = projectsData.filter(cocokProyek);
         const featured = projectsData.find(p => p.featured) || projectsData[0];
-        const featuredMuncul = featured && cocokFilter(featured, filterAktif);
+        const featuredMuncul = featured && cocokProyek(featured);
 
         // Featured occupying one of the 4 slots, the rest go to the grid.
         const sisaSlot = featuredMuncul ? GRID_LIMIT - 1 : GRID_LIMIT;
@@ -1843,7 +1904,8 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         grid.innerHTML = diGrid.length
             ? diGrid.map((p, i) => renderCard(p, spans[i % spans.length], i)).join('')
             : `<div class="projects-empty">
-                 <p>Tidak ada proyek yang memakai <strong>${filterAktif}</strong>.</p>
+                 <i class="fas fa-magnifying-glass-minus" aria-hidden="true"></i>
+                 <p>Tidak ada proyek yang cocok dengan pencarian ini.</p>
                </div>`;
 
         // Slide untuk sisanya
@@ -1892,13 +1954,24 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     // Semua listener dipasang ulang setiap render karena kartu & chip
     // digenerate ulang (innerHTML) setiap filter berubah.
     function pasangInteraksi() {
-        // Filter chips
-        document.querySelectorAll('.filter-chip').forEach(chip => {
+        // Chip utama + item menu "dll" (keduanya memakai data-filter).
+        // Guard `dataset.bound` mencegah listener menumpuk: chip hanya
+        // dibuat sekali, tapi renderProyek() dipanggil setiap filter berubah.
+        document.querySelectorAll('[data-filter]').forEach(chip => {
+            if (chip.dataset.bound === '1') return;
+            chip.dataset.bound = '1';
             chip.addEventListener('click', () => {
-                if (filterAktif === chip.dataset.filter) return;
-                filterAktif = chip.dataset.filter;
+                const f = chip.dataset.filter;
+                tutupMore();
+                if (filterAktif === f) return;
+                filterAktif = f;
                 renderProyek();
             });
+        });
+
+        // Tandai chip/menu yang sedang aktif
+        document.querySelectorAll('[data-filter]').forEach(chip => {
+            chip.setAttribute('aria-pressed', String(chip.dataset.filter === filterAktif));
         });
 
         // Reveal on scroll untuk kartu yang baru dirender
@@ -1993,10 +2066,73 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         }, true);
     }
 
+    // ---------- Menu "dll" ----------
+    function tutupMore() {
+        const menu = document.getElementById('moreMenu');
+        const btn = document.getElementById('moreBtn');
+        if (menu) menu.hidden = true;
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+
+    function initMoreMenu() {
+        const btn = document.getElementById('moreBtn');
+        const menu = document.getElementById('moreMenu');
+        if (!btn || !menu) return;
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const buka = menu.hidden;
+            menu.hidden = !buka;
+            btn.setAttribute('aria-expanded', String(buka));
+        });
+
+        // Klik di luar menutup menu
+        document.addEventListener('click', (e) => {
+            if (!menu.hidden && !menu.contains(e.target)) tutupMore();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !menu.hidden) {
+                tutupMore();
+                btn.focus();
+            }
+        });
+    }
+
+    // ---------- Pencarian ----------
+    function initSearch() {
+        const input = document.getElementById('projectSearch');
+        const clear = document.getElementById('searchClear');
+        if (!input) return;
+
+        // Debounce supaya render tidak jalan tiap ketikan.
+        let t = null;
+        input.addEventListener('input', () => {
+            if (clear) clear.hidden = !input.value;
+            clearTimeout(t);
+            t = setTimeout(() => {
+                const v = input.value.trim().toLowerCase();
+                if (v === cariAktif) return;
+                cariAktif = v;
+                renderProyek();
+            }, 180);
+        });
+
+        clear?.addEventListener('click', () => {
+            input.value = '';
+            clear.hidden = true;
+            cariAktif = '';
+            renderProyek();
+            input.focus();
+        });
+    }
+
     function initProjects() {
         if (!document.getElementById('projectsGrid')) return;
-        bangunFilterChips();
+        bangunToolbar();
         renderProyek();
+        initMoreMenu();
+        initSearch();
         initSlidesNav();
         initProjectsCanvas();
     }

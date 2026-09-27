@@ -606,11 +606,33 @@
                 <p class="section-desc">Dibuat dengan presisi — skalabel, cepat, dan menyenangkan</p>
             </div>
 
+            <!-- Toolbar: search + kategori utama + "dll" -->
+            <div class="project-toolbar" id="projectToolbar">
+                <div class="project-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="projectSearch" autocomplete="off"
+                           placeholder="Cari proyek, teknologi, atau kategori..."
+                           aria-label="Cari proyek, teknologi, atau kategori">
+                    <button type="button" class="search-clear" id="searchClear" hidden
+                            aria-label="Bersihkan pencarian">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="project-filters-row">
+                    <div class="project-filters" id="projectFilters" role="group" aria-label="Filter kategori"></div>
+                    <div class="project-more">
+                        <button type="button" class="filter-chip more-btn" id="moreBtn"
+                                aria-expanded="false" aria-haspopup="true">
+                            dll <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="more-menu" id="moreMenu" hidden></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Featured Project -->
             <div id="featuredProject" class="featured-wrap" data-scroll-reveal="fade-up"></div>
-
-            <!-- Filter proyek: chip teknologi dibuat otomatis dari projectsData -->
-            <div class="project-filters" id="projectFilters" role="group" aria-label="Filter proyek berdasarkan teknologi"></div>
 
             <!-- Projects Grid Asymmetric (maksimal 4 proyek) -->
             <div id="projectsGrid" class="projects-grid"></div>
