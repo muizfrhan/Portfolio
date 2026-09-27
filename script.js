@@ -40,6 +40,25 @@
             year: '2026'
         },
         {
+            id: 'perpustakaan',
+            title: 'Pusaku — Sistem Informasi Perpustakaan',
+            category: 'Library Management System',
+            description: 'Sistem informasi perpustakaan berbasis web — katalog buku, peminjaman dan pengembalian dengan perhitungan denda otomatis, autentikasi tiga role, serta dashboard statistik per modul.',
+            longDescription: 'Pusaku adalah sistem informasi perpustakaan berbasis web yang menangani seluruh alur operasional perpustakaan, mulai dari katalog buku, data anggota, peminjaman dengan batas maksimal dua buku per anggota, pengembalian beserta kondisi dan pencatatan kondisi buku, hingga perhitungan denda keterlambatan yang otomatis. Dibangun dengan PHP Native dan MySQL — aplikasi ini memiliki tiga level akses (Owner, Admin/Petugas, dan Anggota) dengan satu form login terpadu, modul pengaturan profil lengkap untuk setiap role, dashboard statistik, dan cetak faktur. Seluruh antarmuka dibangun dengan design system Tailwind CSS buatan sendiri, dilengkapi sistem notifikasi berbasis flash message, dialog konfirmasi kustom, dan spinner otomatis pada tombol simpan.',
+            image: 'assets/images/projects/perpustakaan-dashboard.png',
+            icon: 'fa-book-open',
+            technologies: ['PHP Native', 'MySQL', 'Tailwind CSS', 'Vanilla JavaScript', 'HTML', 'CSS', 'AJAX', 'Chart.js'],
+            features: ['Login terpadu untuk tiga role (Owner, Admin, Anggota) tanpa pemilih role', 'Katalog buku dengan pencarian, filter, dan pagination', 'Peminjaman dengan batas maksimal dua buku dan nomor pinjam otomatis', 'Pengembalian dengan pencatatan kondisi buku dan hitung denda keterlambatan otomatis', 'Manajemen akun: nonaktifkan dan hapus permanen dengan akun Owner terkunci', 'Dashboard statistik, daftar buku terlambat, dan pengembalian dengan denda', 'Pengaturan profil lengkap: foto profil, data diri, dan ganti password', 'Audit log untuk setiap aksi destruktif'],
+            challenges: 'Menyatukan tiga tabel akun dengan hak akses berbeda — Owner, Admin, dan Anggota — ke dalam satu alur login yang sama, sekaligus memastikan setiap modul hanya bisa diakses oleh role yang benar. Selain itu, hapus akun Berisiko karena foreign key ber-ON DELETE CASCADE, sehingga menghapus satu akun dapat ikut menghapus riwayat peminjaman dan pengembalian di tabel lain.',
+            solutions: 'Sesi login tunggal yang mendeteksi peran dari username/NIM lalu mengarahkan ke panel masing-masing, dengan guard role di tiap halaman dan fragment. Untuk hapus akun, alur dibuat dua tahap — nonaktifkan (soft delete) sebagai aksi default, dan hapus permanen yang menolak target terkunci serta peminjaman yang belum kembali, sambil menampilkan jumlah riwayat yang akan ikut terhapus agar pengguna tidak kehilangan data tanpa sadar.',
+            github: 'https://github.com/muizfrhan/Perpustakaan',
+            demo: '#',
+            urlLabel: 'github.com/muizfrhan/Perpustakaan',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: '2026'
+        },
+        {
             id: 'tiket-pesawat',
             title: 'Tiket Pesawat',
             category: 'Ticket Booking System',
