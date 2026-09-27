@@ -5229,3 +5229,257 @@ body { text-rendering: optimizeLegibility; }
     margin: 0 auto;
     padding: 0 40px;
 }
+/* ==========================================================================
+   PROYEK: FILTER TEKNOLOGI + SLIDE PROYEK SISAAN
+   --------------------------------------------------------------------------
+   Dua tambahan untuk section #projects:
+
+   1. .project-filters  - deretan chip (chip filter). Chip dibuat otomatis
+                          dari seluruh teknologi yang dipakai projectsData,
+                          jadi tidak perlu ditulis manual per proyek.
+   2. .project-slides   - track horizontal untuk proyek yang tidak muat di
+                          grid (grid dibatasi 4 proyek), dengan tombol
+                          geser + scroll-snap.
+
+   Mengikuti variabel & gaya yang sudah dipakai design system:
+   --accent-cyan, --glass-bg, --radius-md, --transition-fast.
+   ========================================================================== */
+
+.project-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 34px 0 26px;
+}
+
+.project-filters:empty {
+    display: none;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: var(--text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.filter-chip:hover {
+    border-color: rgba(0, 240, 255, 0.35);
+    color: var(--text-primary);
+    background: rgba(0, 240, 255, 0.07);
+}
+
+.filter-chip:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
+.filter-chip[aria-pressed='true'] {
+    background: rgba(0, 240, 255, 0.14);
+    border-color: rgba(0, 240, 255, 0.5);
+    color: var(--accent-cyan);
+}
+
+.filter-chip .chip-count {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+}
+
+.filter-chip[aria-pressed='true'] .chip-count {
+    background: rgba(0, 240, 255, 0.22);
+}
+
+/* ---------- Slide proyek sisanya ---------- */
+.project-slides {
+    margin-top: 34px;
+}
+
+.project-slides[hidden] {
+    display: none;
+}
+
+.slides-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.slides-tag {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    color: var(--accent-cyan);
+    opacity: 0.85;
+    margin-bottom: 6px;
+}
+
+.slides-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.slides-nav {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.slides-btn {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.slides-btn:hover:not(:disabled) {
+    background: rgba(0, 240, 255, 0.12);
+    border-color: rgba(0, 240, 255, 0.4);
+    color: var(--accent-cyan);
+}
+
+.slides-btn:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
+.slides-btn:disabled {
+    opacity: 0.28;
+    cursor: not-allowed;
+}
+
+/* Track geser horizontal. scroll-snap supaya terasa seperti carousel. */
+.slides-track {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    /* Sembunyikan scrollbar tapi tetap bisa digeser & di-swipe */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 4px 4px 10px;
+    cursor: grab;
+}
+
+.slides-track::-webkit-scrollbar {
+    display: none;
+}
+
+.slides-track:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 4px;
+    border-radius: var(--radius-md);
+}
+
+.slides-track.dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+}
+
+.slides-track .project-card {
+    flex: 0 0 clamp(280px, 30%, 380px);
+    grid-column: auto;
+    scroll-snap-align: start;
+    opacity: 1;
+    transform: none;
+}
+
+.slides-progress {
+    height: 3px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+}
+
+.slides-progress span {
+    display: block;
+    height: 100%;
+    width: 25%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    transition: transform 0.2s ease, width 0.2s ease;
+}
+
+/* ---------- Keadaan kosong (filter tidak ada hasil) ---------- */
+.projects-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.projects-empty p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    margin: 0;
+}
+
+.projects-empty strong {
+    color: var(--accent-cyan);
+}
+
+/* ---------- Responsif ---------- */
+@media (max-width: 768px) {
+    .project-filters {
+        gap: 8px;
+        margin: 26px 0 20px;
+        /* Boleh geser mendatar, bukan wraps 5 baris di layar sempit */
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+    }
+
+    .project-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .slides-head {
+        align-items: center;
+    }
+
+    .slides-track .project-card {
+        flex: 0 0 84%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .slides-track {
+        scroll-behavior: auto;
+    }
+}

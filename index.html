@@ -609,8 +609,31 @@
             <!-- Featured Project -->
             <div id="featuredProject" class="featured-wrap" data-scroll-reveal="fade-up"></div>
 
-            <!-- Projects Grid Asymmetric -->
+            <!-- Filter proyek: chip teknologi dibuat otomatis dari projectsData -->
+            <div class="project-filters" id="projectFilters" role="group" aria-label="Filter proyek berdasarkan teknologi"></div>
+
+            <!-- Projects Grid Asymmetric (maksimal 4 proyek) -->
             <div id="projectsGrid" class="projects-grid"></div>
+
+            <!-- Slide untuk proyek sisanya -->
+            <div class="project-slides" id="projectSlides" hidden>
+                <div class="slides-head">
+                    <div>
+                        <span class="slides-tag">JUGA DIBANGUN</span>
+                        <h3 class="slides-title">Proyek Lainnya</h3>
+                    </div>
+                    <div class="slides-nav">
+                        <button type="button" class="slides-btn" id="slidesPrev" aria-label="Geser ke kiri">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <button type="button" class="slides-btn" id="slidesNext" aria-label="Geser ke kanan">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="slides-track" id="slidesTrack" tabindex="0" aria-label="Daftar proyek lainnya, bisa digeser"></div>
+                <div class="slides-progress" aria-hidden="true"><span id="slidesBar"></span></div>
+            </div>
         </div>
     </section>
 

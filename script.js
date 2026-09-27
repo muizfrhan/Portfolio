@@ -1756,21 +1756,152 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         'gradient-f': 'linear-gradient(135deg, #7b2fff 0%, #00f0ff 60%, #2ecc71 100%)'
     };
 
-    function initProjects() {
+    // Batas proyek yang tampil di grid. Featured ikut dihitung, jadi
+    // featured (1) + 3 kartu = 4. Sisanya masuk ke slide.
+    const GRID_LIMIT = 4;
+
+    // Beberapa proyek menulis teknologi yang sebenarnya sama dengan nama
+    // berbeda ("PHP Native" vs "PHP 8.2", "Bootstrap 5" vs "Bootstrap").
+    // Tanpa normalisasi ini, filter "php" hanya akan cocok ke sebagian
+    // proyek. Peta ini menyatukannya supaya satu chip benar-benar mewakili
+    // satu teknologi.
+    const TEK_ALIAS = {
+        'php native': 'php',
+        'php 8.2': 'php',
+        'vanilla javascript': 'javascript',
+        'bootstrap 5': 'bootstrap',
+        'laravel 12': 'laravel',
+        'laravel sanctum': 'laravel',
+        'vue.js 3': 'vue.js',
+    };
+
+    function normTek(t) {
+        const k = String(t).toLowerCase().trim();
+        return TEK_ALIAS[k] || k;
+    }
+
+    let filterAktif = 'all';
+
+    // Proyek cocok dengan filter bila salah satu teknologinya (sudah
+    // dinormalisasi) sama dengan filter.
+    function cocokFilter(p, filter) {
+        if (filter === 'all') return true;
+        return p.technologies.some(t => normTek(t) === filter);
+    }
+
+    // Kumpulkan seluruh teknologi yang dipakai + jumlah proyeknya, lalu urut
+    // dari yang paling sering muncul. Chip dibuat otomatis, jadi menambah
+    // proyek baru cukup dengan menambah teknologinya di projectsData.
+    function bangunFilterChips() {
+        const wrap = document.getElementById('projectFilters');
+        if (!wrap) return;
+
+        const hitung = new Map();
+        projectsData.forEach(p => {
+            new Set(p.technologies.map(normTek)).forEach(k => {
+                hitung.set(k, (hitung.get(k) || 0) + 1);
+            });
+        });
+
+        const urut = [...hitung.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+        // Semua teknologi ditampilkan, bukan hanya 10 teratas: membatasi
+        // daftar membuat sebagian teknologi (mis. Vue.js) mustahil difilter.
+
+        const chip = (key, label, n) =>
+            `<button type="button" class="filter-chip" data-filter="${key}" aria-pressed="${key === filterAktif}">
+                ${label}<span class="chip-count">${n}</span>
+            </button>`;
+
+        wrap.innerHTML =
+            chip('all', 'Semua', projectsData.length) +
+            urut.map(([k, n]) => chip(k, k, n)).join('');
+    }
+
+    function renderProyek() {
         const featuredWrap = document.getElementById('featuredProject');
         const grid = document.getElementById('projectsGrid');
+        const slides = document.getElementById('projectSlides');
+        const track = document.getElementById('slidesTrack');
         if (!featuredWrap || !grid) return;
 
+        const cocok = projectsData.filter(p => cocokFilter(p, filterAktif));
         const featured = projectsData.find(p => p.featured) || projectsData[0];
-        const others = projectsData.filter(p => p.id !== featured.id);
+        const featuredMuncul = featured && cocokFilter(featured, filterAktif);
 
-        // render featured
-        featuredWrap.innerHTML = renderFeatured(featured);
-        // render grid
-        const spans = ['span-7','span-5','span-5','span-7','span-12'];
-        grid.innerHTML = others.map((p, i) => renderCard(p, spans[i % spans.length], i)).join('');
+        // Featured occupying one of the 4 slots, the rest go to the grid.
+        const sisaSlot = featuredMuncul ? GRID_LIMIT - 1 : GRID_LIMIT;
+        const others = cocok.filter(p => !featuredMuncul || p.id !== featured.id);
+        const diGrid = others.slice(0, Math.max(0, sisaSlot));
+        const diSlide = others.slice(Math.max(0, sisaSlot));
 
-        // reveal + tilt
+        // Featured
+        featuredWrap.innerHTML = featuredMuncul ? renderFeatured(featured) : '';
+        featuredWrap.hidden = !featuredMuncul;
+
+        // Grid
+        const spans = ['span-7', 'span-5', 'span-5', 'span-7', 'span-12'];
+        grid.innerHTML = diGrid.length
+            ? diGrid.map((p, i) => renderCard(p, spans[i % spans.length], i)).join('')
+            : `<div class="projects-empty">
+                 <p>Tidak ada proyek yang memakai <strong>${filterAktif}</strong>.</p>
+               </div>`;
+
+        // Slide untuk sisanya
+        if (slides && track) {
+            if (!diSlide.length) {
+                slides.hidden = true;
+                track.innerHTML = '';
+            } else {
+                slides.hidden = false;
+                track.innerHTML = diSlide.map((p, i) => renderCard(p, 'slide-card', i)).join('');
+                requestAnimationFrame(() => {
+                    track.scrollLeft = 0;
+                    updateSlideNav();
+                });
+            }
+        }
+
+        // Tandai chip aktif
+        document.querySelectorAll('.filter-chip').forEach(c => {
+            c.setAttribute('aria-pressed', String(c.dataset.filter === filterAktif));
+        });
+
+        pasangInteraksi();
+    }
+
+    function updateSlideNav() {
+        const track = document.getElementById('slidesTrack');
+        const prev = document.getElementById('slidesPrev');
+        const next = document.getElementById('slidesNext');
+        const bar = document.getElementById('slidesBar');
+        if (!track) return;
+
+        const max = track.scrollWidth - track.clientWidth;
+        const bisaGeser = max > 4;
+
+        if (prev) prev.disabled = !bisaGeser || track.scrollLeft <= 2;
+        if (next) next.disabled = !bisaGeser || track.scrollLeft >= max - 2;
+        if (bar) {
+            const rasio = bisaGeser ? Math.max(0.18, track.clientWidth / track.scrollWidth) : 1;
+            const pos = bisaGeser ? track.scrollLeft / max : 0;
+            bar.style.width = (rasio * 100).toFixed(1) + '%';
+            bar.style.transform = `translateX(${(pos * (100 / rasio - 100)).toFixed(1)}%)`;
+        }
+    }
+
+    // Semua listener dipasang ulang setiap render karena kartu & chip
+    // digenerate ulang (innerHTML) setiap filter berubah.
+    function pasangInteraksi() {
+        // Filter chips
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                if (filterAktif === chip.dataset.filter) return;
+                filterAktif = chip.dataset.filter;
+                renderProyek();
+            });
+        });
+
+        // Reveal on scroll untuk kartu yang baru dirender
         const revealEls = document.querySelectorAll('.featured-project, .project-card');
         const ro = new IntersectionObserver((entries) => {
             entries.forEach(e => {
@@ -1780,22 +1911,23 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                     ro.unobserve(e.target);
                 }
             });
-        }, { threshold: 0.16 });
+        }, { threshold: 0.12 });
         revealEls.forEach((el, idx) => {
             el.dataset.delay = (idx * 0.07) + 's';
             ro.observe(el);
         });
 
+        // Efek tilt 3D pada hover
         if (!isMobile && !prefersReducedMotion && !isLowEnd) {
             document.querySelectorAll('.featured-project, .project-card').forEach(card => {
+                if (card.closest('#slidesTrack')) return; // skip kartu di slide
                 let raf = null;
-                const innerHover = card; // transform card itself
                 card.addEventListener('mousemove', (e) => {
                     const r = card.getBoundingClientRect();
-                    const cx = r.left + r.width/2;
-                    const cy = r.top + r.height/2;
-                    const dx = (e.clientX - cx) / (r.width/2);
-                    const dy = (e.clientY - cy) / (r.height/2);
+                    const cx = r.left + r.width / 2;
+                    const cy = r.top + r.height / 2;
+                    const dx = (e.clientX - cx) / (r.width / 2);
+                    const dy = (e.clientY - cy) / (r.height / 2);
                     if (raf) cancelAnimationFrame(raf);
                     raf = requestAnimationFrame(() => {
                         card.style.transform = `perspective(900px) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg) translateY(-4px)`;
@@ -1808,20 +1940,64 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             });
         }
 
-        // click handlers
+        // Klik kartu -> buka modal detail
         document.querySelectorAll('[data-project-id]').forEach(el => {
             el.addEventListener('click', (e) => {
-                // prevent link navigation when project card clicked but github/demo clicked
                 if (e.target.closest('.card-link') || e.target.closest('.featured-actions a') || e.target.closest('.card-footer a')) return;
-                const id = el.dataset.projectId;
-                openProjectModal(id);
+                openProjectModal(el.dataset.projectId);
             });
             el.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProjectModal(el.dataset.projectId); }
             });
-            // cursor
         });
+    }
 
+    function initSlidesNav() {
+        const track = document.getElementById('slidesTrack');
+        const prev = document.getElementById('slidesPrev');
+        const next = document.getElementById('slidesNext');
+        if (!track) return;
+
+        const langkah = () => {
+            const kartu = track.querySelector('.project-card');
+            return kartu ? kartu.getBoundingClientRect().width + 18 : 320;
+        };
+
+        prev?.addEventListener('click', () => track.scrollBy({ left: -langkah(), behavior: 'smooth' }));
+        next?.addEventListener('click', () => track.scrollBy({ left: langkah(), behavior: 'smooth' }));
+        track.addEventListener('scroll', () => requestAnimationFrame(updateSlideNav), { passive: true });
+        window.addEventListener('resize', () => requestAnimationFrame(updateSlideNav));
+
+        // Drag-to-scroll dengan pointer (menggeser tanpa scrollbar)
+        let dragging = false, startX = 0, startLeft = 0, moved = false;
+        track.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'touch') return; // biarkan swipe native
+            dragging = true; moved = false;
+            startX = e.clientX; startLeft = track.scrollLeft;
+            track.classList.add('dragging');
+        });
+        window.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            const dx = e.clientX - startX;
+            if (Math.abs(dx) > 4) moved = true;
+            track.scrollLeft = startLeft - dx;
+        });
+        window.addEventListener('pointerup', () => {
+            if (!dragging) return;
+            dragging = false;
+            track.classList.remove('dragging');
+        });
+        // Supaya drag tidak memicu buka modal
+        track.addEventListener('click', (e) => {
+            if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+        }, true);
+    }
+
+    function initProjects() {
+        if (!document.getElementById('projectsGrid')) return;
+        bangunFilterChips();
+        renderProyek();
+        initSlidesNav();
         initProjectsCanvas();
     }
 
