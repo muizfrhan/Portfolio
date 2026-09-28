@@ -4012,8 +4012,12 @@ i.sub-touch { display: none; }
    tidak muat di bawah tombol. */
 
 /* Tombol pemicu di header section. Bentuknya mengikuti .filter-chip supaya
-   konsisten dengan kontrol lain di section itu, dan ikut animasi reveal
-   yang sama dengan tag, judul, dan deskripsi di sebelahnya. */
+   konsisten dengan kontrol lain di section itu.
+
+   Sengaja TIDAK ikut animasi reveal seperti tag, judul, dan deskripsi di
+   sebelahnya. Elemen itu dekoratif, sedangkan ini kontrol: kalau ikut
+   transparan saat masuk viewport, tombol sempat nyaris tak terlihat dan
+   terbaca sebagai tidak ada. Kontrol harus langsung bisa dipakai. */
 .share-btn {
     display: inline-flex;
     align-items: center;
@@ -4030,27 +4034,20 @@ i.sub-touch { display: none; }
     letter-spacing: 0.01em;
     cursor: pointer;
     white-space: nowrap;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease 0.55s, transform 0.6s ease 0.55s,
-                background-color var(--transition-fast), border-color var(--transition-fast),
+    transition: background-color var(--transition-fast), border-color var(--transition-fast),
                 box-shadow var(--transition-fast);
 }
-.projects-header.visible .share-btn { opacity: 1; transform: none; }
 .share-btn:hover {
     background: rgba(0, 240, 255, 0.15);
     border-color: rgba(0, 240, 255, 0.55);
     box-shadow: 0 8px 24px -12px rgba(0, 240, 255, 0.6);
 }
-.share-btn:active { transform: translateY(0); }
+.share-btn:active { transform: translateY(1px); }
 .share-btn i { font-size: 0.92rem; color: var(--accent-cyan); }
 .share-btn:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
 .share-btn[aria-expanded='true'] {
     background: rgba(0, 240, 255, 0.18);
     border-color: rgba(0, 240, 255, 0.6);
-}
-@media (prefers-reduced-motion: reduce) {
-    .share-btn { opacity: 1; transform: none; transition: none; }
 }
 
 .share-pop {
