@@ -2322,6 +2322,9 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             <div class="pd-actions">
                 ${hasGithub ? `<a href="${data.github}" class="pd-btn pd-btn-primary" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub Repository <i class="fas fa-arrow-up-right-from-square pd-arrow" aria-hidden="true"></i></a>` : ''}
                 ${hasDemo ? `<a href="${data.demo}" class="pd-btn pd-btn-ghost" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Live Demo <i class="fas fa-arrow-up-right-from-square pd-arrow" aria-hidden="true"></i></a>` : ''}
+                <button type="button" class="pd-btn pd-btn-ghost" data-share-open data-project="${data.id}" aria-haspopup="dialog" aria-expanded="false">
+                    <i class="fas fa-share-nodes" aria-hidden="true"></i> Bagikan
+                </button>
             </div>
 
             <div class="modal-body">
@@ -2377,6 +2380,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     function closeProjectModal() {
         const modal = document.getElementById('projectModal');
         if (!modal) return;
+        if (sharePopEl) closeSharePopover();
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden','true');
         document.body.classList.remove('modal-open');
@@ -2385,6 +2389,9 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     }
 
     function handleModalKey(e) {
+        // Popover berbagi adalah lapisan di atas modal, jadi Escape menutup
+        // yang paling atas dulu (popover), baru modal-nya.
+        if (e.key === 'Escape' && sharePopEl) { closeSharePopover(); return; }
         if (e.key === 'Escape') closeProjectModal();
         if (e.key === 'Tab') {
             const modal = document.getElementById('projectModal');
@@ -2397,6 +2404,24 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         }
     }
 
+    // Klik di luar popover menutupnya. Dipasang sekali, dengan guard
+    // isConnected supaya tidak menumpuk setiap kali popover dibuka.
+    document.addEventListener('click', (e) => {
+        if (!sharePopEl) return;
+        if (sharePopEl.contains(e.target)) return;
+        if (e.target.closest && e.target.closest('[data-share-open]')) return;
+        closeSharePopover();
+    }, true);
+    window.addEventListener('resize', () => { if (sharePopEl) closeSharePopover(); });
+
+    // Tombol bagikan di header section Proyek: markup-nya ada di index.html,
+    // jadi didelegasikan ke document agar tidak ikut hilang saat section
+    // dirender ulang.
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-share-kind="portfolio"]');
+        if (btn) openSharePopover(btn, PORTFOLIO_SHARE);
+    });
+
     function initProjectModalEvents() {
         const modal = document.getElementById('projectModal');
         const backdrop = document.getElementById('modalBackdrop');
@@ -2406,6 +2431,215 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         closeBtn?.addEventListener('click', closeProjectModal);
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeProjectModal();
+        });
+        // Delegasi: isi modal dirender ulang tiap kali proyek dibuka, jadi
+        // tombol bagikan tidak bisa dipasang listener-nya satu per satu.
+        modal.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-share-open]');
+            if (btn) openSharePopover(btn, shareItemForProject(btn.dataset.project));
+        });
+    }
+
+    /* ============================================
+        BAGIKAN
+        ============================================
+        Hanya link + teks yang bisa dibagikan. opted untuk Story Instagram
+        dan TikTok TIDAK ada API web: Instagram hanya punya SDK untuk
+        media/berkas, dan TikTok tidak membuka SDK publik untuk konten pihak
+        ketiga. Jadi yang bisa di-share native adalah share sheet bawaan HP
+        (WhatsApp, X, Telegram, SMS) lewat Web Share API. Sisanya memakai
+        intent URL yang memang didukung platform tersebut. */
+    const SHARE_TARGETS = [
+        { key: 'whatsapp', label: 'WhatsApp', icon: 'fab fa-whatsapp', tint: '#25D366',
+          href: (u, t) => `https://wa.me/?text=${encodeURIComponent(t + '\n' + u)}` },
+        { key: 'x', label: 'X', icon: 'fab fa-x-twitter', tint: '#ffffff',
+          href: (u, t) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(t)}&url=${encodeURIComponent(u)}` },
+        { key: 'linkedin', label: 'LinkedIn', icon: 'fab fa-linkedin-in', tint: '#0A66C2',
+          href: (u) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}` },
+        { key: 'telegram', label: 'Telegram', icon: 'fab fa-telegram-plane', tint: '#26A5E4',
+          href: (u, t) => `https://t.me/share/url?url=${encodeURIComponent(u)}&text=${encodeURIComponent(t)}` },
+        { key: 'facebook', label: 'Facebook', icon: 'fab fa-facebook', tint: '#1877F2',
+          href: (u) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(u)}` },
+        { key: 'email', label: 'Email', icon: 'fas fa-envelope', tint: '#8B9BB4',
+          href: (u, t) => `mailto:?subject=${encodeURIComponent(t)}&body=${encodeURIComponent(u)}` },
+    ];
+
+    // URL portfolio ditulis tetap, bukan diambil dari location.href: share bisa
+    // dibuka lewat pratinjau lokal atau domain lain, dan link yang dibagikan
+    // tetap harus menunjuk ke alamat publik.
+    const PORTFOLIO_SHARE = {
+        title: 'Muhamad Farhan Muizaddin — Software Engineer',
+        text: 'Portfolio software engineer: SIMRS-RME, APSS, Pusaku, dan proyek lainnya.',
+        url: 'https://portfolio-mfarhanmuizaddin.vercel.app/',
+        heading: 'Bagikan portfolio ini',
+    };
+
+    // Dipisah dari showToast() milik form kontak: toast itu terikat pada
+    // elemen form, dan menampilkannya dari modal akan membuatnya terpotong
+    // atau memicu gaya yang salah.
+    function shareToast(message) {
+        let el = document.getElementById('shareToast');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'shareToast';
+            el.className = 'share-toast';
+            el.setAttribute('role', 'status');
+            el.setAttribute('aria-live', 'polite');
+            document.body.appendChild(el);
+        }
+        el.textContent = message;
+        el.classList.add('show');
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    // Deskripsi sekali bagikan. Dua sumber: proyek individual, dan portfolio
+    // utuh dari tombol di header section. Bentuknya sengaja sama supaya satu
+    // set handler di bawah bisa dipakai keduanya.
+    function shareItemForProject(projectId) {
+        const p = projectsData.find(x => x.id === projectId);
+        if (!p) return null;
+        // Prioritaskan repo GitHub: itu yang paling berguna untuk manoeuvre
+        // share. Kalau proyek tidak punya repo, arahkan ke portfolio ini.
+        const url = (p.github && p.github !== '#') ? p.github : location.href;
+        return {
+            title: p.title,
+            text: p.title + ' — ' + p.description,
+            url,
+            heading: 'Bagikan proyek ini',
+        };
+    }
+
+    let sharePopEl = null;
+    let sharePopBtn = null;
+
+    function closeSharePopover() {
+        if (!sharePopEl) return;
+        sharePopEl.remove();
+        sharePopEl = null;
+        if (sharePopBtn) {
+            sharePopBtn.setAttribute('aria-expanded', 'false');
+            sharePopBtn.focus();
+            sharePopBtn = null;
+        }
+    }
+
+    async function copyShareLink(item) {
+        const { url } = item;
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(url);
+            } else {
+                // Fallback untuk konteks non-secure / browser lama.
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                ta.setAttribute('readonly', '');
+                ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+            }
+            shareToast('Link disalin: ' + url);
+        } catch {
+            shareToast('Gagal menyalin. Salin manual dari address bar.');
+        }
+    }
+
+    async function nativeShare(item) {
+        try {
+            await navigator.share({ title: item.title, text: item.text, url: item.url });
+        } catch (err) {
+            // AbortError = user menekan cancel di share sheet. Jangan tampilkan apa pun.
+            if (err && err.name !== 'AbortError') shareToast('Gagal membuka aplikasi berbagi.');
+        }
+    }
+
+    function openSharePopover(btn, item) {
+        if (!item) return;
+        if (sharePopEl) { closeSharePopover(); return; }
+
+        const { url, text } = item;
+        const canNative = typeof navigator.share === 'function';
+
+        const pop = document.createElement('div');
+        pop.className = 'share-pop';
+        pop.setAttribute('role', 'dialog');
+        pop.setAttribute('aria-label', item.heading + ': ' + item.title);
+
+        pop.innerHTML = `
+            <div class="share-pop__head">
+                <strong>${item.heading}</strong>
+                <button type="button" class="share-pop__close" aria-label="Tutup pilihan berbagi">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            ${canNative ? `
+            <button type="button" class="share-pop__native" data-share-native>
+                <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                <span>Bagikan ke aplikasi lain</span>
+            </button>` : ''}
+            <div class="share-pop__grid" role="group" aria-label="Pilih aplikasi">
+                ${SHARE_TARGETS.map(t => `
+                    <a class="share-pop__item" href="${t.href(url, text)}" target="_blank" rel="noopener noreferrer"
+                       style="--tint:${t.tint}" data-share-target="${t.key}">
+                        <i class="${t.icon}" aria-hidden="true"></i>
+                        <span>${t.label}</span>
+                    </a>`).join('')}
+                <button type="button" class="share-pop__item" data-share-copy style="--tint:#5EEAD4">
+                    <i class="fas fa-link" aria-hidden="true"></i>
+                    <span>Salin link</span>
+                </button>
+            </div>
+            <p class="share-pop__note">
+                Instagram dan TikTok Story tidak punya tombol bagikan bawaan —
+                salin link lalu tempel di Story.
+            </p>
+        `;
+
+        document.body.appendChild(pop);
+        sharePopEl = pop;
+        sharePopBtn = btn;
+        btn.setAttribute('aria-expanded', 'true');
+
+        // Posisikan di bawah tombol, lalu balik ke atas kalau tidak muat.
+        //
+        // Animasi masuknya harus dimatikan dulu saat mengukur: dengan
+        // scale(0.97) di keyframe awal, getBoundingClientRect() melaporkan
+        // ukuran yang lebih kecil dari ukuran final. Akibatnya popover
+        // dihitung muat di bawah tombol padahal 4px-nya keluar viewport.
+        const r = btn.getBoundingClientRect();
+        pop.style.visibility = 'hidden';
+        pop.style.animation = 'none';
+        const pr = pop.getBoundingClientRect();
+        const gap = 8;
+        const margin = 12;
+        let top = r.bottom + gap;
+        if (top + pr.height > innerHeight - margin) {
+            const atas = r.top - pr.height - gap;
+            // Kalau bahkan di atas pun tidak muat, tempel ke tepi bawah viewport.
+            top = atas >= margin ? atas : Math.max(margin, innerHeight - pr.height - margin);
+        }
+        let left = r.left + r.width / 2 - pr.width / 2;
+        left = Math.min(Math.max(margin, left), Math.max(margin, innerWidth - pr.width - margin));
+        pop.style.top = top + 'px';
+        pop.style.left = left + 'px';
+        pop.style.visibility = 'visible';
+        // Aktifkan lagi animasinya setelah posisi final, supaya tetap halus.
+        requestAnimationFrame(() => { pop.style.animation = ''; });
+
+        pop.querySelector('.share-pop__close').addEventListener('click', closeSharePopover);
+        pop.querySelector('[data-share-copy]')?.addEventListener('click', async () => {
+            await copyShareLink(item);
+            closeSharePopover();
+        });
+        pop.querySelector('[data-share-native]')?.addEventListener('click', async () => {
+            closeSharePopover();
+            await nativeShare(item);
+        });
+        // Tutup setelah pilih platform, supaya tidak menutupi jendela share-nya.
+        pop.querySelectorAll('[data-share-target]').forEach(a => {
+            a.addEventListener('click', () => setTimeout(closeSharePopover, 120));
         });
     }
 

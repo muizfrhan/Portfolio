@@ -4005,6 +4005,173 @@ i.sub-touch { display: none; }
 }
 .pd-btn:focus-visible { outline:2px solid var(--accent-cyan); outline-offset:3px; }
 
+/* ---------- Bagikan proyek ----------
+
+   Popover-nya ditempel ke <body>, bukan di dalam modal, supaya tidak ikut
+   terpotong oleh overflow modal dan tetap bisa membalikkan posisi kalau
+   tidak muat di bawah tombol. */
+
+/* Tombol pemicu di header section. Bentuknya mengikuti .filter-chip supaya
+   konsisten dengan kontrol lain di section itu, dan ikut animasi reveal
+   yang sama dengan tag, judul, dan deskripsi di sebelahnya. */
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 240, 255, 0.28);
+    background: rgba(0, 240, 255, 0.08);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease 0.55s, transform 0.6s ease 0.55s,
+                background-color var(--transition-fast), border-color var(--transition-fast),
+                box-shadow var(--transition-fast);
+}
+.projects-header.visible .share-btn { opacity: 1; transform: none; }
+.share-btn:hover {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: rgba(0, 240, 255, 0.55);
+    box-shadow: 0 8px 24px -12px rgba(0, 240, 255, 0.6);
+}
+.share-btn:active { transform: translateY(0); }
+.share-btn i { font-size: 0.92rem; color: var(--accent-cyan); }
+.share-btn:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
+.share-btn[aria-expanded='true'] {
+    background: rgba(0, 240, 255, 0.18);
+    border-color: rgba(0, 240, 255, 0.6);
+}
+@media (prefers-reduced-motion: reduce) {
+    .share-btn { opacity: 1; transform: none; transition: none; }
+}
+
+.share-pop {
+    position: fixed;
+    z-index: 9998;
+    width: min(300px, calc(100vw - 24px));
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    background: rgba(12, 15, 32, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: sharePopIn 0.18s ease-out;
+}
+@keyframes sharePopIn {
+    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+}
+.share-pop__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.share-pop__head strong { font-size: 0.88rem; color: var(--text-primary); }
+.share-pop__close {
+    display: grid;
+    place-items: center;
+    width: 28px; height: 28px;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    cursor: pointer;
+    flex: none;
+}
+.share-pop__close:hover { background: rgba(255, 255, 255, 0.12); color: var(--text-primary); }
+.share-pop__close:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+
+.share-pop__native {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 11px 12px;
+    border: 1px solid rgba(94, 234, 212, 0.32);
+    border-radius: var(--radius-md);
+    background: rgba(94, 234, 212, 0.09);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.share-pop__native:hover { background: rgba(94, 234, 212, 0.16); }
+.share-pop__native i { color: var(--accent-cyan); }
+.share-pop__native:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+
+.share-pop__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+.share-pop__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 4px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    font-size: 0.62rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.share-pop__item i { font-size: 1.02rem; color: var(--tint); }
+.share-pop__item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: color-mix(in srgb, var(--tint) 45%, transparent);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+.share-pop__item:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+
+.share-pop__note {
+    margin: 11px 0 0;
+    font-size: 0.64rem;
+    line-height: 1.5;
+    color: var(--text-tertiary, #6B7A93);
+}
+
+.share-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 26px;
+    z-index: 10001;
+    transform: translate(-50%, 14px);
+    padding: 11px 17px;
+    border-radius: var(--radius-pill);
+    background: rgba(10, 14, 30, 0.97);
+    border: 1px solid rgba(94, 234, 212, 0.34);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.share-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
 /* ---------- Project Detail: preview ---------- */
 .pd-preview { margin:0; padding:24px 24px 0; }
 .pd-preview-bar {

@@ -604,6 +604,16 @@
                 <span class="section-tag">KARYA PILIHAN</span>
                 <h2 class="section-title">Proyek Unggulan</h2>
                 <p class="section-desc">Dibuat dengan presisi — skalabel, cepat, dan menyenangkan</p>
+                <!-- Bagikan portfolio: Instagram dan TikTok Story tidak punya
+                     intent URL web, jadi jalur ke sana lewat share sheet bawaan
+                     HP atau menyalin link lalu menempelnya manual. -->
+                <button type="button" class="share-btn" id="sharePortfolioBtn"
+                        data-share-open data-share-kind="portfolio"
+                        aria-haspopup="dialog" aria-expanded="false"
+                        aria-label="Bagikan portfolio ini ke media sosial">
+                    <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                    <span>Bagikan</span>
+                </button>
             </div>
 
             <!-- Toolbar: search + kategori utama + "dll" -->
