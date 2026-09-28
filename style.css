@@ -3740,6 +3740,21 @@ i.sub-touch { display: none; }
     transition: transform 0.7s cubic-bezier(0.22,1,0.32,1);
 }
 .project-card:hover .card-preview-bg { transform: scale(1.08); }
+
+/* Kartu grid dulu selalu memakai gradient; screenshot asli hanya muncul di
+   featured dan modal. Sekarang screenshot juga dirender di grid supaya kartu
+   proyek menunjukkan aplikasinya, bukan sekadar blok warna. */
+.card-preview-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.32, 1);
+}
+.project-card:hover .card-preview-img { transform: scale(1.08); }
 .card-preview-icon {
     position:relative;
     z-index:1;

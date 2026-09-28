@@ -116,6 +116,25 @@
             year: '2023'
         },
         {
+            id: 'simrs-rme',
+            title: 'SIMRS-RME',
+            category: 'Hospital Information System',
+            description: 'Sistem informasi manajemen rumah sakit berbasis web — pendaftaran, antrean, rekam medis, farmasi, penagihan, dan rawat inap berjalan di atas satu basis data dengan hak akses berbeda untuk setiap peran.',
+            longDescription: 'SIMRS-RME (Sistem Informasi Manajemen Rumah Sakit & Rekam Medis Elektronik) adalah sistem informasi yang menyatukan seluruh operasional rumah sakit di atas satu basis data, dari pendaftaran dan antrean, rekam medis elektronik, farmasi dan resep, penagihan, hingga rawat inap dan penempatan kamar. Setiap modul memakai satu nomor rekam medis yang sama sehingga tidak ada pemisahan data antar unit. Hak akses dikelola lewat tujuh peran dan 22 izin granular yang diperiksa di titik backend, bukan hanya disembunyikan di antarmuka. Landing page publik dibangun sebagai Vue 3 + Vite terpisah dari bundle dashboard, dengan data faktual dihitung dari kode aplikasi. Dibangun dengan Laravel 12, Vue.js 3, Vite, Tailwind CSS, Alpine.js, dan PostgreSQL.',
+            image: 'assets/images/projects/simrs-rme.png',
+            icon: 'fa-hospital',
+            technologies: ['Laravel 12', 'Vue.js 3', 'PHP 8.2', 'Vite', 'Tailwind CSS', 'Alpine.js', 'PostgreSQL', 'JavaScript', 'HTML', 'CSS'],
+            features: ['Landing page publik Vue 3 dengan bundel terpisah dari dashboard', 'Pendaftaran dan penomoran antrean otomatis per poli', 'Rekam medis elektronik: SOAP, tanda vital, diagnose ICD-10, dan prosedur', 'Resep elektronik dengan validasi dan pengurangan stok otomatis', 'Rawat inap dengan penempatan kamar, kelas kamar, dan status beds', 'Penagihan dari rekam medis final beserta invoice dan pembayaran', 'Tujuh peran dengan 22 izin granular yang diperiksa di backend', 'Enkripsi field-level pada kolom NIK dengan pencarian blind index'],
+            challenges: 'Menyatukan delapan modul operasional di atas satu basis data tanpa pemisahan data antar unit, sekaligus memastikan setiap aksi tulis hanya bisa dilakukan oleh peran yang memang berwenang. Selain itu, satu bug CSS pada reset margin global diam-diam mematikan seluruh ritme vertikal hero sehingga tidak muncul sebagai error, dan aset hasil build yang hilang dari manifest membuat seluruh scoped style Vue hilang tanpa jejak di log server.',
+            solutions: 'Satu nomor rekam medis sebagai kunci penghubung seluruh modul, dengan permission RoleMiddleware yang memeriksa izin di backend pada 70 titik sehingga proteksi tidak bergantung pada menyembunyikan tombol di UI. Untuk sisi tampilan, reset margin dibungkus :where() agar specificity-nya turun dan tidak menimpa aturan komponen, serta Ditambahkan test yang memverifikasi setiap aset yang dirujuk manifest benar-benar ada di disk — Asset yang hilang dari build sekarang menggagalkan test, bukan diam-diam merusak halaman.',
+            github: 'https://github.com/muizfrhan/Sistem-Informasi-Manajemen-Rumah-Sakit',
+            demo: '#',
+            urlLabel: 'github.com/muizfrhan/Sistem-Informasi-Manajemen-Rumah-Sakit',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: '2026'
+        },
+        {
             id: 'system-management-hotel',
             title: 'System Management Hotel',
             category: 'Hotel Management System',
@@ -1837,6 +1856,8 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         docker: 'Docker',
         pinia: 'Pinia',
         'laravel sanctum': 'Sanctum',
+        postgresql: 'PostgreSQL',
+        'alpine.js': 'Alpine.js',
     };
 
     function labelChip(k) {
@@ -2186,8 +2207,10 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         return `
         <article class="project-card ${spanClass}" data-project-id="${p.id}" tabindex="0" role="button" aria-label="View ${p.title} details">
             <div class="card-preview">
-                <div class="card-preview-bg" style="background:${bg}"></div>
-                ${isImagePath(p.image) ? '' : `<div class="card-preview-icon"><i class="fas ${p.icon}"></i></div>`}
+                ${isImagePath(p.image)
+                    ? `<img class="card-preview-img" src="${p.image}" alt="Tangkapan layar ${p.title}" decoding="async">`
+                    : `<div class="card-preview-bg" style="background:${bg}"></div>
+                       <div class="card-preview-icon"><i class="fas ${p.icon}"></i></div>`}
                 <div class="card-overlay"><span><i class="fas fa-eye"></i> Lihat Proyek</span></div>
             </div>
             <div class="card-body">
