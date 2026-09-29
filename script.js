@@ -1819,7 +1819,11 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
 
     function normTek(t) {
         const k = String(t).toLowerCase().trim();
-        return TEK_ALIAS[k] || k;
+        const alias = TEK_ALIAS[k] || k;
+        // Nomor versi di akhir dibuang ("Laravel 11" -> "laravel", "Vite 6" ->
+        // "vite"). Tanpa ini tiap versi menjadi chip sendiri, jadi proyek
+        // berbasis Laravel 11 tidak ikut terhitung di chip "Laravel".
+        return alias.replace(/\s+\d+(?:\.\d+)*$/, '');
     }
 
     let filterAktif = 'all';
@@ -1878,6 +1882,9 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         'laravel sanctum': 'Sanctum',
         postgresql: 'PostgreSQL',
         'alpine.js': 'Alpine.js',
+        jquery: 'jQuery',
+        phpunit: 'PHPUnit',
+        postcss: 'PostCSS',
     };
 
     function labelChip(k) {
