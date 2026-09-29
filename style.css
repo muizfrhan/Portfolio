@@ -3755,6 +3755,16 @@ i.sub-touch { display: none; }
     transition: transform 0.7s cubic-bezier(0.22, 1, 0.32, 1);
 }
 .project-card:hover .card-preview-img { transform: scale(1.08); }
+
+/* Beberapa proyek memakai mockup potret (misalnya desain monitor) yang tidak
+   boleh dipotong. Untuk data yang menandai previewFit = 'contain', gambar
+   ditampilkan utuh di atas latar kartu, dan efek zoom saat hover dimatikan
+   supaya tepinya tidak ikut terpotong. */
+.card-preview-img--contain {
+    object-fit: contain;
+    padding: 10px;
+}
+.project-card:hover .card-preview-img--contain { transform: none; }
 .card-preview-icon {
     position:relative;
     z-index:1;
@@ -4007,168 +4017,278 @@ i.sub-touch { display: none; }
 
 /* ---------- Bagikan proyek ----------
 
-   Popover-nya ditempel ke <body>, bukan di dalam modal, supaya tidak ikut
-   terpotong oleh overflow modal dan tetap bisa membalikkan posisi kalau
-   tidak muat di bawah tombol. */
+   Pemicunya ada di panel detail proyek: yang dibagikan adalah isi proyek
+   itu sendiri, jadi tombolnya muncul saat proyek yang sedang dibaca.
 
-/* Tombol pemicu di header section. Bentuknya mengikuti .filter-chip supaya
-   konsisten dengan kontrol lain di section itu.
-
-   Sengaja TIDAK ikut animasi reveal seperti tag, judul, dan deskripsi di
-   sebelahnya. Elemen itu dekoratif, sedangkan ini kontrol: kalau ikut
-   transparan saat masuk viewport, tombol sempat nyaris tak terlihat dan
-   terbaca sebagai tidak ada. Kontrol harus langsung bisa dipakai. */
-.share-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 22px;
-    padding: 11px 22px;
-    border-radius: 999px;
-    border: 1px solid rgba(0, 240, 255, 0.28);
-    background: rgba(0, 240, 255, 0.08);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background-color var(--transition-fast), border-color var(--transition-fast),
-                box-shadow var(--transition-fast);
-}
-.share-btn:hover {
-    background: rgba(0, 240, 255, 0.15);
-    border-color: rgba(0, 240, 255, 0.55);
-    box-shadow: 0 8px 24px -12px rgba(0, 240, 255, 0.6);
-}
-.share-btn:active { transform: translateY(1px); }
-.share-btn i { font-size: 0.92rem; color: var(--accent-cyan); }
-.share-btn:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 3px; }
-.share-btn[aria-expanded='true'] {
-    background: rgba(0, 240, 255, 0.18);
-    border-color: rgba(0, 240, 255, 0.6);
-}
-
-.share-pop {
+   Modalnya ditempel ke <body> sebagai lapisan di atas panel proyek. Kalau
+   dialog ini ikut berada di dalam panel proyek, ia akan terpotong oleh
+   overflow-y modal dan terkurung focus trap milik panel tersebut. */
+.share-modal {
     position: fixed;
-    z-index: 9998;
-    width: min(300px, calc(100vw - 24px));
-    padding: 14px;
-    border-radius: var(--radius-lg);
-    background: rgba(12, 15, 32, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    animation: sharePopIn 0.18s ease-out;
-}
-@keyframes sharePopIn {
-    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-    to   { opacity: 1; transform: none; }
-}
-.share-pop__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 12px;
-}
-.share-pop__head strong { font-size: 0.88rem; color: var(--text-primary); }
-.share-pop__close {
+    inset: 0;
+    /* Harus di atas .project-modal yang memakai 10000. Panel detail proyek
+       adalah lapisan induknya, jadi di bawah angka itu modal ini tertutup. */
+    z-index: 10001;
     display: grid;
     place-items: center;
-    width: 28px; height: 28px;
-    border: 0;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--text-secondary);
-    cursor: pointer;
-    flex: none;
+    padding: clamp(0.75rem, 3vw, 1.5rem);
+    opacity: 0;
+    transition: opacity 0.18s var(--ease-out, ease);
 }
-.share-pop__close:hover { background: rgba(255, 255, 255, 0.12); color: var(--text-primary); }
-.share-pop__close:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+.share-modal.is-open { opacity: 1; }
 
-.share-pop__native {
+.share-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 9, 22, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.share-modal__panel {
+    position: relative;
+    width: min(520px, 100%);
+    max-height: min(88vh, 760px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: clamp(1.1rem, 3vw, 1.6rem);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(180deg, rgba(16, 26, 51, 0.99), rgba(8, 14, 32, 0.99));
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.85);
+    transform: translateY(10px) scale(0.985);
+    transition: transform 0.22s var(--ease-out, ease);
+}
+.share-modal.is-open .share-modal__panel { transform: none; }
+
+.share-modal__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.share-modal__eyebrow {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-cyan, #22b8c6);
+}
+.share-modal__title {
+    margin-top: 4px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-primary, #fff);
+    line-height: 1.35;
+}
+.share-modal__close {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text-secondary, #9db1cd);
+    cursor: pointer;
+    transition: background var(--transition-fast, 0.2s), color var(--transition-fast, 0.2s);
+}
+.share-modal__close:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.share-modal__close:focus-visible { outline: 2px solid var(--accent-cyan, #22b8c6); outline-offset: 2px; }
+
+/* Pratinjau kartu Story */
+.share-modal__story {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.03);
+}
+.share-modal__storyframe {
+    position: relative;
+    width: 84px;
+    flex: none;
+    aspect-ratio: 9 / 16;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0a1730;
+    box-shadow: 0 8px 22px -10px rgba(0, 0, 0, 0.7);
+}
+.share-modal__storyframe img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.share-modal__storyfallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 8px;
+    text-align: center;
+    font-size: 0.62rem;
+    line-height: 1.4;
+    color: var(--muted-dark, #9db1cd);
+}
+.share-modal__storymeta { min-width: 0; }
+.share-modal__storymeta strong {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-primary, #fff);
+}
+.share-modal__storymeta span {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--muted-dark, #9db1cd);
+}
+
+/* Empat aksi utama */
+.share-modal__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+/* Tiga tombol (Story IG, Story TikTok, Share Project) membuat baris kedua
+   setengah kosong, jadi tombol terakhir diratakan penuh. */
+.share-modal__actions > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+.share-act {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 10px;
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 11px 12px;
-    border: 1px solid rgba(94, 234, 212, 0.32);
-    border-radius: var(--radius-md);
-    background: rgba(94, 234, 212, 0.09);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    font-size: 0.82rem;
+    padding: 13px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--radius, 14px);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary, #fff);
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.85rem;
     font-weight: 600;
+    text-align: left;
     cursor: pointer;
+    transition: background var(--transition-fast, 0.2s), border-color var(--transition-fast, 0.2s),
+                transform var(--transition-fast, 0.2s);
 }
-.share-pop__native:hover { background: rgba(94, 234, 212, 0.16); }
-.share-pop__native i { color: var(--accent-cyan); }
-.share-pop__native:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+.share-act i { font-size: 1.05rem; flex: none; }
+.share-act:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+}
+.share-act:active { transform: translateY(0); }
+.share-act:focus-visible { outline: 2px solid var(--accent-cyan, #22b8c6); outline-offset: 2px; }
+.share-act:disabled { opacity: 0.55; cursor: wait; transform: none; }
+.share-act--instagram i { color: #E4405F; }
+.share-act--tiktok i { color: #69C9D0; }
+.share-act--native i { color: var(--accent-cyan, #22b8c6); }
+.share-act--copy i { color: #5EEAD4; }
 
-.share-pop__grid {
+.share-modal__hint {
+    margin: 14px 0 14px;
+    padding: 11px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius, 14px);
+    background: rgba(0, 240, 255, 0.05);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--muted-dark, #9db1cd);
+}
+
+/* Intent URL yang memang didukung platform */
+.share-modal__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
 }
-.share-pop__item {
+.share-tile {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 9px 4px 8px;
+    gap: 7px;
+    padding: 12px 8px;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--text-secondary);
-    font-size: 0.62rem;
+    border-radius: var(--radius, 14px);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary, #c3d5ee);
+    font-size: 0.68rem;
     font-weight: 600;
-    line-height: 1.2;
     text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: var(--font-body);
-    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    transition: background var(--transition-fast, 0.2s), border-color var(--transition-fast, 0.2s),
+                color var(--transition-fast, 0.2s);
 }
-.share-pop__item i { font-size: 1.02rem; color: var(--tint); }
-.share-pop__item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: color-mix(in srgb, var(--tint) 45%, transparent);
-    color: var(--text-primary);
-    transform: translateY(-2px);
+.share-tile i { font-size: 1.1rem; color: var(--tint, #fff); }
+.share-tile:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: color-mix(in srgb, var(--tint, #fff) 45%, transparent);
+    color: #fff;
 }
-.share-pop__item:focus-visible { outline: 2px solid var(--accent-cyan); outline-offset: 2px; }
+.share-tile:focus-visible { outline: 2px solid var(--accent-cyan, #22b8c6); outline-offset: 2px; }
 
-.share-pop__note {
-    margin: 11px 0 0;
-    font-size: 0.64rem;
+/* Fallback terakhir: menyalin tautan, bukan jalur utama */
+.share-modal__fallback {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.share-modal__fallback .share-act { justify-content: center; }
+.share-modal__fallbacknote {
+    font-size: 0.68rem;
     line-height: 1.5;
-    color: var(--text-tertiary, #6B7A93);
+    text-align: center;
+    color: var(--muted-dark, #9db1cd);
 }
 
+/* Toast */
 .share-toast {
     position: fixed;
     left: 50%;
     bottom: 26px;
-    z-index: 10001;
-    transform: translate(-50%, 14px);
-    padding: 11px 17px;
-    border-radius: var(--radius-pill);
-    background: rgba(10, 14, 30, 0.97);
-    border: 1px solid rgba(94, 234, 212, 0.34);
-    color: var(--text-primary);
-    font-size: 0.8rem;
+    z-index: 10002;
+    max-width: min(30rem, calc(100vw - 2rem));
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(10, 23, 48, 0.97);
+    color: #fff;
+    font-size: 0.82rem;
     font-weight: 600;
-    box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.8);
     opacity: 0;
-    pointer-events: none;
+    transform: translate(-50%, 12px);
     transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
 }
 .share-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.share-toast--success { border-color: rgba(15, 122, 82, 0.5); }
+.share-toast--error { border-color: rgba(179, 38, 30, 0.55); }
+.share-toast--info { border-color: rgba(34, 184, 198, 0.4); }
 
+@media (max-width: 520px) {
+    .share-modal__actions { grid-template-columns: 1fr; }
+    .share-modal__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .share-modal__panel { max-height: 92vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .share-modal, .share-modal__panel, .share-act, .share-tile, .share-toast {
+        transition: none !important;
+    }
+}
 /* ---------- Project Detail: preview ---------- */
 .pd-preview { margin:0; padding:24px 24px 0; }
 .pd-preview-bar {

@@ -40,6 +40,26 @@
             year: '2026'
         },
         {
+            id: 'sipkl',
+            title: 'SIPKL — Sistem Informasi Praktik Kerja Lapangan',
+            category: 'Web Application',
+            description: 'Sistem informasi pengelolaan Praktik Kerja Lapangan — mahasiswa mendaftar, mengajukan bimbingan, mengunggah laporan, dan memantau penilaian, sementara admin memverifikasi dan dosen memberi nilai.',
+            longDescription: 'SIPKL (Sistem Informasi Praktik Kerja Lapangan) adalah aplikasi web yang mengelola seluruh siklus PKL mahasiswa di lingkungan kampus, dari pendaftaran, penempatan perusahaan mitra, pengajuan dan persetujuan jadwal bimbingan, absensi, jurnal harian, hingga penilaian akhir dan penerbitan sertifikat. Satu aplikasi ini melayani lima peran sekaligus — Admin, Dosen Pembimbing, Koordinator, Pimpinan, dan Mahasiswa — dengan dashboard serta menu yang menyesuaikan kewenangan tiap peran. Login memakai satu kolom yang menerima NIM, NIP, atau email, dan tersedia login lewat QR Code dari perangkat yang sudah masuk untuk perangkat bersama. Format laporan diunggah admin sehingga mahasiswa dan dosen selalu memakai berkas yang sama, dan setiap sertifikat punya kode unik yang bisa diverifikasi publik tanpa login. Dibangun dengan Laravel 11, PHP 8.2, dan MySQL dengan design system Tailwind CSS.',
+            image: 'assets/images/projects/sipkl.png',
+            previewFit: 'contain',
+            icon: 'fa-briefcase',
+            technologies: ['Laravel 11', 'PHP 8.2', 'MySQL', 'Tailwind CSS', 'Vite', 'Alpine.js', 'Bootstrap 5', 'Laravel Breeze', 'JavaScript', 'HTML', 'CSS'],
+            features: ['Lima peran dengan dashboard dan menu sesuai kewenangan', 'Satu kolom login untuk NIM, NIP, atau email', 'Login QR Code dari perangkat yang sudah masuk', 'Pendaftaran PKL dengan verifikasi admin dan status yang terpantau', 'Pengajuan dan persetujuan jadwal bimbingan', 'Absensi check-in/out, jurnal harian, dan pengajuan izin', 'Unggah laporan mengikuti format resmi yang diunggah admin', 'Input nilai PKL setelah minimal empat sesi bimbingan disetujui', 'Konfigurasi kategori dan komponen penilaian oleh admin', 'Sertifikat dengan kode unik dan verifikasi publik', 'Audit log dan halaman system health'],
+            challenges: 'Menyatukan lima peran dengan alur kerja yang berbeda di atas satu basis data — mahasiswa mengirim, admin memverifikasi, dosen menilai — tanpa membuka akses antar modul. Ditambah kebutuhan login yang praktis dari perangkat bersama di lokasi PKL, dan berkas laporan yang harus mengikuti format resmi yang bisa berubah antar periode.',
+            solutions: 'RoleMiddleware yang memeriksa kewenangan di backend pada setiap route, bukan hanya menyembunyikan menu di antarmuka. Satu model User yang terhubung ke tabel mahasiswa dan dosen sehingga NIM dan NIP bisa dipakai sebagai identitas login, format laporan disimpan sebagai berkas yang diunggah admin, dan login QR sebagai alternatif agar mahasiswa tidak perlu mengetik kata sandi di perangkat yang dipakai bersama.',
+            github: 'https://github.com/muizfrhan/Sistem-Informasi-Praktik-Kerja-Lapangan',
+            demo: '#',
+            urlLabel: 'github.com/muizfrhan/Sistem-Informasi-Praktik-Kerja-Lapangan',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: '2026'
+        },
+        {
             id: 'perpustakaan',
             title: 'Pusaku — Sistem Informasi Perpustakaan',
             category: 'Library Management System',
@@ -2208,7 +2228,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         <article class="project-card ${spanClass}" data-project-id="${p.id}" tabindex="0" role="button" aria-label="View ${p.title} details">
             <div class="card-preview">
                 ${isImagePath(p.image)
-                    ? `<img class="card-preview-img" src="${p.image}" alt="Tangkapan layar ${p.title}" decoding="async">`
+                    ? `<img class="card-preview-img${p.previewFit === 'contain' ? ' card-preview-img--contain' : ''}" src="${p.image}" alt="Tangkapan layar ${p.title}" decoding="async">`
                     : `<div class="card-preview-bg" style="background:${bg}"></div>
                        <div class="card-preview-icon"><i class="fas ${p.icon}"></i></div>`}
                 <div class="card-overlay"><span><i class="fas fa-eye"></i> Lihat Proyek</span></div>
@@ -2380,7 +2400,9 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     function closeProjectModal() {
         const modal = document.getElementById('projectModal');
         if (!modal) return;
-        if (sharePopEl) closeSharePopover();
+        // Modal berbagi adalah lapisan di atas panel proyek, jadi tutup dulu
+        // lapisan yang paling atas supaya tidak meninggalkan state terbuka.
+        if (shareModalEl) closeShareModal();
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden','true');
         document.body.classList.remove('modal-open');
@@ -2389,38 +2411,19 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     }
 
     function handleModalKey(e) {
-        // Popover berbagi adalah lapisan di atas modal, jadi Escape menutup
-        // yang paling atas dulu (popover), baru modal-nya.
-        if (e.key === 'Escape' && sharePopEl) { closeSharePopover(); return; }
-        if (e.key === 'Escape') closeProjectModal();
-        if (e.key === 'Tab') {
-            const modal = document.getElementById('projectModal');
-            if (!modal || !modal.classList.contains('open')) return;
-            const focusable = modal.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])');
-            if (!focusable.length) return;
-            const first = focusable[0], last = focusable[focusable.length-1];
-            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-        }
+        if (e.key === 'Escape') return;   // ditangani closeShareModal
+        if (e.key !== 'Tab') return;
+        const modal = document.getElementById('projectModal');
+        if (!modal || !modal.classList.contains('open')) return;
+        // Focus trap tetap milik panel proyek; modal berbagi punya trap sendiri
+        // dan memblokir klik di panel ini selagi terbuka.
+        if (shareModalEl) return;
+        const focusable = modal.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])');
+        if (!focusable.length) return;
+        const first = focusable[0], last = focusable[focusable.length-1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
-
-    // Klik di luar popover menutupnya. Dipasang sekali, dengan guard
-    // isConnected supaya tidak menumpuk setiap kali popover dibuka.
-    document.addEventListener('click', (e) => {
-        if (!sharePopEl) return;
-        if (sharePopEl.contains(e.target)) return;
-        if (e.target.closest && e.target.closest('[data-share-open]')) return;
-        closeSharePopover();
-    }, true);
-    window.addEventListener('resize', () => { if (sharePopEl) closeSharePopover(); });
-
-    // Tombol bagikan di header section Proyek: markup-nya ada di index.html,
-    // jadi didelegasikan ke document agar tidak ikut hilang saat section
-    // dirender ulang.
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-share-kind="portfolio"]');
-        if (btn) openSharePopover(btn, PORTFOLIO_SHARE);
-    });
 
     function initProjectModalEvents() {
         const modal = document.getElementById('projectModal');
@@ -2432,70 +2435,74 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeProjectModal();
         });
-        // Delegasi: isi modal dirender ulang tiap kali proyek dibuka, jadi
-        // tombol bagikan tidak bisa dipasang listener-nya satu per satu.
-        modal.addEventListener('click', (e) => {
-            const btn = e.target.closest('[data-share-open]');
-            if (btn) openSharePopover(btn, shareItemForProject(btn.dataset.project));
-        });
     }
 
     /* ============================================
-        BAGIKAN
+        BAGIKAN PROYEK
         ============================================
-        Hanya link + teks yang bisa dibagikan. opted untuk Story Instagram
-        dan TikTok TIDAK ada API web: Instagram hanya punya SDK untuk
-        media/berkas, dan TikTok tidak membuka SDK publik untuk konten pihak
-        ketiga. Jadi yang bisa di-share native adalah share sheet bawaan HP
-        (WhatsApp, X, Telegram, SMS) lewat Web Share API. Sisanya memakai
-        intent URL yang memang didukung platform tersebut. */
-    const SHARE_TARGETS = [
+        Pemicunya ada di panel detail proyek, jadi isi yang dibagikan
+        selalu mengikuti proyek yang sedang dibaca: judul, ringkasan, dan
+        tautan proyek itu sendiri.
+
+        Yang benar-benar didukung, dipisahkan dari yang tidak, supaya tidak
+        ada tombol yang kelihatan bekerja padahal tidak berguna:
+
+        Resmi dan bisa dipakai
+        - navigator.share({title, text, url})    share sheet bawaan perangkat
+        - navigator.canShare({files})            berbagi gambar ke sheet itu
+        - wa.me, twitter.com/intent, facebook.com/sharer, t.me/share/url,
+          linkedin.com/sharing, dan mailto
+
+        Tidak ada sama sekali
+        - Instagram Story dari web. Instagram hanya menyediakan SDK untuk
+          aplikasi iOS dan Android native, tidak ada web share target dan
+          tidak ada intent URL resmi untuk tautan.
+        - TikTok. Tidak membuka SDK web publik untuk konten pihak ketiga,
+          dan tidak menyediakan intent URL untuk tautan.
+
+        Dua platform terakhir itu tidak punya tombol resmi, jadi langkahnya
+        dibuat sesedikit mungkin tanpa mengarang kemampuannya. gambarnya
+        disiapkan dalam format Story 1080x1920 lalu dikirim ke share sheet
+        sebagai BERKAS. Dari sana pengguna memilih Instagram atau TikTok di
+        sheet bawaan, persis seperti saat memakai tombol share bawaan HP, dan
+        aplikasi yang terbuka mengerjakan sisanya. Kalau perangkat tidak
+        mendukung berbagi berkas, berbagi teks biasa tetap dipakai. Salin
+        link hanya jaring pengaman terakhir.
+    */
+    const SHARE_INTENTS = [
         { key: 'whatsapp', label: 'WhatsApp', icon: 'fab fa-whatsapp', tint: '#25D366',
           href: (u, t) => `https://wa.me/?text=${encodeURIComponent(t + '\n' + u)}` },
         { key: 'x', label: 'X', icon: 'fab fa-x-twitter', tint: '#ffffff',
           href: (u, t) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(t)}&url=${encodeURIComponent(u)}` },
-        { key: 'linkedin', label: 'LinkedIn', icon: 'fab fa-linkedin-in', tint: '#0A66C2',
-          href: (u) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}` },
-        { key: 'telegram', label: 'Telegram', icon: 'fab fa-telegram-plane', tint: '#26A5E4',
-          href: (u, t) => `https://t.me/share/url?url=${encodeURIComponent(u)}&text=${encodeURIComponent(t)}` },
         { key: 'facebook', label: 'Facebook', icon: 'fab fa-facebook', tint: '#1877F2',
           href: (u) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(u)}` },
+        { key: 'telegram', label: 'Telegram', icon: 'fab fa-telegram-plane', tint: '#26A5E4',
+          href: (u, t) => `https://t.me/share/url?url=${encodeURIComponent(u)}&text=${encodeURIComponent(t)}` },
+        { key: 'linkedin', label: 'LinkedIn', icon: 'fab fa-linkedin-in', tint: '#0A66C2',
+          href: (u) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}` },
         { key: 'email', label: 'Email', icon: 'fas fa-envelope', tint: '#8B9BB4',
           href: (u, t) => `mailto:?subject=${encodeURIComponent(t)}&body=${encodeURIComponent(u)}` },
     ];
 
-    // URL portfolio ditulis tetap, bukan diambil dari location.href: share bisa
-    // dibuka lewat pratinjau lokal atau domain lain, dan link yang dibagikan
-    // tetap harus menunjuk ke alamat publik.
-    const PORTFOLIO_SHARE = {
-        title: 'Muhamad Farhan Muizaddin — Software Engineer',
-        text: 'Portfolio software engineer: SIMRS-RME, APSS, Pusaku, dan proyek lainnya.',
-        url: 'https://portfolio-mfarhanmuizaddin.vercel.app/',
-        heading: 'Bagikan portfolio ini',
-    };
+    const STORY_W = 1080;
+    const STORY_H = 1920;
+    const STORY_BRAND = 'Muhamad Farhan Muizaddin';
+    const STORY_LOGO = 'assets/images/logo.png';
+    const STORY_FALLBACK_URL = 'portfolio-mfarhanmuizaddin.vercel.app';
 
-    // Dipisah dari showToast() milik form kontak: toast itu terikat pada
-    // elemen form, dan menampilkannya dari modal akan membuatnya terpotong
-    // atau memicu gaya yang salah.
-    function shareToast(message) {
-        let el = document.getElementById('shareToast');
-        if (!el) {
-            el = document.createElement('div');
-            el.id = 'shareToast';
-            el.className = 'share-toast';
-            el.setAttribute('role', 'status');
-            el.setAttribute('aria-live', 'polite');
-            document.body.appendChild(el);
+    /** Teks tautan kartu Story: host + path, tanpa skema agar tidak melebar. */
+    function storyLinkText(url) {
+        try {
+            const u = new URL(url);
+            const path = u.pathname.replace(/\/+$/, '');
+            return (u.host + path).slice(0, 46);
+        } catch (e) {
+            return String(url || '').replace(/^https?:\/\//, '').slice(0, 46);
         }
-        el.textContent = message;
-        el.classList.add('show');
-        clearTimeout(el._t);
-        el._t = setTimeout(() => el.classList.remove('show'), 2200);
     }
 
-    // Deskripsi sekali bagikan. Dua sumber: proyek individual, dan portfolio
-    // utuh dari tombol di header section. Bentuknya sengaja sama supaya satu
-    // set handler di bawah bisa dipakai keduanya.
+    // Deskripsi sekali bagikan. Selalu diturunkan dari proyek yang sedang
+    // dibaca, jadi tidak ada yang perlu diisi manual per proyek.
     function shareItemForProject(projectId) {
         const p = projectsData.find(x => x.id === projectId);
         if (!p) return null;
@@ -2503,36 +2510,326 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         // share. Kalau proyek tidak punya repo, arahkan ke portfolio ini.
         const url = (p.github && p.github !== '#') ? p.github : location.href;
         return {
+            id: p.id,
             title: p.title,
             text: p.title + ' — ' + p.description,
             url,
-            heading: 'Bagikan proyek ini',
+            image: p.image,
+            icon: p.icon,
+            techs: (p.technologies || []).slice(0, 4),
         };
     }
 
-    let sharePopEl = null;
-    let sharePopBtn = null;
+    // ============================================
+    // Story image 1080x1920
+    // ============================================
 
-    function closeSharePopover() {
-        if (!sharePopEl) return;
-        sharePopEl.remove();
-        sharePopEl = null;
-        if (sharePopBtn) {
-            sharePopBtn.setAttribute('aria-expanded', 'false');
-            sharePopBtn.focus();
-            sharePopBtn = null;
+    function loadImage(src, timeoutMs = 8000) {
+        return new Promise((resolve, reject) => {
+            if (!src) {
+                reject(new Error('tidak ada gambar'));
+                return;
+            }
+            const img = new Image();
+            // Batas waktu wajib: tanpa itu satu gambar yang menggantung akan
+            // membuat kartu Story tidak pernah selesai dan tombolnya diam saja.
+            const timer = setTimeout(
+                () => reject(new Error('gambar proyek terlalu lama dimuat')),
+                timeoutMs
+            );
+            const settle = (fn, arg) => { clearTimeout(timer); fn(arg); };
+            img.onload = () => settle(resolve, img);
+            img.onerror = () => settle(reject, new Error('gambar proyek gagal dimuat'));
+            img.src = src;
+        });
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+        const rr = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.arcTo(x + w, y, x + w, y + h, rr);
+        ctx.arcTo(x + w, y + h, x, y + h, rr);
+        ctx.arcTo(x, y + h, x, y, rr);
+        ctx.arcTo(x, y, x + w, y, rr);
+        ctx.closePath();
+    }
+
+    /** Potong teks jadi maksimal maxLines baris, tambahkan elipsis di akhir. */
+    function wrapText(ctx, text, maxWidth, maxLines) {
+        const words = String(text || '').split(/\s+/).filter(Boolean);
+        const lines = [];
+        let line = '';
+
+        for (const w of words) {
+            const next = line ? line + ' ' + w : w;
+            if (ctx.measureText(next).width <= maxWidth || !line) {
+                line = next;
+            } else {
+                lines.push(line);
+                line = w;
+                if (lines.length === maxLines) break;
+            }
+        }
+
+        if (line && lines.length < maxLines) lines.push(line);
+
+        if (lines.length === maxLines) {
+            let last = lines[maxLines - 1];
+            while (last.length > 1 && ctx.measureText(last + '…').width > maxWidth) {
+                last = last.slice(0, -1);
+            }
+            lines[maxLines - 1] = last.replace(/[.,;:]?$/, '') + '…';
+        }
+
+        return lines;
+    }
+
+    function drawStack(ctx, x, y, lines, lineHeight) {
+        lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+        return y + (lines.length - 1) * lineHeight;
+    }
+
+    /** Skalakan gambar ke dalam kotak tanpa meregangkan atau memotong. */
+    function drawContained(ctx, img, x, y, box) {
+        if (!img || !img.width || !img.height) return;
+        const scale = Math.min(box / img.width, box / img.height);
+        const w = img.width * scale;
+        const h = img.height * scale;
+        ctx.drawImage(img, x + (box - w) / 2, y + (box - h) / 2, w, h);
+    }
+
+    /**
+     * Susun kartu Story 1080x1920 berisi logo, pratinjau proyek, nama,
+     * ringkasan, dan tautan proyek. Kanvas yang sama yang dikirim ke share
+     * sheet sebagai berkas, jadi tidak ada render terpisah untuk tiap platform.
+     */
+    async function buildStoryImage(item) {
+        const canvas = document.createElement('canvas');
+        canvas.width = STORY_W;
+        canvas.height = STORY_H;
+        const ctx = canvas.getContext('2d');
+
+        const pad = 84;
+        const inner = STORY_W - pad * 2;
+
+        // Latar
+        const bg = ctx.createLinearGradient(0, 0, STORY_W, STORY_H);
+        bg.addColorStop(0, '#0a1730');
+        bg.addColorStop(0.55, '#102347');
+        bg.addColorStop(1, '#060d1f');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, STORY_W, STORY_H);
+
+        const glow = ctx.createRadialGradient(STORY_W * 0.78, 190, 0, STORY_W * 0.78, 190, 620);
+        glow.addColorStop(0, 'rgba(34,184,198,0.30)');
+        glow.addColorStop(1, 'rgba(34,184,198,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, STORY_W, 900);
+
+        // Pratinjau proyek dan logo dimuat bersamaan supaya render kartu tidak
+        // menambah satu siklus jaringan lagi.
+        const shotY = 236;
+        const shotH = 900;
+        const [shot, logo] = await Promise.all([
+            loadImage(item.image).catch(() => null),
+            loadImage(STORY_LOGO).catch(() => null)
+        ]);
+
+        // Branding di atas
+        const headX = pad + (logo ? 128 : 0);
+        if (logo) drawContained(ctx, logo, pad, 92, 96);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '600 34px "Space Grotesk", sans-serif';
+        ctx.textBaseline = 'top';
+        ctx.fillText(STORY_BRAND, headX, logo ? 108 : 96);
+
+        ctx.fillStyle = 'rgba(157,177,205,0.9)';
+        ctx.font = '500 28px Inter, sans-serif';
+        ctx.fillText('Software Engineer', headX, logo ? 156 : 148);
+
+        ctx.save();
+        roundRect(ctx, pad, shotY, inner, shotH, 40);
+        ctx.clip();
+        ctx.fillStyle = '#0b1630';
+        ctx.fillRect(pad, shotY, inner, shotH);
+
+        if (shot) {
+            // Skala-aspek-rapat: screenshot lanskap dipotong, bukan diregangkan.
+            const scale = Math.max(inner / shot.width, shotH / shot.height);
+            const dw = shot.width * scale;
+            const dh = shot.height * scale;
+            ctx.drawImage(shot, pad + (inner - dw) / 2, shotY + (shotH - dh) / 2, dw, dh);
+        } else {
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '600 96px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(String.fromCodePoint(0xf0f7), pad + inner / 2, shotY + shotH / 2 - 48);
+            ctx.textAlign = 'left';
+        }
+        ctx.restore();
+
+        // Bingkai tipis
+        ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+        ctx.lineWidth = 2;
+        roundRect(ctx, pad + 1, shotY + 1, inner - 2, shotH - 2, 40);
+        ctx.stroke();
+
+        // Nama proyek
+        let y = shotY + shotH + 76;
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 66px "Space Grotesk", sans-serif';
+        y = drawStack(ctx, pad, y, wrapText(ctx, item.title, inner, 2), 78) + 78;
+
+        // Ringkasan
+        ctx.fillStyle = 'rgba(200,216,238,0.92)';
+        ctx.font = '400 34px Inter, sans-serif';
+        y = drawStack(ctx, pad, y, wrapText(ctx, item.text.replace(item.title + ' — ', ''), inner, 3), 48) + 44;
+
+        // Chip teknologi
+        if (item.techs.length) {
+            ctx.font = '600 26px Inter, sans-serif';
+            let cx = pad;
+            const cy = y;
+            for (const t of item.techs) {
+                const tw = ctx.measureText(t).width + 44;
+                if (cx + tw > pad + inner) break;
+                ctx.fillStyle = 'rgba(255,255,255,0.08)';
+                roundRect(ctx, cx, cy, tw, 54, 27);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(224,238,255,0.95)';
+                ctx.fillText(t, cx + 22, cy + 14);
+                cx += tw + 16;
+            }
+            y = cy + 54;
+        }
+
+        // Domain di bawah
+        const footY = STORY_H - 148;
+        ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(pad, footY - 52);
+        ctx.lineTo(pad + inner, footY - 52);
+        ctx.stroke();
+
+        ctx.fillStyle = '#22b8c6';
+        ctx.font = '600 32px "Space Grotesk", sans-serif';
+        // URL proyek, bukan domain portfolio: kartu ini mewakili satu proyek
+        // sehingga tautan yang tampil harus mengarah ke proyek itu sendiri.
+        ctx.fillText(storyLinkText(item.url), pad, footY, inner - 200);
+
+        ctx.fillStyle = 'rgba(157,177,205,0.85)';
+        ctx.font = '500 26px Inter, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('Karya pilihan', STORY_W - pad, footY + 4);
+        ctx.textAlign = 'left';
+
+        return canvas;
+    }
+
+    /**
+     * Ekspor kanvas jadi berkas yang siap dikirim ke share sheet.
+     *
+     * Default-nya JPEG karena kartu Story 1080x1920 sebagai PNG berukuran
+     * sekitar 1,4 MB: terlalu berat untuk dikirim lewat share sheet di jaringan
+     * seluler. Kualitas 0,92 masih di atas yang dibutuhkan untuk teks besar.
+     */
+    function canvasToFile(canvas, filename, type = 'image/jpeg', quality = 0.92) {
+        return new Promise((resolve, reject) => {
+            if (!canvas.toBlob) {
+                reject(new Error('canvas tidak bisa diekspor'));
+                return;
+            }
+            canvas.toBlob(blob => {
+                if (blob) resolve(new File([blob], filename, { type }));
+                else reject(new Error('gagal membuat berkas gambar'));
+            }, type, quality);
+        });
+    }
+
+    // ============================================
+    // Modal berbagi
+    // ============================================
+
+    let shareModalEl = null;
+    let shareModalOpener = null;
+    let shareStoryFile = null;
+    let shareBusy = false;
+
+    const canNativeShare = () => typeof navigator.share === 'function';
+    const canShareFile = () => canNativeShare()
+        && typeof navigator.canShare === 'function'
+        && typeof File !== 'undefined';
+
+    // Toast terpisah dari showToast() milik form kontak: toast itu terikat
+    // pada elemen form dan akan terpotong saat muncul dari atas panel.
+    function shareToast(message, tone) {
+        let el = document.getElementById('shareToast');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'shareToast';
+            el.setAttribute('role', 'status');
+            el.setAttribute('aria-live', 'polite');
+            document.body.appendChild(el);
+        }
+        el.textContent = message;
+        el.className = 'share-toast' + (tone ? ' share-toast--' + tone : '');
+        requestAnimationFrame(() => el.classList.add('show'));
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.classList.remove('show'), 3200);
+    }
+
+    function closeShareModal() {
+        if (!shareModalEl) return;
+        shareModalEl.classList.remove('is-open');
+        // Modal berbagi adalah lapisan di atas detail proyek. Kunci gulir milik
+        // body baru boleh dilepas kalau tidak ada modal lain yang masih terbuka.
+        if (!document.getElementById('projectModal')?.classList.contains('open')) {
+            document.body.classList.remove('modal-open');
+        }
+        document.removeEventListener('keydown', shareModalKey);
+        const el = shareModalEl;
+        shareModalEl = null;
+        setTimeout(() => el.remove(), 220);
+        if (shareModalOpener) {
+            shareModalOpener.setAttribute('aria-expanded', 'false');
+            shareModalOpener.focus();
+            shareModalOpener = null;
         }
     }
 
+    function shareModalKey(e) {
+        if (e.key === 'Escape' && shareModalEl) {
+            closeShareModal();
+            return;
+        }
+        if (e.key !== 'Tab' || !shareModalEl) return;
+        const f = shareModalEl.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])');
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+
+    function setShareBusy(busy, label) {
+        shareBusy = busy;
+        if (!shareModalEl) return;
+        shareModalEl.classList.toggle('is-busy', busy);
+        shareModalEl.querySelectorAll('[data-share-action]').forEach(btn => {
+            btn.disabled = busy;
+        });
+        const status = shareModalEl.querySelector('[data-share-status]');
+        if (status) status.textContent = busy ? (label || 'Menyiapkan gambar Story…') : '';
+    }
+
     async function copyShareLink(item) {
-        const { url } = item;
         try {
-            if (navigator.clipboard?.writeText) {
-                await navigator.clipboard.writeText(url);
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(item.url);
             } else {
-                // Fallback untuk konteks non-secure / browser lama.
                 const ta = document.createElement('textarea');
-                ta.value = url;
+                ta.value = item.url;
                 ta.setAttribute('readonly', '');
                 ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
                 document.body.appendChild(ta);
@@ -2540,109 +2837,261 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 document.execCommand('copy');
                 ta.remove();
             }
-            shareToast('Link disalin: ' + url);
-        } catch {
-            shareToast('Gagal menyalin. Salin manual dari address bar.');
+            shareToast('Link disalin ke clipboard', 'success');
+        } catch (e) {
+            shareToast('Gagal menyalin. Salin manual dari address bar.', 'error');
         }
     }
 
+    /** Bagikan teks biasa: share sheet bawaan perangkat. */
     async function nativeShare(item) {
         try {
             await navigator.share({ title: item.title, text: item.text, url: item.url });
-        } catch (err) {
-            // AbortError = user menekan cancel di share sheet. Jangan tampilkan apa pun.
-            if (err && err.name !== 'AbortError') shareToast('Gagal membuka aplikasi berbagi.');
+            shareToast('Dialog berbagi selesai', 'success');
+        } catch (e) {
+            if (e && e.name !== 'AbortError') shareToast('Gagal membuka dialog berbagi', 'error');
         }
     }
 
-    function openSharePopover(btn, item) {
+    /**
+     * Bagikan kartu Story sebagai berkas.
+     *
+     * Ini jalur resmi dan satu-satunya yang mendekati "kirim ke Story":
+     * berkas masuk ke share sheet, lalu pengguna memilih Instagram atau
+ * TikTok di sana. Aplikasi yang terbuka yang mengunggah dan memotong
+ * gambarnya, bukan situs ini.
+     */
+    async function shareStoryImage(item, label) {
+        if (!shareStoryFile) {
+            shareToast('Gambar Story belum siap, coba lagi sebentar', 'error');
+            return;
+        }
+
+        if (!canShareFile() || !navigator.canShare({ files: [shareStoryFile] })) {
+            // Perangkat tidak mendukung berbagi berkas: turun ke berbagi teks
+            // supaya tetap resmi dan tidak memaksa pengguna menyalin manual.
+            await nativeShare(item);
+            shareToast('Perangkat ini tidak bisa berbagi gambar, mengirim teks', 'info');
+            return;
+        }
+
+        try {
+            await navigator.share({ files: [shareStoryFile], title: item.title, text: item.text });
+            shareToast('Kirim ke ' + label + ' lewat share sheet', 'success');
+        } catch (e) {
+            if (e && e.name === 'NotAllowedError') {
+                shareToast('Berbagi dibatalkan perangkat', 'info');
+            } else if (e && e.name === 'AbortError') {
+                // Pengguna menekan batal di share sheet.
+            } else {
+                shareToast('Gagal mengirim gambar, mencoba berbagi teks', 'error');
+                await nativeShare(item);
+            }
+        }
+    }
+
+    function openShareModal(btn, item) {
         if (!item) return;
-        if (sharePopEl) { closeSharePopover(); return; }
+        if (shareModalEl) { closeShareModal(); return; }
 
-        const { url, text } = item;
-        const canNative = typeof navigator.share === 'function';
+        const supportsText = canNativeShare();
 
-        const pop = document.createElement('div');
-        pop.className = 'share-pop';
-        pop.setAttribute('role', 'dialog');
-        pop.setAttribute('aria-label', item.heading + ': ' + item.title);
+        const modal = document.createElement('div');
+        modal.className = 'share-modal';
+        modal.id = 'shareModal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-label', 'Bagikan ' + item.title);
 
-        pop.innerHTML = `
-            <div class="share-pop__head">
-                <strong>${item.heading}</strong>
-                <button type="button" class="share-pop__close" aria-label="Tutup pilihan berbagi">
-                    <i class="fas fa-xmark" aria-hidden="true"></i>
-                </button>
+        modal.innerHTML = `
+            <div class="share-modal__backdrop" data-share-close></div>
+            <div class="share-modal__panel">
+                <header class="share-modal__head">
+                    <div class="share-modal__headtext">
+                        <span class="share-modal__eyebrow">Bagikan</span>
+                        <h2 class="share-modal__title">${item.title}</h2>
+                    </div>
+                    <button type="button" class="share-modal__close" data-share-close aria-label="Tutup">
+                        <i class="fas fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </header>
+
+                <div class="share-modal__story">
+                    <div class="share-modal__storyframe">
+                        <span class="share-modal__storyfallback" data-share-thumb-fallback>Menyiapkan…</span>
+                    </div>
+                    <div class="share-modal__storymeta">
+                        <strong>Kartu Story 1080 &times; 1920</strong>
+                        <span data-share-status role="status" aria-live="polite">Menyiapkan kartu Story…</span>
+                    </div>
+                </div>
+
+                <div class="share-modal__actions">
+                    <button type="button" class="share-act share-act--instagram" data-share-action="story-instagram">
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
+                        <span>Share to Instagram</span>
+                    </button>
+                    <button type="button" class="share-act share-act--tiktok" data-share-action="story-tiktok">
+                        <i class="fab fa-tiktok" aria-hidden="true"></i>
+                        <span>Share to TikTok</span>
+                    </button>
+                    ${supportsText ? `
+                    <button type="button" class="share-act share-act--native" data-share-action="native">
+                        <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                        <span>Share Project</span>
+                    </button>` : ''}
+                </div>
+
+                <p class="share-modal__hint">
+                    Instagram dan TikTok tidak punya tombol berbagi langsung dari web.
+                    Kartu Story dikirim ke share sheet sebagai gambar; pilih IG atau TikTok
+                    di sana, lalu Posting ke Story.
+                </p>
+
+                <div class="share-modal__grid" role="group" aria-label="Pilih aplikasi">
+                    ${SHARE_INTENTS.map(t => `
+                        <a class="share-tile" href="${t.href(item.url, item.text)}" target="_blank" rel="noopener noreferrer"
+                           style="--tint:${t.tint}">
+                            <i class="${t.icon}" aria-hidden="true"></i>
+                            <span>${t.label}</span>
+                        </a>`).join('')}
+                </div>
+
+                <div class="share-modal__fallback">
+                    <button type="button" class="share-act share-act--copy" data-share-action="copy">
+                        <i class="fas fa-link" aria-hidden="true"></i>
+                        <span>Copy Link</span>
+                    </button>
+                    <span class="share-modal__fallbacknote">Dipakai kalau perangkat tidak punya dialog berbagi.</span>
+                </div>
             </div>
-            ${canNative ? `
-            <button type="button" class="share-pop__native" data-share-native>
-                <i class="fas fa-share-nodes" aria-hidden="true"></i>
-                <span>Bagikan ke aplikasi lain</span>
-            </button>` : ''}
-            <div class="share-pop__grid" role="group" aria-label="Pilih aplikasi">
-                ${SHARE_TARGETS.map(t => `
-                    <a class="share-pop__item" href="${t.href(url, text)}" target="_blank" rel="noopener noreferrer"
-                       style="--tint:${t.tint}" data-share-target="${t.key}">
-                        <i class="${t.icon}" aria-hidden="true"></i>
-                        <span>${t.label}</span>
-                    </a>`).join('')}
-                <button type="button" class="share-pop__item" data-share-copy style="--tint:#5EEAD4">
-                    <i class="fas fa-link" aria-hidden="true"></i>
-                    <span>Salin link</span>
-                </button>
-            </div>
-            <p class="share-pop__note">
-                Instagram dan TikTok Story tidak punya tombol bagikan bawaan —
-                salin link lalu tempel di Story.
-            </p>
         `;
 
-        document.body.appendChild(pop);
-        sharePopEl = pop;
-        sharePopBtn = btn;
+        document.body.appendChild(modal);
+        shareModalEl = modal;
+        shareModalOpener = btn;
         btn.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('modal-open');
+        document.addEventListener('keydown', shareModalKey);
 
-        // Posisikan di bawah tombol, lalu balik ke atas kalau tidak muat.
-        //
-        // Animasi masuknya harus dimatikan dulu saat mengukur: dengan
-        // scale(0.97) di keyframe awal, getBoundingClientRect() melaporkan
-        // ukuran yang lebih kecil dari ukuran final. Akibatnya popover
-        // dihitung muat di bawah tombol padahal 4px-nya keluar viewport.
-        const r = btn.getBoundingClientRect();
-        pop.style.visibility = 'hidden';
-        pop.style.animation = 'none';
-        const pr = pop.getBoundingClientRect();
-        const gap = 8;
-        const margin = 12;
-        let top = r.bottom + gap;
-        if (top + pr.height > innerHeight - margin) {
-            const atas = r.top - pr.height - gap;
-            // Kalau bahkan di atas pun tidak muat, tempel ke tepi bawah viewport.
-            top = atas >= margin ? atas : Math.max(margin, innerHeight - pr.height - margin);
-        }
-        let left = r.left + r.width / 2 - pr.width / 2;
-        left = Math.min(Math.max(margin, left), Math.max(margin, innerWidth - pr.width - margin));
-        pop.style.top = top + 'px';
-        pop.style.left = left + 'px';
-        pop.style.visibility = 'visible';
-        // Aktifkan lagi animasinya setelah posisi final, supaya tetap halus.
-        requestAnimationFrame(() => { pop.style.animation = ''; });
+        modal.querySelectorAll('[data-share-close]').forEach(el => el.addEventListener('click', closeShareModal));
 
-        pop.querySelector('.share-pop__close').addEventListener('click', closeSharePopover);
-        pop.querySelector('[data-share-copy]')?.addEventListener('click', async () => {
-            await copyShareLink(item);
-            closeSharePopover();
+        modal.querySelectorAll('[data-share-action]').forEach(btnAction => {
+            btnAction.addEventListener('click', async () => {
+                if (shareBusy) return;
+                const act = btnAction.dataset.shareAction;
+
+                if (act === 'copy') {
+                    await copyShareLink(item);
+                    return;
+                }
+
+                if (act === 'native') {
+                    closeShareModal();
+                    await nativeShare(item);
+                    return;
+                }
+
+                // Instagram dan TikTok: kartu Story dikirim sebagai berkas bila
+                // perangkat mendukung, kalau tidak tetap pakai berbagi teks.
+                if (shareStoryFile) {
+                    closeShareModal();
+                    await shareStoryImage(item, act === 'story-instagram' ? 'Instagram' : 'TikTok');
+                    return;
+                }
+
+                setShareBusy(true, 'Menyiapkan kartu Story…');
+                try {
+                    await shareStoryReady;
+                } catch (e) {
+                    // Kartu gagal dirender: lepaskan status sibuk dan tetap
+                    // lanjutkan berbagi teks supaya tombol tidak diam saja.
+                    setShareBusy(false);
+                    closeShareModal();
+                    await nativeShare(item);
+                    return;
+                }
+                setShareBusy(false);
+                closeShareModal();
+                await shareStoryImage(item, act === 'story-instagram' ? 'Instagram' : 'TikTok');
+            });
         });
-        pop.querySelector('[data-share-native]')?.addEventListener('click', async () => {
-            closeSharePopover();
-            await nativeShare(item);
-        });
-        // Tutup setelah pilih platform, supaya tidak menutupi jendela share-nya.
-        pop.querySelectorAll('[data-share-target]').forEach(a => {
-            a.addEventListener('click', () => setTimeout(closeSharePopover, 120));
-        });
+
+        requestAnimationFrame(() => modal.classList.add('is-open'));
+        setTimeout(() => modal.querySelector('.share-modal__close')?.focus(), 60);
+
+        // Pratinjau disisipkan begitu kartu siap dirender, bukan di dalam HTML
+        // awal, karena render-nya baru selesai setelah gambar proyek dimuat.
+        shareStoryReady
+            .then(() => {
+                if (!shareStoryThumb || shareModalEl !== modal) return;
+                const frame = modal.querySelector('.share-modal__storyframe');
+                if (!frame) return;
+                const img = document.createElement('img');
+                img.src = shareStoryThumb;
+                img.alt = 'Pratinjau kartu Story untuk ' + item.title;
+                const hint = frame.querySelector('[data-share-thumb-fallback]');
+                if (hint) hint.remove();
+                frame.appendChild(img);
+                const status = modal.querySelector('[data-share-status]');
+                if (status) status.textContent = 'Siap dikirim ke Instagram atau TikTok';
+            })
+            .catch(() => {
+                const status = shareModalEl && shareModalEl.querySelector('[data-share-status]');
+                if (status) status.textContent = 'Pratinjau tidak tersedia, berbagi teks tetap jalan';
+            });
     }
 
+    // Pratinjau thumbnail dibuat terpisah dari berkas 1080x1920 supaya modal
+    // tidak menunggu render gambar berukuran penuh.
+    let shareStoryThumb = '';
+    let shareStoryReady = Promise.resolve();
+
+    function buildStoryThumb(canvas) {
+        const t = document.createElement('canvas');
+        t.width = 216;
+        t.height = 384;
+        t.getContext('2d').drawImage(canvas, 0, 0, 216, 384);
+        shareStoryThumb = t.toDataURL('image/jpeg', 0.72);
+    }
+
+    /* Pemicu: tombol Bagikan di panel detail proyek. Delegasi dipasang satu
+       kali karena isi modal dirender ulang setiap kali proyek dibuka.
+
+       Kartu Story disiapkan di sini, di dalam gestur klik, supaya saat
+       tombol Instagram atau TikTok ditekan tidak perlu menunggu render dan
+       konteks izin pengguna tidak ikut hilang. */
+    document.addEventListener('click', (e) => {
+        if (shareModalEl) return;
+        const btn = e.target.closest('[data-share-open]');
+        if (!btn) return;
+
+        const item = shareItemForProject(btn.dataset.project);
+        if (!item) return;
+
+        shareStoryFile = null;
+        shareStoryThumb = '';
+        setShareBusy(false);
+
+        shareStoryReady = buildStoryImage(item)
+            .then(canvas => {
+                buildStoryThumb(canvas);
+                return canvasToFile(canvas, 'story-' + item.id + '.jpg');
+            })
+            .then(file => { shareStoryFile = file; return file; });
+
+        // Kegagalan menyiapkan gambar tidak boleh menggagalkan berbagi teks.
+        shareStoryReady.catch((err) => {
+            shareStoryFile = null;
+            if (window.console && console.warn) console.warn('[share] kartu Story gagal disiapkan', err);
+        });
+
+        openShareModal(btn, item);
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && shareModalEl) closeShareModal();
+    });
     // ============================================
     // EXPERIENCE TIMELINE
     // ============================================
