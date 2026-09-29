@@ -495,7 +495,7 @@ a {
 
     /* Drawer footer status */
     .nav-links::after {
-        content: 'â— Terbuka untuk kolaborasi';
+        content: '→ Terbuka untuk kolaborasi';
         position: absolute;
         left: 24px;
         right: 24px;
@@ -545,7 +545,7 @@ a {
         transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.2s ease;
     }
 
-    /* Item number 01â€“06 */
+    /* Item number 01–06 */
     .nav-link::before {
         content: counter(premium-nav, decimal-leading-zero);
         font-family: ui-monospace, 'Cascadia Code', 'Courier New', monospace;
@@ -641,7 +641,7 @@ a {
 }
 
 /* ============================================
-   HERO SECTION â€” PREMIUM REDESIGN
+   HERO SECTION — PREMIUM REDESIGN
    ============================================ */
 .hero {
     position: relative;
@@ -822,7 +822,7 @@ a {
     z-index: 2;
 }
 
-/* --- Status Badge â€” compact, width follows content --- */
+/* --- Status Badge — compact, width follows content --- */
 .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -868,7 +868,7 @@ a {
     letter-spacing: 1.5px;
 }
 
-/* --- Eyebrow â€” HALO, SAYA close to headline --- */
+/* --- Eyebrow — HALO, SAYA close to headline --- */
 .hero-eyebrow {
     font-family: var(--font-body);
     font-size: 0.8rem;
@@ -899,7 +899,7 @@ a {
     transform: translateY(0);
 }
 
-/* --- Headline â€” dominant focal point --- */
+/* --- Headline — dominant focal point --- */
 .hero-title {
     font-family: var(--font-display);
     font-size: clamp(2.8rem, 6vw, 5rem);
@@ -1051,7 +1051,7 @@ a {
     51%, 100% { opacity: 0; }
 }
 
-/* --- Description â€” wider, readable --- */
+/* --- Description — wider, readable --- */
 .hero-description {
     font-size: clamp(1rem, 1.5vw, 1.15rem);
     line-height: 1.75;
@@ -1069,7 +1069,7 @@ a {
     transform: translateY(0);
 }
 
-/* --- CTA Buttons â€” premium --- */
+/* --- CTA Buttons — premium --- */
 .hero-buttons {
     display: flex;
     gap: 14px;
@@ -1163,7 +1163,7 @@ a {
     transform: translate(4px, -4px);
 }
 
-/* --- Social Links â€” closer to CTAs --- */
+/* --- Social Links — closer to CTAs --- */
 .hero-social {
     display: flex;
     gap: 12px;
@@ -1208,7 +1208,7 @@ a {
     transform: translateY(-2px);
 }
 
-/* --- Right side â€” profile stage --- */
+/* --- Right side — profile stage --- */
 .hero-right {
     position: relative;
     display: flex;
@@ -1548,7 +1548,7 @@ a {
 }
 
 /* ============================================
-   HERO RESPONSIVE â€” TABLET
+   HERO RESPONSIVE — TABLET
    ============================================ */
 @media (max-width: 1024px) {
     .hero-layout,
@@ -1571,7 +1571,7 @@ a {
 }
 
 /* ============================================
-   HERO RESPONSIVE â€” MOBILE (â‰¤768px)
+   HERO RESPONSIVE — MOBILE (≤768px)
    Foto di atas, teks di bawah.
    CTA stack, badge aman, tanpa overflow.
    ============================================ */
@@ -1630,7 +1630,7 @@ a {
         margin-bottom: 4px;
     }
 
-    /* Headline â€” aman dari overflow */
+    /* Headline — aman dari overflow */
     .hero-title {
         text-align: center;
         width: 100%;
@@ -1668,7 +1668,7 @@ a {
         padding: 0 2px;
     }
 
-    /* CTA â€” stack full-width, mudah di-tap */
+    /* CTA — stack full-width, mudah di-tap */
     .hero-buttons {
         flex-direction: column;
         align-items: stretch;
@@ -1698,7 +1698,7 @@ a {
         font-size: 1rem;
     }
 
-    /* Foto profil â€” proporsi rapi, tidak terlalu besar */
+    /* Foto profil — proporsi rapi, tidak terlalu besar */
     .profile-stage {
         width: min(260px, 68vw);
         margin: 0 auto;
@@ -1735,7 +1735,7 @@ a {
         opacity: 0.7;
     }
 
-    /* Badge mengambang â€” tarik ke dalam agar tidak overflow */
+    /* Badge mengambang — tarik ke dalam agar tidak overflow */
     .profile-badge-float {
         font-size: 0.56rem;
         padding: 6px 10px;
@@ -1770,7 +1770,7 @@ a {
         opacity: 0.35;
     }
 
-    /* Glow background â€” lebih kecil & ringan */
+    /* Glow background — lebih kecil & ringan */
     .glow-cyan {
         width: 420px;
         height: 420px;
@@ -1800,7 +1800,7 @@ a {
 }
 
 /* ============================================
-   HERO RESPONSIVE â€” SMALL PHONE (â‰¤480px)
+   HERO RESPONSIVE — SMALL PHONE (≤480px)
    ============================================ */
 @media (max-width: 480px) {
     .hero {
@@ -1881,7 +1881,7 @@ a {
 }
 
 /* ============================================
-   HERO RESPONSIVE â€” TINY PHONE (â‰¤375px)
+   HERO RESPONSIVE — TINY PHONE (≤375px)
    ============================================ */
 @media (max-width: 375px) {
     .hero {
@@ -1928,7 +1928,7 @@ a {
 }
 
 /* ============================================
-   HERO RESPONSIVE â€” SMALLEST (â‰¤320px)
+   HERO RESPONSIVE — SMALLEST (≤320px)
    ============================================ */
 @media (max-width: 320px) {
     .hero {
@@ -1957,7 +1957,7 @@ a {
     }
 }
 
-/* Landscape phone â€” kompak, foto lebih kecil */
+/* Landscape phone — kompak, foto lebih kecil */
 @media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
     .hero {
         padding: calc(72px + env(safe-area-inset-top, 0px)) 0 28px;
@@ -1992,7 +1992,7 @@ a {
     }
 }
 
-/* Hero scrolled state â€” subtle fade for depth */
+/* Hero scrolled state — subtle fade for depth */
 .hero-left.is-scrolled {
     opacity: 0.6;
     transform: translateY(-8px);
@@ -4145,13 +4145,25 @@ i.sub-touch { display: none; }
     font-weight: 700;
     color: var(--text-primary, #fff);
 }
-.share-modal__storymeta span {
+/* Dipakai > span supaya label di dalam tombol unduh tidak ikut warna dan
+   ukuran teks status. */
+.share-modal__storymeta > span {
     display: block;
     margin-top: 4px;
     font-size: 0.72rem;
     line-height: 1.5;
     color: var(--muted-dark, #9db1cd);
 }
+/* Tombol unduh diletakkan di bawah pratinjau kartu, bukan di baris aksi
+   utama, karena itu jalur manual untuk browser yang tidak bisa mengirim
+   berkas ke share sheet. */
+.share-modal__storymeta .share-act {
+    margin-top: 10px;
+    padding: 9px 12px;
+    font-size: 0.74rem;
+    width: 100%;
+}
+.share-act--download i { color: #7dd3fc; }
 
 /* Empat aksi utama */
 .share-modal__actions {
@@ -4409,7 +4421,7 @@ body.modal-open { overflow:hidden; }
     .card-preview { height:200px; }
     .featured-info { padding:24px 20px; }
 
-    /* Project Detail â€” single column, natural page-edge scrolling */
+    /* Project Detail — single column, natural page-edge scrolling */
     .project-modal { padding:0; align-items:flex-start; }
     .modal-panel { max-width:100%; border-radius:0; border-left:none; border-right:none; }
     .pd-head { padding:24px 20px 20px; padding-right:64px; gap:12px; }
@@ -4429,7 +4441,7 @@ body.modal-open { overflow:hidden; }
     .featured-actions { flex-direction:column; }
     .featured-actions .btn-solid-sm, .featured-actions .btn-ghost { width:100%; justify-content:center; }
 
-    /* Project Detail â€” buttons full width, easy to tap */
+    /* Project Detail — buttons full width, easy to tap */
     .pd-actions { width:100%; }
     .pd-actions .pd-btn { flex:1 1 100%; justify-content:center; }
     #modalSubtitle { font-size:0.87rem; }
@@ -4895,7 +4907,7 @@ body.modal-open { overflow:hidden; }
     .section-tag { letter-spacing: 2px; padding: 6px 14px; font-size: 0.68rem; }
     .lab-hint { font-size: 0.64rem; }
 }
-/* HP / layar sempit: sembunyikan lab â€” tablet & laptop tetap tampil */
+/* HP / layar sempit: sembunyikan lab — tablet & laptop tetap tampil */
 @media (max-width: 767px) {
     .lab { display: none !important; }
 }
@@ -5041,7 +5053,7 @@ body.modal-open { overflow:hidden; }
 .iterm-window:focus-within .iterm-cursor { opacity: 1; }
 
 /* ============================================
-    CONTACT SECTION â€” PREMIUM
+    CONTACT SECTION — PREMIUM
     ============================================ */
 .contact {
     position: relative;
@@ -5103,7 +5115,7 @@ body.modal-open { overflow:hidden; }
     -webkit-backdrop-filter: blur(18px);
     box-shadow: 0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
 }
-/* Honeypot â€” benar-benar tersembunyi dari manusia & screen reader via aria-hidden */
+/* Honeypot — benar-benar tersembunyi dari manusia & screen reader via aria-hidden */
 .hp-field {
     position: absolute !important;
     left: -9999px !important;
@@ -5242,7 +5254,7 @@ body.modal-open { overflow:hidden; }
     border-radius: 5px;
     font-size: 0.9em;
 }
-/* Premium toast â€” glassmorphism futuristic, slide-in */
+/* Premium toast — glassmorphism futuristic, slide-in */
 .form-toast {
     margin-top: 14px;
     padding: 14px 16px;
@@ -5385,7 +5397,7 @@ body.modal-open { overflow:hidden; }
     .iterm-actions { display: none; }
     .contact-header .section-title { font-size: 1.9rem; }
     .site-footer { margin-top: 32px; }
-    /* Contact form â€” larger tap targets, prevent iOS zoom */
+    /* Contact form — larger tap targets, prevent iOS zoom */
     .field input, .field textarea { font-size: 16px; }
     .contact-submit { min-height: 52px; font-size: 1rem; }
 }
@@ -5406,7 +5418,7 @@ body.modal-open { overflow:hidden; }
 }
 
 /* ============================================
-    FINAL POLISH â€” Responsive overflow, a11y, perf
+    FINAL POLISH — Responsive overflow, a11y, perf
     ============================================ */
 /* Container responsive breathing */
 @media (max-width: 768px) {
@@ -5456,7 +5468,7 @@ body.modal-open { overflow:hidden; }
 @media (prefers-contrast: more) {
     :focus-visible { outline-width: 3px; }
 }
-/* Text navbar logo responsive â€” size-based, never distorted */
+/* Text navbar logo responsive — size-based, never distorted */
 @media (max-width: 1024px) {
     .logo-text, .logo-dot { font-size: clamp(0.92rem, 2.6vw, 1.1rem); }
 }
@@ -5470,24 +5482,24 @@ body.modal-open { overflow:hidden; }
 @media (max-width: 360px) {
     .logo-text, .logo-dot { font-size: 0.82rem; }
 }
-/* === PERFORMANCE PATCH â€” smooth 60fps scroll === */
+/* === PERFORMANCE PATCH — smooth 60fps scroll === */
 html { scroll-behavior: smooth; scroll-padding-top: 72px; overscroll-behavior-y: contain; }
 body { text-rendering: optimizeLegibility; }
-/* GPU layers â€” promote fixed / parallax elements */
+/* GPU layers — promote fixed / parallax elements */
 .navbar, .hero-background, .profile-stage, .profile-frame, .hero-left { will-change: transform, opacity; transform: translateZ(0); }
 .timeline-progress { will-change: transform; transform-origin: top; backface-visibility: hidden; }
-/* Sections isolate paint â€” prevents full-page reflow on scroll */
+/* Sections isolate paint — prevents full-page reflow on scroll */
 .hero, .about, .tech-stack, .projects, .experience, .lab, .iterm, .contact { contain: layout paint; }
-/* Below-fold lazy render â€” huge boost for initial load & scroll */
+/* Below-fold lazy render — huge boost for initial load & scroll */
 .tech-stack, .projects, .experience, .lab, .iterm, .contact { content-visibility: auto; contain-intrinsic-size: 600px 800px; }
-/* Reduce heavy blur globally â€” still cinematic but much cheaper */
+/* Reduce heavy blur globally — still cinematic but much cheaper */
 .tech-card-inner, .tl-card, .contact-card, .contact-form-wrap { backdrop-filter: blur(12px) saturate(140%); -webkit-backdrop-filter: blur(12px) saturate(140%); }
 .navbar.scrolled { backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%); }
-/* Glow â€” reduce blur radius & stop pulse on low-end already handled via JS */
+/* Glow — reduce blur radius & stop pulse on low-end already handled via JS */
 .radial-glow, .tech-glow-1, .tech-glow-2 { will-change: transform, opacity; }
-/* Canvases â€” ensure they don't block pointer & are GPU composited */
+/* Canvases — ensure they don't block pointer & are GPU composited */
 #heroCanvas, #techBgCanvas, #projectsCanvas, #expCanvas, #labCanvas, #itermCanvas, #contactCanvas { will-change: opacity; transform: translateZ(0); pointer-events: none; }
-/* Mobile performance â€” lighter blur & shadow + pause animations */
+/* Mobile performance — lighter blur & shadow + pause animations */
 @media (max-width: 768px) {
     html { scroll-behavior: auto; } /* prevent smooth scroll jank on mobile swipe */
     .navbar.scrolled { backdrop-filter: blur(12px) saturate(140%) !important; -webkit-backdrop-filter: blur(12px) saturate(140%) !important; }
@@ -5498,7 +5510,7 @@ body { text-rendering: optimizeLegibility; }
     .profile-ring, .profile-ring-2, .profile-circuit { animation-duration: 24s !important; }
     .profile-glow, .projects-glow, .exp-glow, .tech-glow-1, .tech-glow-2 { filter: blur(32px) !important; animation: none !important; opacity: 0.5 !important; }
     .radial-glow { opacity: 0.45 !important; animation: none !important; }
-    /* disable parallax transforms on mobile â€” already disabled in JS but ensure no stray */
+    /* disable parallax transforms on mobile — already disabled in JS but ensure no stray */
     .hero-background, .profile-3d-layer, .profile-stage, .profile-frame { transform: none !important; }
     .tech-stack, .projects, .experience, .lab, .iterm, .contact { content-visibility: auto; contain-intrinsic-size: 400px 600px; }
 }

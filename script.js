@@ -2762,12 +2762,39 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     let shareModalEl = null;
     let shareModalOpener = null;
     let shareStoryFile = null;
+    let shareStoryCanvas = null;
     let shareBusy = false;
 
     const canNativeShare = () => typeof navigator.share === 'function';
     const canShareFile = () => canNativeShare()
         && typeof navigator.canShare === 'function'
         && typeof File !== 'undefined';
+
+    /**
+     * Apakah perangkat ini benar-benar bisa menerima BERKAS di share sheet.
+     *
+     * Pengecekan terakhir tetap dilakukan di shareStoryImage() memakai berkas
+     * aslinya, karena bisa saja berkas kecil lolos padahal gambar 1080x1920
+     * ditolak. Yang diprobe di sini hanya untuk membaca Reality: browser
+     * desktop hampir selalu menolak berkas, sehingga tombol Instagram dan
+     * TikTok harus menjelaskan langkah manual, bukan diam-diamfell back ke
+     * berbagi teks.
+     */
+    let fileShareProbe = null;
+    function fileShareSupported() {
+        if (fileShareProbe !== null) return fileShareProbe;
+        if (!canShareFile()) {
+            fileShareProbe = false;
+            return false;
+        }
+        try {
+            const probe = new File([new Uint8Array([1])], 'probe.txt', { type: 'text/plain' });
+            fileShareProbe = navigator.canShare({ files: [probe] });
+        } catch (e) {
+            fileShareProbe = false;
+        }
+        return fileShareProbe;
+    }
 
     // Toast terpisah dari showToast() milik form kontak: toast itu terikat
     // pada elemen form dan akan terpotong saat muncul dari atas panel.
@@ -2861,12 +2888,50 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
     }
 
     /**
+     * Simpan kartu Story ke perangkat.
+     *
+     * Ini jalur utama untuk browser desktop dan Safari, yang memang tidak
+     * punya web share target berkas. Daripada diam-diamfell back ke berbagi
+     * teks, kartu diunduh supaya orang bisa mengunggah ke Story-nya sendiri.
+     */
+    function downloadStoryImage(item) {
+        const canvas = shareStoryCanvas;
+
+        if (!canvas || !canvas.toBlob) {
+            shareToast('Kartu Story belum siap, coba lagi sebentar', 'error');
+            return false;
+        }
+
+        canvas.toBlob(blob => {
+            if (!blob) {
+                shareToast('Gagal menyiapkan berkas kartu Story', 'error');
+                return;
+            }
+
+            const filename = 'story-' + (item.id || 'proyek') + '.jpg';
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+            shareToast('Kartu Story diunduh: ' + filename, 'success');
+        }, 'image/jpeg', 0.92);
+
+        return true;
+    }
+
+    /**
      * Bagikan kartu Story sebagai berkas.
      *
      * Ini jalur resmi dan satu-satunya yang mendekati "kirim ke Story":
      * berkas masuk ke share sheet, lalu pengguna memilih Instagram atau
- * TikTok di sana. Aplikasi yang terbuka yang mengunggah dan memotong
- * gambarnya, bukan situs ini.
+     * TikTok di sana. Aplikasi yang terbuka yang mengunggah dan memotong
+     * gambarnya, bukan situs ini.
      */
     async function shareStoryImage(item, label) {
         if (!shareStoryFile) {
@@ -2875,12 +2940,15 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         }
 
         if (!canShareFile() || !navigator.canShare({ files: [shareStoryFile] })) {
-            // Perangkat tidak mendukung berbagi berkas: turun ke berbagi teks
-            // supaya tetap resmi dan tidak memaksa pengguna menyalin manual.
-            await nativeShare(item);
-            shareToast('Perangkat ini tidak bisa berbagi gambar, mengirim teks', 'info');
+            // Perangkat tidak mendukung berbagi berkas. Ambil jalur yang
+            // jelas: unduh kartunya, lalu suruh orang mengunggah sendiri ke
+            // Story aplikasi yang dituju.
+            downloadStoryImage(item);
+            shareToast('Browser ini tidak bisa mengirim gambar ke ' + label
+                + '. Kartu Story diunduh, unggah manual dari galeri.', 'info');
             return;
         }
+
 
         try {
             await navigator.share({ files: [shareStoryFile], title: item.title, text: item.text });
@@ -2902,6 +2970,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         if (shareModalEl) { closeShareModal(); return; }
 
         const supportsText = canNativeShare();
+        const supportsFiles = fileShareSupported();
 
         const modal = document.createElement('div');
         modal.className = 'share-modal';
@@ -2930,6 +2999,10 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                     <div class="share-modal__storymeta">
                         <strong>Kartu Story 1080 &times; 1920</strong>
                         <span data-share-status role="status" aria-live="polite">Menyiapkan kartu Story…</span>
+                        <button type="button" class="share-act share-act--download" data-share-action="download-story">
+                            <i class="fas fa-download" aria-hidden="true"></i>
+                            <span>Unduh kartu Story</span>
+                        </button>
                     </div>
                 </div>
 
@@ -2950,9 +3023,13 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 </div>
 
                 <p class="share-modal__hint">
-                    Instagram dan TikTok tidak punya tombol berbagi langsung dari web.
-                    Kartu Story dikirim ke share sheet sebagai gambar; pilih IG atau TikTok
-                    di sana, lalu Posting ke Story.
+                    ${supportsFiles
+                        ? `Instagram dan TikTok tidak punya tombol berbagi langsung dari web.
+                           Kartu Story dikirim ke share sheet sebagai gambar; pilih IG atau TikTok
+                           di sana, lalu Posting ke Story.`
+                        : `Browser ini tidak bisa mengirim gambar ke Story secara langsung
+                           (hanya Android dan iOS yang bisa). Kartu Story sudah disiapkan di
+                           atas: unduh, lalu unggah manual ke Story Instagram atau TikTok.`}
                 </p>
 
                 <div class="share-modal__grid" role="group" aria-label="Pilih aplikasi">
@@ -2993,6 +3070,22 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                     return;
                 }
 
+                // Unduh kartu Story: jalur utama di browser desktop dan Safari,
+                // yang memang tidak punya web share target untuk berkas.
+                if (act === 'download-story') {
+                    setShareBusy(true, 'Menyiapkan berkas…');
+                    try {
+                        await shareStoryReady;
+                    } catch (e) {
+                        setShareBusy(false);
+                        shareToast('Kartu Story gagal dibuat, coba lagi sebentar', 'error');
+                        return;
+                    }
+                    setShareBusy(false);
+                    downloadStoryImage(item);
+                    return;
+                }
+
                 if (act === 'native') {
                     closeShareModal();
                     await nativeShare(item);
@@ -3000,7 +3093,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 }
 
                 // Instagram dan TikTok: kartu Story dikirim sebagai berkas bila
-                // perangkat mendukung, kalau tidak tetap pakai berbagi teks.
+                // perangkat mendukung, kalau tidak kartu diunduh untuk diunggah manual.
                 if (shareStoryFile) {
                     closeShareModal();
                     await shareStoryImage(item, act === 'story-instagram' ? 'Instagram' : 'TikTok');
@@ -3077,11 +3170,15 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         if (!item) return;
 
         shareStoryFile = null;
+        shareStoryCanvas = null;
         shareStoryThumb = '';
         setShareBusy(false);
 
         shareStoryReady = buildStoryImage(item)
             .then(canvas => {
+                // Kanvasnya disimpan supaya tombol "Unduh kartu Story" tidak
+                // harus membuat ulang gambar yang sama.
+                shareStoryCanvas = canvas;
                 buildStoryThumb(canvas);
                 return canvasToFile(canvas, 'story-' + item.id + '.jpg');
             })
@@ -3090,6 +3187,7 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         // Kegagalan menyiapkan gambar tidak boleh menggagalkan berbagi teks.
         shareStoryReady.catch((err) => {
             shareStoryFile = null;
+            shareStoryCanvas = null;
             if (window.console && console.warn) console.warn('[share] kartu Story gagal disiapkan', err);
         });
 
