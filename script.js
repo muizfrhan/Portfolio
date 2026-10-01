@@ -1124,7 +1124,96 @@
     // ============================================
     // COUNTER ANIMATION
     // ============================================
-    function animateCounter(element) {
+    /*
+ * Ringkasan profil di section "Tentang".
+ *
+ * SEMUA angka di sini dihitung dari sumber data yang sama dengan isi halaman,
+ * tidak ada yang ditulis manual:
+ *
+ *   projects         -> projectsData.length
+ *   tech             -> jumlah teknologi unik di seluruh proyek
+ *   organizations    -> entri timeline bertanda "Organisasi"
+ *   educationYears   -> selisih tahun pada entri timeline bertanda "Pendidikan"
+ *
+ * Sebelumnya keempatnya hardcode di atribut data-target, sehingga menambah
+ * satu proyek hanya updating projectsData tidak cukup — angka di section ini
+ * diam-diam jadi tidak cocok dengan daftar proyek yang tampil. Itu bukan
+ * sekadar angka yang basi: halaman jadi mengetik sesuatu yang tidak ada.
+ */
+function initAboutStats() {
+    const root = document.querySelector('[data-about-stats]');
+    if (!root) return;
+
+    const uniqueTech = new Set();
+    projectsData.forEach(p => {
+        (p.technologies || []).forEach(t => uniqueTech.add(String(t).trim()));
+    });
+
+    // Timeline adalah sumber kebenaran untuk organisasi dan masa studi.
+    const timelineItems = Array.from(document.querySelectorAll('.tl-item'));
+
+    const organizations = timelineItems.filter(item => {
+        const date = (item.querySelector('.tl-date') || {}).textContent || '';
+        return /organisasi/i.test(date);
+    }).length;
+
+    /*
+     * "Tahun Pendidikan" dihitung dari rentang tahun pada entri pendidikan
+     * (mis. 2019–2022). Bisa lebih dari satu entri, jadi rentangnya dijumlah
+     * bukan hanya diambil yang pertama, dan hasilnya 0 kalau memang tidak ada
+     * entri pendidikan — lebih baik 0 daripada menebak angka.
+     *
+     * PENTING: penanda jenis entri ("Pendidikan" / "Organisasi") berada pada
+     * `.tl-year`, sedangkan `.tl-date` hanya berisi tahun atau kata "Magang".
+     * Entri pendidikan karena itu looked up ke KEDUA elemen: kalau hanya
+     * `.tl-date` yang diperiksa, tidak ada yang pernah cocok dan angka ini
+     * diam-diam selalu 0 — persis yang terjadi sebelum perbaikan ini.
+     */
+    const educationYears = timelineItems.reduce((total, item) => {
+        const date = (item.querySelector('.tl-date') || {}).textContent || '';
+        const label = (item.querySelector('.tl-year') || {}).textContent || '';
+
+        if (!/pendidikan/i.test(date) && !/pendidikan/i.test(label)) return total;
+
+        const years = label.match(/\b(19|20)\d{2}\b/g);
+        if (!years || years.length < 2) return total;
+
+        const from = parseInt(years[0], 10);
+        const to = parseInt(years[years.length - 1], 10);
+        return total + Math.max(0, to - from);
+    }, 0);
+
+    const values = {
+        projects: projectsData.length,
+        tech: uniqueTech.size,
+        organizations,
+        educationYears,
+    };
+
+    root.querySelectorAll('[data-stat]').forEach(item => {
+        const key = item.dataset.stat;
+        const value = values[key];
+        if (typeof value !== 'number') return;
+
+        const numberEl = item.querySelector('.stat-number');
+        if (!numberEl) return;
+
+        numberEl.dataset.target = String(value);
+
+        // Kalau counter sudah sempat jalan, angka lama akan terkunci di
+        // data-counted dan animasi tidak main lagi. Set ulang supaya
+        // penghitung baru langsung memakai target yang benar.
+        if (item.dataset.counted === 'true') {
+            delete item.dataset.counted;
+            numberEl.textContent = '0';
+            animateCounter(item);
+        }
+    });
+
+    return values;
+}
+
+function animateCounter(element) {
         if (element.dataset.counted) return;
         element.dataset.counted = 'true';
 
@@ -2929,71 +3018,119 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
      * punya web share target berkas. Daripada diam-diamfell back ke berbagi
      * teks, kartu diunduh supaya orang bisa mengunggah ke Story-nya sendiri.
      */
-    function downloadStoryImage(item) {
-        const canvas = shareStoryCanvas;
+    /**
+ * Deteksi iOS/iPadOS.
+ *
+ * Diperlukan karena cara terbaik menyimpan gambar BERBEDA per platform:
+ * Android dan desktop bisa memakai <a download>, sementara iOS mengabaikan
+ * atribut download pada blob: URL dan hanya menampilkan pratinjau.
+ */
+function isAppleDevice() {
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) return true;
+    // iPadOS 13+ melaporkan dirinya sebagai Mac; bedanya dari sentuh layar.
+    return /Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1;
+}
 
-        if (!canvas || !canvas.toBlob) {
-            shareToast('Kartu Story belum siap, coba lagi sebentar', 'error');
-            return false;
-        }
+/*
+     * Simpan kartu Story ke perangkat.
+     *
+     * Jalur utama untuk browser yang tidak punya web share target berkas
+     * (desktop, dan sebagian besar Android). Kalau platform ternyata tidak
+     * mendukungnya, keputusan dibuat di dalam fungsi: iOS dan Android
+     * menerima lewat share sheet, sisanya memakai <a download>.
+     *
+     * Kenapa tidak cukup satu cara: iOS mengabaikan atribut `download` pada
+     * `blob:` URL dan hanya membuka pratinjau, tanpa error yang terlihat.
+     * Android lama behave serupa saat unduhan dipicu di luar gestur pengguna.
+     * Karena itu hasilnya diprobe dan diturunkan ke jalur yang benar-benar
+     * bekerja di platform tersebut.
+     */
+async function downloadStoryImage(item) {
+    const canvas = shareStoryCanvas;
 
-        /*
-         * toBlob() bisa menolak tanpa exception: canvas yang sudah tainted
-         * (gambar lintas origin tanpa CORS) dan sebagian browser yang memblokir
-         * unduhan otomatis akan mengirimnya sebagai null atau melempar
-         * SecurityError. Dua-duanya dulu ini tidak tertangani, jadi tombolnya
-         * tidak berfungsi tanpa penjelasan apa pun. Setiap jalur gagal sekarang
-         * diberi pesan yang bisa ditindaklanjuti.
-         */
-        let settled = false;
-        const fail = (message) => {
-            if (settled) return;
-            settled = true;
-            shareToast(message, 'error');
-        };
-
-        try {
-            canvas.toBlob(blob => {
-                if (!blob) {
-                    fail('Browser menolak mengekspor kartu. Coba simpan halaman, lalu buka ulang.');
-                    return;
-                }
-
-                try {
-                    const filename = 'story-' + (item.id || 'proyek') + '.jpg';
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-
-                    link.href = url;
-                    link.download = filename;
-                    link.rel = 'noopener';
-                    // Beberapa browser (Safari/iOS) membatalkan unduhan kalau
-                    // elemennya dilepas sebelum transfer dimulai.
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-
-                    // Dicabut setelah transfer sempat berjalan, bukan langsung
-                    // pada frame yang sama dengan klik.
-                    setTimeout(() => {
-                        link.remove();
-                        URL.revokeObjectURL(url);
-                    }, 4000);
-
-                    settled = true;
-                    shareToast('Kartu Story diunduh: ' + filename, 'success');
-                } catch (e) {
-                    fail('Gagal menyimpan kartu. Periksa izin unduhan browser.');
-                }
-            }, 'image/jpeg', 0.92);
-        } catch (e) {
-            // Keamanan canvas: gambar proyek dimuat lintas origin tanpa
-            // header CORS, jadi canvas tidak boleh diekspor.
-            fail('Kartu tidak bisa diekspor karena gambar melintasi domain. Coba lagi lewat tombol Instagram atau TikTok.');
-        }
-
-        return true;
+    if (!canvas || !canvas.toBlob) {
+        shareToast('Kartu Story belum siap, coba lagi sebentar', 'error');
+        return false;
     }
+
+    const filename = 'story-' + (item.id || 'proyek') + '.jpg';
+
+    /*
+     * toBlob() menolak tanpa exception ketika canvas-nya tainted (gambar lintas
+     * origin tanpa CORS), dan sebagian browser memblokir unduhan otomatis
+     * sehingga callback-nya tidak pernah dipanggil. Timeout di bawah menutup
+     * kasus kedua: tanpa itu Promise menggantung dan tombol terlihat freeze.
+     */
+    let blob;
+    try {
+        blob = await Promise.race([
+            new Promise((resolve, reject) => {
+                canvas.toBlob(resolve, 'image/jpeg', 0.92);
+            }),
+            new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('toBlob timeout')), 8000);
+            })
+        ]);
+    } catch (e) {
+        shareToast('Browser menolak mengekspor kartu. Muat ulang halaman lalu coba lagi.', 'error');
+        return false;
+    }
+
+    if (!blob) {
+        shareToast('Browser menolak mengekspor kartu. Muat ulang halaman lalu coba lagi.', 'error');
+        return false;
+    }
+
+    /*
+     * Jalur 1 — iOS: <a download> pada blob: URL diabaikan Safari, jadi
+     * andalkan share sheet yang punya tombol simpan gambar. Android ikut
+     * memakai jalur ini karena tombol simpan di sana jauh lebih bisa diandalkan
+     * daripada unduhan senyap yang tidak memberi umpan balik apa pun.
+     */
+    if (canShareFile()) {
+        try {
+            const file = new File([blob], filename, { type: 'image/jpeg' });
+            if (navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: item.title });
+                shareToast('Kartu Story siap disimpan', 'success');
+                return true;
+            }
+        } catch (e) {
+            // AbortError = pengguna menutup share sheet. Itu pilihan mereka,
+            // bukan kegagalan, jadi tidak perlu pesan error.
+            if (e && e.name === 'AbortError') return true;
+            // TypeError dan lainnya: lanjut ke jalur manual di bawah.
+        }
+    }
+
+    /*`
+     * Jalur 2 — <a download>. Efektif di Chrome Android dan semua desktop.
+     * Elemennya sengaja dibiarkan menempel di DOM sebentar: Safari membatalkan
+     * transfer kalau node-nya dilepas pada frame yang sama dengan klik.
+     */
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = filename;
+    link.rel = 'noopener';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+
+    setTimeout(() => {
+        link.remove();
+        URL.revokeObjectURL(url);
+    }, 8000);
+
+    if (isAppleDevice()) {
+        shareToast('iOS: buka tab baru, lalu simpan gambar dari sana', 'success');
+    } else {
+        shareToast('Kartu Story diunduh: ' + filename, 'success');
+    }
+
+    return true;
+}
 
     /**
      * Bagikan kartu Story sebagai berkas.
@@ -4436,6 +4573,13 @@ document.addEventListener('click', (e) => {
         initProjects();
         initProjectModalEvents();
         initExperience();
+        /*
+         * Setelah initExperience: fungsi ini menghitung "Organisasi" dan "Tahun
+         * Pendidikan" dengan membaca DOM timeline, jadi timeline harus sudah ada.
+         * Dipanggil paling akhir karena initScrollReveal sudah memasang observer
+         * — target counter di-set di sini, sebelum sectionveal pertama.
+         */
+        initAboutStats();
         initLab3D();
         initIterm();
         initContact();

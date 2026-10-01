@@ -306,21 +306,32 @@
                             </div>
                         </div>
                     </div>
-                    <div class="about-stats" aria-label="Ringkasan profil">
-                        <div class="stat-item" data-counter>
-                    <span class="stat-number" data-target="8">0</span>
-                    <span class="stat-label">Proyek</span>
+                    <!--
+Angka di sini TIDAK ditulis manual. `data-stat` memberi tahu script
+      sumber datanya, dan initAboutStats() menghitung ulang tiap kali
+      projectsData atau timeline berubah.
+
+      Sebelumnya semuanya hardcode di data-target, sehingga setiap proyek baru
+      harus dicatat di tiga tempat: array projectsData, kartu di section
+      Proyek, dan angka ringkasan di sini. Salah satu yang lupa akan
+      menampilkan angka yang bertentangan dengan isi halaman — persis yang
+      terjadi: projectsData berisi 9 proyek sementara stat masih menulis 8.
+    -->
+<div class="about-stats" aria-label="Ringkasan profil" data-about-stats>
+                        <div class="stat-item" data-counter data-stat="projects">
+                            <span class="stat-number" data-target="0">0</span>
+                            <span class="stat-label">Proyek</span>
                         </div>
-                        <div class="stat-item" data-counter>
-                            <span class="stat-number" data-target="10">0</span>
+                        <div class="stat-item" data-counter data-stat="tech">
+                            <span class="stat-number" data-target="0">0</span>
                             <span class="stat-label">Teknologi</span>
                         </div>
-                        <div class="stat-item" data-counter>
-                            <span class="stat-number" data-target="2">0</span>
+                        <div class="stat-item" data-counter data-stat="organizations">
+                            <span class="stat-number" data-target="0">0</span>
                             <span class="stat-label">Organisasi</span>
                         </div>
-                        <div class="stat-item" data-counter>
-                            <span class="stat-number" data-target="4">0</span>
+                        <div class="stat-item" data-counter data-stat="educationYears">
+                            <span class="stat-number" data-target="0">0</span>
                             <span class="stat-label">Tahun Pendidikan</span>
                         </div>
                     </div>
