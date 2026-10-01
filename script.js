@@ -3045,6 +3045,23 @@ function isAppleDevice() {
      * Karena itu hasilnya diprobe dan diturunkan ke jalur yang benar-benar
      * bekerja di platform tersebut.
      */
+/*
+ * Unduh kartu Story ke perangkat.
+ *
+ * Urutan jalur PENTING dan deliberate: unduh dulu, share sheet belakangan.
+ *
+ * Versi sebelumnya memakai share sheet lebih dulu karena "iOS mengabaikan
+ * <a download>". Akibatnya di Android yang sebenarnya bisa mengunduh, tombol
+ * "Unduh" malah membuka share sheet WhatsApp/Instagram — dan karena sheet itu
+ * tidak punya tujuan "simpan ke file" yang mencolok, pengguna tidak pernah
+ * melihat gambarnya masuk ke perangkat. Klik terlihat tidak berhasil.
+ *
+ * Chrome Android DAN desktop menghormati <a download> dengan baik, jadi itu
+ * jalur utama untuk keduanya. Hanya iOS yang benar-benar tidak bisa, dan
+ * bahkan di sana share sheet tetap dijalankan sebagai cadangan: unduh dulu,
+ * baru tawarkan opsi lain.
+ */
+
 async function downloadStoryImage(item) {
     const canvas = shareStoryCanvas;
 
@@ -3057,7 +3074,7 @@ async function downloadStoryImage(item) {
 
     /*
      * toBlob() menolak tanpa exception ketika canvas-nya tainted (gambar lintas
-     * origin tanpa CORS), dan sebagian browser memblokir unduhan otomatis
+     * origin tanpa CORS), dan sebagian browser memblokir ekspor otomatis
      * sehingga callback-nya tidak pernah dipanggil. Timeout di bawah menutup
      * kasus kedua: tanpa itu Promise menggantung dan tombol terlihat freeze.
      */
@@ -3082,31 +3099,16 @@ async function downloadStoryImage(item) {
     }
 
     /*
-     * Jalur 1 — iOS: <a download> pada blob: URL diabaikan Safari, jadi
-     * andalkan share sheet yang punya tombol simpan gambar. Android ikut
-     * memakai jalur ini karena tombol simpan di sana jauh lebih bisa diandalkan
-     * daripada unduhan senyap yang tidak memberi umpan balik apa pun.
-     */
-    if (canShareFile()) {
-        try {
-            const file = new File([blob], filename, { type: 'image/jpeg' });
-            if (navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: item.title });
-                shareToast('Kartu Story siap disimpan', 'success');
-                return true;
-            }
-        } catch (e) {
-            // AbortError = pengguna menutup share sheet. Itu pilihan mereka,
-            // bukan kegagalan, jadi tidak perlu pesan error.
-            if (e && e.name === 'AbortError') return true;
-            // TypeError dan lainnya: lanjut ke jalur manual di bawah.
-        }
-    }
-
-    /*`
-     * Jalur 2 — <a download>. Efektif di Chrome Android dan semua desktop.
-     * Elemennya sengaja dibiarkan menempel di DOM sebentar: Safari membatalkan
-     * transfer kalau node-nya dilepas pada frame yang sama dengan klik.
+     * Jalur 1 — unduh langsung.
+     *
+     * <a download> dipakai sebagai jalur utama, bukan khusus iOS: Chrome di
+     * Android dan semua browser desktop menghormatinya, dan hasilnya file
+     * sungguhan di perangkat — persis yang orang Rewrite dari tombol "Unduh".
+     *
+     * Elemennya sengaja dibiarkan menempel di DOM beberapa detik: Safari
+     * membatalkan transfer kalau node-nya dilepas pada frame yang sama dengan
+     * klik, dan beberapa browser mobile lebih dulu memprosesnya di frame
+     * berikutnya.
      */
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -3114,6 +3116,7 @@ async function downloadStoryImage(item) {
     link.href = url;
     link.download = filename;
     link.rel = 'noopener';
+    link.target = '_blank';
     link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
@@ -3121,14 +3124,35 @@ async function downloadStoryImage(item) {
     setTimeout(() => {
         link.remove();
         URL.revokeObjectURL(url);
-    }, 8000);
+    }, 10000);
 
+    /*
+     * Jalur 2 — iOS saja.
+     *
+     * Safari tidak punya unduhan file yang bisa dipicu dari web, jadi
+     * share sheet adalah satu-satunya jalan yang benar-benar menyimpan gambar
+     * ke galeri. Ini tetap dijalankan meski Jalur 1 sudah dipicu: di iOS
+     * trigger <a download> tidak menghasilkan apa-apa, jadi sheet inilah yang
+     * benar-benar bekerja.
+     */
     if (isAppleDevice()) {
-        shareToast('iOS: buka tab baru, lalu simpan gambar dari sana', 'success');
-    } else {
-        shareToast('Kartu Story diunduh: ' + filename, 'success');
+        shareToast('iOS: pilih "Simpan ke Foto" di lembar berbagi', 'success');
+        await new Promise(resolve => setTimeout(resolve, 400));
+        try {
+            const file = new File([blob], filename, { type: 'image/jpeg' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: item.title });
+            }
+        } catch (e) {
+            // AbortError = pengguna menutup sheet. Itu pilihan mereka, bukan
+            // kegagalan, jadi tidak perlu pesan error. TypeError dan lainnya
+            // juga ditelan: Jalur 1 sudah dipicu dan>iOS masih menampilkan
+            // toast, jadi tombol ini tidak berakhir tanpa umpan balik.
+        }
+        return true;
     }
 
+    shareToast('Kartu Story diunduh: ' + filename, 'success');
     return true;
 }
 
