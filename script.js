@@ -155,6 +155,26 @@
             year: '2026'
         },
         {
+            id: 'materialx',
+            featured: true,
+            title: 'MATERIALX — Sistem Inventori Konstruksi Modern',
+            category: 'Inventory Management System',
+            description: 'Sistem inventori untuk toko material dan depo bangunan — stok curah, barang masuk/keluar, POS, produk, supplier, pelanggan, dan laporan dalam satu basis data dengan hak akses berbasis peran.',
+            longDescription: 'MATERIALX adalah sistem inventori untuk toko material dan depo bangunan yang menangani stok curah (semen, pasir, besi) termasuk varian satuan pcs, ton, dan palet. Dibangun sebagai SPA Vue 3 di depan API PHP 8.2 di atas PostgreSQL, dengan 138 endpoint, 36 migrasi, dan RBAC granular yang diperiksa di backend pada setiap route. Fitur utamanya mencakup dashboard dengan agregasi SQL, kasir POS dengan invoice tempo dan surat jalan, modul barang masuk dan keluar dengan pembatalan yang mengembalikan stok, penyesuaian stok manual dengan jejak audit, serta laporan stok dan penjualan per periode. Angka stok tidak pernah dihitung ulang di browser — ringkasan dan status "stok menipis" seluruhnya dibaca dari server agar tampilan tidak mungkin melenceng dari modul inventori yang menjadi sumber kebenarannya. Autentikasi memakai JWT access token 15 menit plus refresh token yang dirotasi setiap dipakai, dengan deteksi reuse yang langsung mencabut seluruh keluarga token.',
+            image: 'assets/images/projects/materialx.jpg',
+            icon: 'fa-boxes-stacked',
+            technologies: ['Vue.js 3', 'PHP 8.2', 'PostgreSQL', 'Vite', 'Tailwind CSS', 'Pinia', 'JWT', 'JavaScript'],
+            features: ['Dashboard real-time dengan agregasi SQL, tren penjualan, dan produk terlaris', 'Kasir POS dengan invoice tempo, surat jalan, dan pembayaran sebagian', 'Stok per gudang dengan varian satuan pcs/ton/palet dan dukungan barcode', 'Barang masuk dan keluar dengan pembatalan yang otomatis membalik efek stok', 'Penyesuaian stok manual dengan jejak audit yang bisa ditelusuri', 'Empat peran dengan 20+ izin granular yang diperiksa di backend, bukan sekadar disembunyikan di UI', 'JWT access + refresh token berotasi dengan deteksi reuse', 'Nomor dokumen berurutan per toko lewat tabel document_sequences', 'Laporan stok dan penjualan dengan agregasi periode', 'Tampilan terang/gelap berbasis design token Material 3'],
+            challenges: 'Menjaga agar angka stok di dashboard tidak pernah berbeda dari modul inventori — sistem menampilkan ringkasan yang terlihat mengesankan, sementara modul inventori adalah sumber kebenaran. Ditambah kebutuhan otorisasi yang benar: menyembunyikan tombol di UI bukan kontrol keamanan, sehingga setiap route harus memeriksa izinnya sendiri, dan dokumen bernomor (PO, invoice, surat jalan) tidak boleh bentrok ketika dua kasir memproses transaksi bersamaan.',
+            solutions: 'Seluruh angka ringkasan dibaca dari agregasi SQL di server, bukan dihitung ulang di browser, sehingga hanya ada satu sumber kebenaran. Otorisasi memakai middleware permission yang memeriksa `<modul>.<aksi>` pada setiap route, ditambah cakupan multi-toko. Nomor dokumen dibuat oleh tabel document_sequences dengan kunci per toko sehingga alokasi angka tetap aman di bawah konkurensi. Setiap mutasi stok dan perubahan destruktif dicatat di audit log dengan retensi berbasis kebijakan.',
+            github: 'https://github.com/muizfrhan/Sistem-Inventori-Industri-Konstruksi-Modern',
+            demo: '#',
+            urlLabel: 'github.com/muizfrhan/Sistem-Inventori-Industri-Konstruksi-Modern',
+            role: 'Software Engineer / Developer',
+            type: 'Web Application',
+            year: '2026'
+        },
+        {
             id: 'system-management-hotel',
             title: 'System Management Hotel',
             category: 'Hotel Management System',
@@ -2538,6 +2558,21 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 return;
             }
             const img = new Image();
+            /*
+             * Wajib: kartu Story digambar ke canvas lalu diekspor lewat
+             * toBlob()/toDataURL(). Tanpa crossOrigin, gambar yang tidak
+             * membawa header CORS akan menaint canvas, dan browser menolak
+             * mengirimnya ke luar sebagai pelanggaran keamanan — artinya
+             * tombol Unduh gagal tepat di langkah terakhir, tanpa jejak error
+             * yang terlihat di UI.
+             *
+             * Aset di repo ini dimuat dari origin yang sama, jadi header
+             * CORS yang dikembalikan server adalah milik kita sendiri. Kalau
+             * gambar memang lintas origin, loadImage akan menolak lewat
+             * onerror dan buildStoryImage memakai fallback — lebih baik
+             * kartu tanpa foto daripada tombol yang diam.
+             */
+            img.crossOrigin = 'anonymous';
             // Batas waktu wajib: tanpa itu satu gambar yang menggantung akan
             // membuat kartu Story tidak pernah selesai dan tombolnya diam saja.
             const timer = setTimeout(
@@ -2902,25 +2937,60 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
             return false;
         }
 
-        canvas.toBlob(blob => {
-            if (!blob) {
-                shareToast('Gagal menyiapkan berkas kartu Story', 'error');
-                return;
-            }
+        /*
+         * toBlob() bisa menolak tanpa exception: canvas yang sudah tainted
+         * (gambar lintas origin tanpa CORS) dan sebagian browser yang memblokir
+         * unduhan otomatis akan mengirimnya sebagai null atau melempar
+         * SecurityError. Dua-duanya dulu ini tidak tertangani, jadi tombolnya
+         * tidak berfungsi tanpa penjelasan apa pun. Setiap jalur gagal sekarang
+         * diberi pesan yang bisa ditindaklanjuti.
+         */
+        let settled = false;
+        const fail = (message) => {
+            if (settled) return;
+            settled = true;
+            shareToast(message, 'error');
+        };
 
-            const filename = 'story-' + (item.id || 'proyek') + '.jpg';
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
+        try {
+            canvas.toBlob(blob => {
+                if (!blob) {
+                    fail('Browser menolak mengekspor kartu. Coba simpan halaman, lalu buka ulang.');
+                    return;
+                }
 
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 5000);
+                try {
+                    const filename = 'story-' + (item.id || 'proyek') + '.jpg';
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
 
-            shareToast('Kartu Story diunduh: ' + filename, 'success');
-        }, 'image/jpeg', 0.92);
+                    link.href = url;
+                    link.download = filename;
+                    link.rel = 'noopener';
+                    // Beberapa browser (Safari/iOS) membatalkan unduhan kalau
+                    // elemennya dilepas sebelum transfer dimulai.
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Dicabut setelah transfer sempat berjalan, bukan langsung
+                    // pada frame yang sama dengan klik.
+                    setTimeout(() => {
+                        link.remove();
+                        URL.revokeObjectURL(url);
+                    }, 4000);
+
+                    settled = true;
+                    shareToast('Kartu Story diunduh: ' + filename, 'success');
+                } catch (e) {
+                    fail('Gagal menyimpan kartu. Periksa izin unduhan browser.');
+                }
+            }, 'image/jpeg', 0.92);
+        } catch (e) {
+            // Keamanan canvas: gambar proyek dimuat lintas origin tanpa
+            // header CORS, jadi canvas tidak boleh diekspor.
+            fail('Kartu tidak bisa diekspor karena gambar melintasi domain. Coba lagi lewat tombol Instagram atau TikTok.');
+        }
 
         return true;
     }
@@ -3074,14 +3144,20 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
                 // yang memang tidak punya web share target untuk berkas.
                 if (act === 'download-story') {
                     setShareBusy(true, 'Menyiapkan berkas…');
-                    try {
-                        await shareStoryReady;
-                    } catch (e) {
-                        setShareBusy(false);
+
+                    // shareStoryReady hanya menolak bila render kartunya sendiri
+                    // gagal. Kegagalan ekspor berkas sengaja tidak ikut
+                    // propagación di sini, karena downloadStoryImage mengekspor
+                    // ulang dari shareStoryCanvas dan bisa berhasil.
+                    await shareStoryReady.catch(() => null);
+
+                    setShareBusy(false);
+
+                    if (!shareStoryCanvas) {
                         shareToast('Kartu Story gagal dibuat, coba lagi sebentar', 'error');
                         return;
                     }
-                    setShareBusy(false);
+
                     downloadStoryImage(item);
                     return;
                 }
@@ -3152,16 +3228,63 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         t.width = 216;
         t.height = 384;
         t.getContext('2d').drawImage(canvas, 0, 0, 216, 384);
-        shareStoryThumb = t.toDataURL('image/jpeg', 0.72);
+        /*
+         * toDataURL melempar SecurityError pada canvas yang tainted. Hulangnya
+         * hal itu mematikan seluruh rantai shareStoryReady, bukan hanya
+         * pratinjau — tombol Unduh lalu menggantung selamanya karena await
+         * di click handler menunggu promise yang sudah ditolak.
+         *
+         * Pratinjau itu decoration: kalau gagal, kartu tetap bisa diunduh dan
+         * dikirim. Karena itu kegagalan di sini ditelan, bukan dinaikkan.
+         */
+        try {
+            shareStoryThumb = t.toDataURL('image/jpeg', 0.72);
+        } catch (e) {
+            shareStoryThumb = '';
+            if (window.console && console.warn) console.warn('[share] pratinjau Story gagal dirender', e);
+        }
     }
 
-    /* Pemicu: tombol Bagikan di panel detail proyek. Delegasi dipasang satu
-       kali karena isi modal dirender ulang setiap kali proyek dibuka.
+/*
+ * Rantai prepare, dengan kegagalan dipisah per konsumen:
+ *
+ *   shareStoryCanvas — dipakai oleh tombol "Unduh kartu Story"
+ *   shareStoryFile   — dipakai oleh tombol Instagram/TikTok lewat share sheet
+ *   shareStoryReady  — yang di-await kedua tombol tersebut
+ *
+ * Kegagalan tidak boleh dilempar seragam. Sebelumnya canvasToFile yang gagal
+ * membuat seluruh rantai menolak, sehingga handler "Unduh" ikut masuk blok
+ * catch padahal kanvasnya sudah jadi dan sebenarnya masih bisa diekspor —
+ * persis gejala "tombol Unduh diam".
+ */
+function prepareShareStory(item) {
+    shareStoryCanvas = null;
+    shareStoryFile = null;
 
-       Kartu Story disiapkan di sini, di dalam gestur klik, supaya saat
-       tombol Instagram atau TikTok ditekan tidak perlu menunggu render dan
-       konteks izin pengguna tidak ikut hilang. */
-    document.addEventListener('click', (e) => {
+    return buildStoryImage(item).then(canvas => {
+        shareStoryCanvas = canvas;
+        buildStoryThumb(canvas);
+
+        // Kegagalan membuat File tidak boleh menghapus kanvas.
+        return canvasToFile(canvas, 'story-' + item.id + '.jpg')
+            .then(file => { shareStoryFile = file; return file; })
+            .catch(err => {
+                shareStoryFile = null;
+                if (window.console && console.warn) {
+                    console.warn('[share] kartu Story tidak bisa dikirim sebagai berkas', err);
+                }
+                return null;
+            });
+    });
+}
+
+/* Pemicu: tombol Bagikan di panel detail proyek. Delegasi dipasang satu
+   kali karena isi modal dirender ulang setiap kali proyek dibuka.
+
+   Kartu Story disiapkan di sini, di dalam gestur klik, supaya saat
+   tombol Instagram atau TikTok ditekan tidak perlu menunggu render dan
+   konteks izin pengguna tidak ikut hilang. */
+document.addEventListener('click', (e) => {
         if (shareModalEl) return;
         const btn = e.target.closest('[data-share-open]');
         if (!btn) return;
@@ -3169,20 +3292,10 @@ me<span class="op">.</span><span class="fn">deploy</span><span class="op">();</s
         const item = shareItemForProject(btn.dataset.project);
         if (!item) return;
 
-        shareStoryFile = null;
-        shareStoryCanvas = null;
         shareStoryThumb = '';
         setShareBusy(false);
 
-        shareStoryReady = buildStoryImage(item)
-            .then(canvas => {
-                // Kanvasnya disimpan supaya tombol "Unduh kartu Story" tidak
-                // harus membuat ulang gambar yang sama.
-                shareStoryCanvas = canvas;
-                buildStoryThumb(canvas);
-                return canvasToFile(canvas, 'story-' + item.id + '.jpg');
-            })
-            .then(file => { shareStoryFile = file; return file; });
+        shareStoryReady = prepareShareStory(item);
 
         // Kegagalan menyiapkan gambar tidak boleh menggagalkan berbagi teks.
         shareStoryReady.catch((err) => {
